@@ -1,5 +1,5 @@
 // Dynamic import to avoid Vercel build issues
-const RasaService = require('./rasa-service').RasaService;
+import { RasaService } from './rasa-service';
 import { OpenRouterService } from './openrouter-service';
 import { TwilioService } from './twilio-service';
 import { APIService } from './api-service';
