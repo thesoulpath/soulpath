@@ -1,0 +1,21 @@
+{
+  "name": "wellness-backend",
+  "version": "1.0.0",
+  "description": "Rasa conversational AI backend for wellness platform",
+  "main": "start-rasa.sh",
+  "scripts": {
+    "dev": "bash start-rasa.sh",
+    "start": "bash start-rasa.sh",
+    "build": "echo 'Rasa backend - no build step required'",
+    "deploy": "echo 'Deploy to Render using render.yaml'",
+    "train": "cd rasa && rasa train",
+    "test": "cd rasa && rasa test",
+    "shell": "cd rasa && rasa shell",
+    "run": "cd rasa && rasa run"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.8.0"
+  }
+}

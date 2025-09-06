@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: wellness-rasa-backend
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r rasa/requirements.txt
+      cd rasa && rasa train
+    startCommand: |
+      cd rasa && rasa run --enable-api --cors "*" --port $PORT
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: RASA_ENDPOINT
+        value: https://wellness-rasa-backend.onrender.com
+    healthCheckPath: /health
+    autoDeploy: true
+    branch: main
+    rootDir: .

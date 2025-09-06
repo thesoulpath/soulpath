@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  rasa:
+    image: rasa/rasa:3.6.20-full
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./rasa:/app
+    command:
+      - run
+      - --cors
+      - "*"
+      - --debug
+    environment:
+      - RASA_TELEMETRY_ENABLED=false
+    networks:
+      - rasa-network
+
+  rasa-actions:
+    image: rasa/rasa:3.6.20-full
+    volumes:
+      - ./rasa/actions:/app/actions
+    command:
+      - run
+      - actions
+      - --debug
+    depends_on:
+      - rasa
+    networks:
+      - rasa-network
+
+networks:
+  rasa-network:
+    driver: bridge
+

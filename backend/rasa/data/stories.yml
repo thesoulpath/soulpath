@@ -1,0 +1,19 @@
+version: "3.1"
+
+stories:
+- story: greet and goodbye
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: affirm
+  steps:
+  - intent: affirm
+  - action: utter_happy
+
+- story: deny
+  steps:
+  - intent: deny
+  - action: utter_goodbye

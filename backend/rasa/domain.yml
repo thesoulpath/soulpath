@@ -1,0 +1,21 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm your astrology assistant. How can I help you today?"
+
+  utter_goodbye:
+    - text: "Goodbye! Have a great day!"
+
+  utter_happy:
+    - text: "Great! I'm glad I could help."
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

@@ -1,0 +1,49 @@
+# Render Deployment Configuration for Rasa
+# This file configures Rasa deployment on Render.com
+
+services:
+  # Rasa Main Service
+  - type: web
+    name: rasa-server
+    runtime: docker
+    dockerfilePath: ./Dockerfile.rasa
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: RASA_ENVIRONMENT
+        value: production
+      - key: RASA_TELEMETRY_ENABLED
+        value: false
+      - key: RASA_MODEL_SERVER
+        value: https://your-render-app.onrender.com
+
+  # Rasa Action Server (if needed)
+  - type: web
+    name: rasa-actions
+    runtime: docker
+    dockerfilePath: ./Dockerfile.actions
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: RASA_ENVIRONMENT
+        value: production
+
+# Database (Optional - for conversation storage)
+databases:
+  - name: rasa-db
+    databaseName: rasa
+    user: rasa
+    plan: free
+
+# Environment Variables
+envVarGroups:
+  - name: rasa-config
+    envVars:
+      - key: RASA_CORS_ORIGIN
+        value: https://your-domain.com
+      - key: RASA_CREDENTIALS_REST_VERIFY
+        value: your-webhook-secret
+      - key: RASA_CREDENTIALS_REST_SECRET
+        value: your-webhook-secret
+

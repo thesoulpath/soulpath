@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: soulpath-chatbot
+    env: docker
+    dockerfilePath: ./Dockerfile.simple
+    plan: starter
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: RASA_PORT
+        value: 5005
+      - key: NEXT_PUBLIC_BASE_URL
+        value: https://soulpath-chatbot.onrender.com
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        sync: false
+      - key: NEXTAUTH_URL
+        value: https://soulpath-chatbot.onrender.com

@@ -1,0 +1,746 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================================
+// CORE USER MODEL - Unified authentication and business data
+// ============================================================================
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  password     String?      // Hashed password for authentication
+  fullName     String?      @map("full_name")
+  avatarUrl    String?      @map("avatar_url")
+  role         String?      @default("user")
+  
+  // Business-specific fields (formerly Client model)
+  phone        String?
+  status       String?      @default("active")
+  birthDate    DateTime?    @map("birth_date") @db.Date
+  birthTime    DateTime?    @map("birth_time") @db.Time(6)
+  birthPlace   String?      @map("birth_place")
+  question     String?
+  language     String?      @default("en")
+  adminNotes   String?      @map("admin_notes")
+  scheduledDate DateTime?   @map("scheduled_date") @db.Date
+  scheduledTime DateTime?   @map("scheduled_time") @db.Time(6)
+  sessionType  String?      @map("session_type")
+  lastReminderSent DateTime? @map("last_reminder_sent") @db.Timestamptz(6)
+  lastBooking  DateTime?    @map("last_booking") @db.Timestamptz(6)
+  notes        String?
+  
+  // Timestamps
+  createdAt    DateTime?    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime?    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  bugComments  BugComment[] @relation("BugCommentAuthor")
+  assignedBugs BugReport[]  @relation("BugReportAssignee")
+  reportedBugs BugReport[]  @relation("BugReportReporter")
+  bookings     Booking[]
+  purchases    Purchase[]
+  paymentRecords PaymentRecord[]
+  userPackages UserPackage[]
+  otpVerifications OtpVerification[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([status], map: "idx_users_status")
+  @@index([createdAt], map: "idx_users_created_at")
+  @@index([role], map: "idx_users_role")
+  @@index([phone], map: "idx_users_phone")
+  @@index([language], map: "idx_users_language")
+  @@map("users")
+}
+
+// ============================================================================
+// PACKAGE MANAGEMENT - Modern package system
+// ============================================================================
+
+model PackageDefinition {
+  id                Int             @id @default(autoincrement())
+  name              String          @db.VarChar(255)
+  description       String?
+  sessionsCount     Int             @map("sessions_count")
+  sessionDurationId Int             @map("session_duration_id")
+  packageType       String          @map("package_type") @db.VarChar(20)
+  maxGroupSize      Int?            @map("max_group_size")
+  isActive          Boolean?        @default(true) @map("is_active")
+  isPopular         Boolean?        @default(false) @map("is_popular")
+  displayOrder      Int?            @default(0) @map("display_order")
+  featured          Boolean?        @default(false) @map("featured")
+  createdAt         DateTime?       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime?       @default(now()) @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  sessionDuration   SessionDuration @relation("PackageDefinitionSessionDuration", fields: [sessionDurationId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  packagePrices     PackagePrice[]
+
+  @@index([isActive], map: "idx_package_definitions_active")
+  @@index([isPopular], map: "idx_package_definitions_popular")
+  @@index([displayOrder], map: "idx_package_definitions_order")
+  @@index([featured], map: "idx_package_definitions_featured")
+  @@map("package_definitions")
+}
+
+model PackagePrice {
+  id                  Int               @id @default(autoincrement())
+  packageDefinitionId Int               @map("package_definition_id")
+  currencyId          Int               @map("currency_id")
+  price               Decimal           @db.Decimal(10, 2)
+  pricingMode         String            @map("pricing_mode") @db.VarChar(20)
+  isActive            Boolean?          @default(true) @map("is_active")
+  createdAt           DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime?         @default(now()) @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  currency            Currency          @relation("PackagePriceCurrency", fields: [currencyId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  packageDefinition   PackageDefinition @relation(fields: [packageDefinitionId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  userPackages        UserPackage[]
+
+  @@unique([packageDefinitionId, currencyId])
+  @@index([currencyId], map: "idx_package_prices_currency")
+  @@map("package_prices")
+}
+
+// ============================================================================
+// SCHEDULING SYSTEM - Modern scheduling with templates and slots
+// ============================================================================
+
+model ScheduleTemplate {
+  id                Int              @id @default(autoincrement())
+  dayOfWeek         String           @map("day_of_week") @db.VarChar(20)
+  startTime         String           @map("start_time") @db.VarChar(10)
+  endTime           String           @map("end_time") @db.VarChar(10)
+  capacity          Int?             @default(3)
+  isAvailable       Boolean?         @default(true) @map("is_available")
+  sessionDurationId Int?             @map("session_duration_id")
+  autoAvailable     Boolean?         @default(true) @map("auto_available")
+  createdAt         DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  scheduleSlots     ScheduleSlot[]
+  sessionDuration   SessionDuration? @relation("ScheduleTemplateSessionDuration", fields: [sessionDurationId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([dayOfWeek], map: "idx_schedule_templates_day")
+  @@map("schedule_templates")
+}
+
+model ScheduleSlot {
+  id                 Int              @id @default(autoincrement())
+  scheduleTemplateId Int              @map("schedule_template_id")
+  startTime          DateTime         @map("start_time") @db.Timestamptz(6)
+  endTime            DateTime         @map("end_time") @db.Timestamptz(6)
+  capacity           Int?             @default(3)
+  bookedCount        Int?             @default(0) @map("booked_count")
+  isAvailable        Boolean?         @default(true) @map("is_available")
+  createdAt          DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  bookings           Booking[]
+  scheduleTemplate   ScheduleTemplate @relation(fields: [scheduleTemplateId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([startTime], map: "idx_schedule_slots_start_time")
+  @@index([isAvailable, startTime], map: "idx_schedule_slots_available_start_time")
+  @@index([endTime], map: "idx_schedule_slots_end_time")
+  @@index([isAvailable], map: "idx_schedule_slots_available")
+  @@index([bookedCount], map: "idx_schedule_slots_booked_count")
+  @@map("schedule_slots")
+}
+
+// ============================================================================
+// PURCHASE AND PACKAGE MANAGEMENT
+// ============================================================================
+
+model Purchase {
+  id              Int           @id @default(autoincrement())
+  userId          String        @map("user_id")
+  totalAmount     Decimal       @map("total_amount") @db.Decimal(10, 2)
+  currencyCode    String        @map("currency_code") @db.VarChar(3)
+  paymentMethod   String        @map("payment_method") @db.VarChar(50)
+  paymentStatus   String?       @default("pending") @map("payment_status") @db.VarChar(20)
+  transactionId   String?       @map("transaction_id") @db.VarChar(255)
+  notes           String?
+  purchasedAt     DateTime?     @default(now()) @map("purchased_at") @db.Timestamptz(6)
+  confirmedAt     DateTime?     @map("confirmed_at") @db.Timestamptz(6)
+  createdAt       DateTime?     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime?     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  userPackages    UserPackage[]
+  paymentRecords  PaymentRecord[]
+
+  @@index([userId], map: "idx_purchases_user_id")
+  @@index([paymentStatus], map: "idx_purchases_payment_status")
+  @@index([purchasedAt], map: "idx_purchases_purchased_at")
+  @@index([userId, paymentStatus], map: "idx_purchases_user_status")
+  @@index([userId, purchasedAt], map: "idx_purchases_user_date")
+  @@map("purchases")
+}
+
+model UserPackage {
+  id                       Int            @id @default(autoincrement())
+  userId                   String         @map("user_id")
+  purchaseId               Int            @map("purchase_id")
+  packagePriceId           Int            @map("package_price_id")
+  quantity                 Int?           @default(1)
+  sessionsUsed             Int?           @default(0) @map("sessions_used")
+  isActive                 Boolean?       @default(true) @map("is_active")
+  expiresAt                DateTime?      @map("expires_at") @db.Timestamptz(6)
+  createdAt                DateTime?      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime?      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  user                    User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  purchase                Purchase        @relation(fields: [purchaseId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  packagePrice            PackagePrice    @relation(fields: [packagePriceId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  bookings                Booking[]
+
+  @@index([userId], map: "idx_user_packages_user_id")
+  @@index([purchaseId], map: "idx_user_packages_purchase_id")
+  @@index([isActive], map: "idx_user_packages_active")
+  @@index([userId, isActive], map: "idx_user_packages_user_active")
+  @@index([expiresAt], map: "idx_user_packages_expires")
+  @@map("user_packages")
+}
+
+// ============================================================================
+// BOOKING SYSTEM - Clean booking model
+// ============================================================================
+
+model Booking {
+  id                    Int                  @id @default(autoincrement())
+  userId                String               @map("user_id")
+  userPackageId         Int                  @map("user_package_id")
+  scheduleSlotId        Int                  @map("schedule_slot_id")
+  sessionType           String               @map("session_type")
+  status                String?              @default("confirmed")
+  notes                 String?
+  cancelledAt           DateTime?            @map("cancelled_at") @db.Timestamptz(6)
+  cancelledReason       String?              @map("cancelled_reason")
+  reminderSent          Boolean?             @default(false) @map("reminder_sent")
+  reminderSentAt        DateTime?            @map("reminder_sent_at") @db.Timestamptz(6)
+  createdAt             DateTime?            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime?            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  userPackage           UserPackage          @relation(fields: [userPackageId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  scheduleSlot          ScheduleSlot         @relation(fields: [scheduleSlotId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([userId], map: "idx_bookings_user_id")
+  @@index([userPackageId], map: "idx_bookings_user_package_id")
+  @@index([scheduleSlotId], map: "idx_bookings_schedule_slot_id")
+  @@index([status], map: "idx_bookings_status")
+  @@index([createdAt], map: "idx_bookings_created_at")
+  @@index([userId, status], map: "idx_bookings_user_status")
+  @@index([userId, createdAt], map: "idx_bookings_user_created")
+  @@map("bookings")
+}
+
+// ============================================================================
+// PAYMENT SYSTEM - Clean payment tracking
+// ============================================================================
+
+model PaymentRecord {
+  id             Int       @id @default(autoincrement())
+  userId         String    @map("user_id")
+  purchaseId     Int       @map("purchase_id")
+  amount         Decimal   @db.Decimal(10, 2)
+  currencyCode   String    @map("currency_code") @db.VarChar(3)
+  paymentMethod  String    @map("payment_method") @db.VarChar(50)
+  paymentStatus  String?   @default("pending") @map("payment_status") @db.VarChar(20)
+  transactionId  String?   @map("transaction_id") @db.VarChar(255)
+  notes          String?
+  paymentDate    DateTime? @map("payment_date") @db.Date
+  confirmedAt    DateTime? @map("confirmed_at") @db.Timestamptz(6)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  purchase       Purchase  @relation(fields: [purchaseId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([userId], map: "idx_payment_records_user_id")
+  @@index([purchaseId], map: "idx_payment_records_purchase_id")
+  @@index([paymentStatus], map: "idx_payment_records_payment_status")
+  @@index([paymentMethod], map: "idx_payment_records_payment_method")
+  @@index([createdAt], map: "idx_payment_records_created_at")
+  @@map("payment_records")
+}
+
+// ============================================================================
+// SUPPORTING MODELS
+// ============================================================================
+
+model Currency {
+  id              Int               @id @default(autoincrement())
+  code            String            @unique @db.VarChar(3)
+  name            String            @db.VarChar(50)
+  symbol          String            @db.VarChar(5)
+  is_default      Boolean?          @default(false)
+  exchange_rate   Decimal?          @default(1.000000) @db.Decimal(10, 6)
+  createdAt       DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  packagePrices   PackagePrice[]    @relation("PackagePriceCurrency")
+  rates           Rate[]
+  paymentMethods  payment_methods[]
+
+  @@map("currencies")
+}
+
+model SessionDuration {
+  id                 Int                 @id @default(autoincrement())
+  name               String              @db.VarChar(100)
+  duration_minutes   Int
+  description        String?
+  isActive           Boolean?            @default(true) @map("is_active")
+  createdAt          DateTime?           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime?           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  packageDefinitions PackageDefinition[] @relation("PackageDefinitionSessionDuration")
+  rates              Rate[]
+  scheduleTemplates  ScheduleTemplate[]  @relation("ScheduleTemplateSessionDuration")
+
+  @@map("session_durations")
+}
+
+model Rate {
+  id                     Int             @id @default(autoincrement())
+  currencyId             Int             @map("currency_id")
+  sessionDurationId      Int             @map("session_duration_id")
+  sessionType            String          @map("session_type") @db.VarChar(50)
+  base_price             Decimal         @db.Decimal(10, 2)
+  group_discount_percent Decimal?        @default(0) @db.Decimal(5, 2)
+  min_group_size         Int?            @default(1)
+  max_group_size         Int?            @default(10)
+  isActive               Boolean?        @default(true) @map("is_active")
+  createdAt              DateTime?       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime?       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  currency               Currency        @relation(fields: [currencyId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  sessionDuration        SessionDuration @relation(fields: [sessionDurationId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([currencyId, sessionDurationId, sessionType])
+  @@map("rates")
+}
+
+model PaymentMethodConfig {
+  id                   Int       @id @default(autoincrement())
+  name                 String    @db.VarChar(100)
+  type                 String?   @default("custom") @db.VarChar(50)
+  description          String?
+  icon                 String?   @db.VarChar(100)
+  requiresConfirmation Boolean?  @default(false) @map("requires_confirmation")
+  autoAssignPackage    Boolean?  @default(true) @map("auto_assign_package")
+  isActive             Boolean?  @default(true) @map("is_active")
+  createdAt            DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([isActive], map: "idx_payment_method_configs_active")
+  @@index([name], map: "idx_payment_method_configs_name")
+  @@index([type], map: "idx_payment_method_configs_type")
+  @@map("payment_method_configs")
+}
+
+// ============================================================================
+// CONTENT MANAGEMENT
+// ============================================================================
+
+model EmailTemplate {
+  id          Int       @id @default(autoincrement())
+  templateKey String    @unique @map("template_key")
+  subject     String
+  body        String
+  language    String?   @default("en")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([templateKey], map: "idx_email_templates_key")
+  @@map("email_templates")
+}
+
+model LogoSettings {
+  id        Int       @id @default(autoincrement())
+  type      String?   @default("text")
+  text      String?   @default("SOULPATH")
+  imageUrl  String?   @map("image_url")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("logo_settings")
+}
+
+model Seo {
+  id          Int       @id @default(autoincrement())
+  title       String?   @default("SOULPATH - Wellness & Healing")
+  description String?   @default("Your journey to wellness starts here. Professional wellness services in a peaceful environment.")
+  keywords    String?   @default("wellness, healing, therapy, meditation, soulpath")
+  ogImage     String?   @map("og_image")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("seo")
+}
+
+model Image {
+  id        Int       @id @default(autoincrement())
+  name      String
+  url       String
+  altText   String?   @map("alt_text")
+  category  String?   @default("general")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("images")
+}
+
+model ProfileImage {
+  id        Int       @id @default(autoincrement())
+  key       String    @unique
+  url       String
+  altText   String?   @map("alt_text")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("profile_images")
+}
+
+model Content {
+  id                Int       @id @default(autoincrement())
+  heroTitleEn       String?   @default("Welcome to SOULPATH") @map("hero_title_en")
+  heroTitleEs       String?   @default("Bienvenido a SOULPATH") @map("hero_title_es")
+  heroSubtitleEn    String?   @default("Your journey to wellness starts here") @map("hero_subtitle_en")
+  heroSubtitleEs    String?   @default("Tu camino al bienestar comienza aquí") @map("hero_subtitle_es")
+  aboutTitleEn      String?   @default("About Us") @map("about_title_en")
+  aboutTitleEs      String?   @default("Sobre Nosotros") @map("about_title_es")
+  aboutContentEn    String?   @default("We are dedicated to helping you achieve your wellness goals.") @map("about_content_en")
+  aboutContentEs    String?   @default("Estamos dedicados a ayudarte a alcanzar tus metas de bienestar.") @map("about_content_es")
+  approachTitleEn   String?   @default("Our Approach") @map("approach_title_en")
+  approachTitleEs   String?   @default("Nuestro Enfoque") @map("approach_title_es")
+  approachContentEn String?   @default("We use a holistic approach to wellness.") @map("approach_content_en")
+  approachContentEs String?   @default("Usamos un enfoque holístico para el bienestar.") @map("approach_content_es")
+  servicesTitleEn   String?   @default("Our Services") @map("services_title_en")
+  servicesTitleEs   String?   @default("Nuestros Servicios") @map("services_title_es")
+  servicesContentEn String?   @default("Professional wellness services in a peaceful environment.") @map("services_content_en")
+  servicesContentEs String?   @default("Servicios profesionales de bienestar en un ambiente pacífico.") @map("services_content_es")
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("content")
+}
+
+model Section {
+  id                Int       @id @default(autoincrement())
+  sectionId         String    @unique @map("section_id")
+  type              String    @default("content") @db.VarChar(50)
+  title             String    @db.VarChar(255)
+  description       String?   @db.Text
+  icon              String    @default("Circle") @db.VarChar(50)
+  component         String    @db.VarChar(100)
+  order             Int       @default(0)
+  enabled           Boolean   @default(true)
+  mobileConfig      Json?     @map("mobile_config")
+  desktopConfig     Json?     @map("desktop_config")
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([enabled, order], map: "idx_sections_enabled_order")
+  @@map("sections")
+}
+
+// ============================================================================
+// COMMUNICATION CONFIGURATION AND TEMPLATES
+// ============================================================================
+
+model CommunicationConfig {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Email Configuration
+  email_enabled         Boolean?  @default(true) @map("email_enabled")
+  brevo_api_key         String?   @default("") @map("brevo_api_key")
+  sender_email          String?   @default("noreply@soulpath.lat") @map("sender_email")
+  sender_name           String?   @default("SOULPATH") @map("sender_name")
+  admin_email           String?   @default("admin@soulpath.lat") @map("admin_email")
+  
+  // SMS Configuration
+  sms_enabled           Boolean?  @default(false) @map("sms_enabled")
+  sms_provider          String?   @default("labsmobile") @map("sms_provider")
+  labsmobile_username   String?   @default("") @map("labsmobile_username")
+  labsmobile_token      String?   @default("") @map("labsmobile_token")
+  sms_sender_name       String?   @default("SoulPath") @map("sms_sender_name")
+
+  @@map("communication_config")
+}
+
+model CommunicationTemplate {
+  id            Int       @id @default(autoincrement())
+  templateKey   String    @unique @map("template_key") // e.g., "booking_confirmation", "otp_verification"
+  name          String    // Display name for the template
+  description   String?   // Description of when this template is used
+  type          String    // "email" or "sms"
+  category      String?   // "booking", "verification", "reminder", etc.
+  isActive      Boolean   @default(true) @map("is_active")
+  isDefault     Boolean   @default(false) @map("is_default")
+  createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  translations  CommunicationTemplateTranslation[]
+
+  @@index([type], map: "idx_communication_templates_type")
+  @@index([category], map: "idx_communication_templates_category")
+  @@index([isActive], map: "idx_communication_templates_active")
+  @@map("communication_templates")
+}
+
+model CommunicationTemplateTranslation {
+  id            Int       @id @default(autoincrement())
+  templateId    Int       @map("template_id")
+  language      String    // "en", "es"
+  subject       String?   // For email templates
+  content       String    // HTML for email, plain text for SMS
+  createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  template      CommunicationTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, language], map: "idx_template_translations_unique")
+  @@index([language], map: "idx_template_translations_language")
+  @@map("communication_template_translations")
+}
+
+// ============================================================================
+// BUG REPORTING SYSTEM
+// ============================================================================
+
+model BugReport {
+  id          String          @id @default(dbgenerated("(gen_random_uuid())::text"))
+  title       String          @db.VarChar(255)
+  description String
+  screenshot  String?
+  annotations Json?           // Store annotation data as JSON
+  status      bug_status?     @default(OPEN)
+  priority    priority_level? @default(MEDIUM)
+  category    String?         @db.VarChar(100)
+  reporterId  String?         @map("reporter_id")
+  assignedTo  String?         @map("assigned_to")
+  createdAt   DateTime?       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime?       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  resolvedAt  DateTime?       @map("resolved_at") @db.Timestamptz(6)
+  archivedAt  DateTime?       @map("archived_at") @db.Timestamptz(6)
+  
+  // Relationships
+  comments    BugComment[]
+  assignee    User?           @relation("BugReportAssignee", fields: [assignedTo], references: [id], onUpdate: Restrict)
+  reporter    User?           @relation("BugReportReporter", fields: [reporterId], references: [id], onUpdate: Restrict)
+
+  @@index([status], map: "idx_bug_reports_status")
+  @@index([priority], map: "idx_bug_reports_priority")
+  @@index([reporterId], map: "idx_bug_reports_reporter")
+  @@index([assignedTo], map: "idx_bug_reports_assignee")
+  @@index([createdAt], map: "idx_bug_reports_created")
+  @@map("bug_reports")
+}
+
+model BugComment {
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  content     String
+  authorId    String    @map("author_id")
+  bugReportId String    @map("bug_report_id")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relationships
+  author      User      @relation("BugCommentAuthor", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  bugReport   BugReport @relation(fields: [bugReportId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([bugReportId], map: "idx_bug_comments_bug_report")
+  @@index([authorId], map: "idx_bug_comments_author")
+  @@map("bug_comments")
+}
+
+// ============================================================================
+// LEGACY SUPPORT TABLES (for migration purposes)
+// ============================================================================
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model group_booking_tiers {
+  id               Int       @id @default(autoincrement())
+  name             String    @db.VarChar(100)
+  min_participants Int
+  max_participants Int
+  discount_percent Decimal?  @default(0) @db.Decimal(5, 2)
+  description      String?
+  is_active        Boolean?  @default(true)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model kv_store_f839855f {
+  key   String @id
+  value Json
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model soultpath {
+  id         BigInt    @id @default(autoincrement())
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model payment_methods {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  description String?
+  currency_id Int
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+  currencies  Currency  @relation(fields: [currency_id], references: [id], onDelete: Cascade, onUpdate: Restrict)
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum bug_status {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  ARCHIVED
+}
+
+enum priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum priority_level {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ============================================================================
+// SMS CONFIGURATION AND OTP VERIFICATION
+// ============================================================================
+
+model SmsConfiguration {
+  id                Int       @id @default(autoincrement())
+  provider          String    @default("labsmobile") // labsmobile, twilio, etc.
+  username          String    // LabsMobile username
+  tokenApi          String    @map("token_api") // LabsMobile API token
+  senderName        String?   @map("sender_name") // SMS sender name
+  isActive          Boolean   @default(true) @map("is_active")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("sms_configurations")
+}
+
+model OtpVerification {
+  id                Int       @id @default(autoincrement())
+  userId            String?   @map("user_id")
+  phoneNumber       String    @map("phone_number")
+  countryCode       String    @map("country_code")
+  otpCode           String    @map("otp_code")
+  isVerified        Boolean   @default(false) @map("is_verified")
+  expiresAt         DateTime  @map("expires_at") @db.Timestamptz(6)
+  attempts          Int       @default(0)
+  maxAttempts       Int       @default(3) @map("max_attempts")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relationships
+  user              User?     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([phoneNumber], map: "idx_otp_verifications_phone")
+  @@index([userId], map: "idx_otp_verifications_user")
+  @@index([expiresAt], map: "idx_otp_verifications_expires")
+  @@map("otp_verifications")
+}
+
+// ============================================================================
+// EXTERNAL API CONFIGURATIONS
+// ============================================================================
+
+model ExternalAPIConfig {
+  id                String   @id @default(cuid())
+  name              String   @unique // e.g., "openrouter", "twilio", "telegram"
+  provider          String   // e.g., "OpenRouter", "Twilio", "Telegram"
+  category          String   // e.g., "ai", "communication", "payment"
+
+  // API Credentials
+  apiKey            String?  @map("api_key")
+  apiSecret         String?  @map("api_secret")
+  apiUrl            String?  @map("api_url")
+  webhookUrl        String?  @map("webhook_url")
+  webhookSecret     String?  @map("webhook_secret")
+
+  // Configuration
+  config            Json?    // Additional configuration as JSON
+  isActive          Boolean  @default(false) @map("is_active")
+  testMode          Boolean  @default(true) @map("test_mode")
+
+  // Metadata
+  description       String?
+  version           String?
+  rateLimit         Int?     @map("rate_limit")
+  timeout           Int?     @default(30000) // milliseconds
+
+  // Status and Monitoring
+  lastTestedAt      DateTime? @map("last_tested_at") @db.Timestamptz(6)
+  lastTestResult    String?   @map("last_test_result")
+  healthStatus      String?   @map("health_status") @default("unknown")
+
+  // Audit
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdBy         String?  @map("created_by")
+  updatedBy         String?  @map("updated_by")
+
+  @@index([name], map: "idx_external_api_configs_name")
+  @@index([category], map: "idx_external_api_configs_category")
+  @@index([isActive], map: "idx_external_api_configs_active")
+  @@map("external_api_configs")
+}
+
+model APIConfigAudit {
+  id                String   @id @default(cuid())
+  configId          String   @map("config_id")
+  action            String   // "create", "update", "delete", "test"
+  oldValues         Json?    @map("old_values")
+  newValues         Json?    @map("new_values")
+  performedBy       String   @map("performed_by")
+  ipAddress         String?  @map("ip_address")
+  userAgent         String?  @map("user_agent")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([configId], map: "idx_api_config_audit_config_id")
+  @@index([performedBy], map: "idx_api_config_audit_performed_by")
+  @@index([createdAt], map: "idx_api_config_audit_created_at")
+  @@map("api_config_audits")
+}

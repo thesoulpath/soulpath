@@ -1,0 +1,193 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - book_reading
+  - check_availability
+  - reschedule_booking
+  - astrology_question
+  - birth_chart_question
+  - horoscope_question
+  - zodiac_sign_question
+  - planetary_question
+  - ask_about_services
+  - ask_about_pricing
+  - ask_about_packages
+  - birth_chart_reading
+  - tarot_reading
+  - astrology_consultation
+  - view_services
+  - ask_questions
+  - basic_reading
+  - comprehensive_reading
+  - premium_reading
+  - select_package
+  - select_slot
+  - confirm_booking
+  - view_bookings
+  - view_packages
+  - provide_all_details
+  - step_by_step_details
+  - waiting_for_details
+  - collect_name
+  - collect_email
+  - collect_birth_date
+  - collect_birth_place
+  - collect_question
+  - collect_country
+  - collect_phone
+  - collect_birth_time
+  - collect_language
+  - set_language_en
+  - set_language_es
+  - collect_special_requests
+  - complete_booking
+  - cancel_booking
+
+entities:
+  - service_type
+  - date
+  - time
+  - zodiac_sign
+  - planet
+  - birth_date
+  - birth_time
+  - birth_place
+  - package_type
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm your astrology assistant. I can help you book readings, answer astrology questions, and provide guidance about your birth chart. How can I assist you today?"
+
+  utter_cheer_up:
+    - text: "Here is something to cheer you up:"
+      image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+    - text: "Did that help you?"
+
+  utter_happy:
+    - text: "Great, carry on!"
+
+  utter_goodbye:
+    - text: "Thank you for visiting! May the stars guide you on your journey. Feel free to return anytime for more astrological insights."
+
+  utter_ask_booking_details:
+    - text: "I'd be happy to help you book a reading! Could you please tell me:\n• What type of reading you're interested in?\n• Your preferred date and time?\n• Your birth information (date, time, and place)?"
+
+  utter_ask_service_type:
+    - text: "We offer several types of readings:\n• Birth Chart Analysis\n• Tarot Card Reading\n• Astrological Consultation\n• Relationship Compatibility\n• Career Guidance\n\nWhich one interests you most?"
+
+  utter_ask_availability:
+    - text: "Let me check our availability for you. What date and time would work best for your reading?"
+
+  utter_booking_confirmed:
+    - text: "Perfect! Your reading has been booked. You'll receive a confirmation email with all the details shortly."
+
+  utter_astrology_question:
+    - text: "I'd love to help! Jose Garfias, our astrology consultant, can give you personalized insights through a professional reading. He's amazing at explaining complex astrological concepts in simple terms. Would you like to book a session with him?"
+
+  utter_astrology_help:
+    - text: "I'd love to help! Jose Garfias, our astrology consultant, can give you personalized insights through a professional reading. He's amazing at explaining complex astrological concepts in simple terms. Would you like to book a session with him?"
+
+  utter_birth_chart_explanation:
+    - text: "A birth chart is your cosmic blueprint at birth! Jose Garfias specializes in reading these charts and can show you exactly how the planets influence your life. He's really good at making it all clear and meaningful. Want to book with him?"
+
+  utter_zodiac_sign_info:
+    - text: "Each sign has unique traits! Jose Garfias can show you how your sun, moon, and rising signs work together in YOUR specific chart. He's great at explaining the deeper meanings. Would you like to book a reading with him?"
+
+  utter_planetary_influence:
+    - text: "Planets influence different aspects of life! Jose Garfias can show you exactly how they affect YOU personally. He's really skilled at making planetary influences clear and relevant. Want to book a session?"
+
+  utter_services_info:
+    - text: "Jose Garfias offers amazing astrology services! He does birth chart analysis, tarot readings, relationship guidance, and career consultations. He's really good at making everything personal and relevant to your life. Want to book with him?"
+
+  utter_pricing_info:
+    - text: "Jose Garfias has different packages to fit your needs! He's flexible and always tries to work within your budget. The best way to see what works for you is to book a consultation with him. Want to see his packages?"
+
+  utter_packages_info:
+    - text: "Jose Garfias has great packages for every need! He's really good at tailoring sessions to what you're looking for. Want to see what he offers and book a session?"
+
+  utter_birth_chart_work:
+    - text: "I'd love to help you explore your birth chart! Jose Garfias is amazing at reading charts and making them meaningful for your life. He can show you things you never knew about yourself. Want to book with him?"
+
+  utter_birth_chart_reading:
+    - text: "Perfect! Jose Garfias is our birth chart specialist. He's really skilled at reading charts and explaining everything in a way that makes sense. Want to book a session with him?"
+
+  utter_tarot_reading:
+    - text: "Great choice! Jose Garfias does amazing tarot readings. He's really intuitive and can give you deep insights about your situation. Want to book a tarot session with him?"
+
+  utter_astrology_consultation:
+    - text: "Jose Garfias is perfect for that! He's great at helping with life decisions, relationships, and personal growth. He really listens and gives practical advice. Want to book a consultation with him?"
+
+  utter_view_services:
+    - text: "Jose Garfias offers:\n• Birth Chart Analysis\n• Tarot Readings\n• Relationship Guidance\n• Career Consultations\n• Personal Growth Sessions\n\nHe's really good at all of these! Want to book with him?"
+
+  utter_ask_questions:
+    - text: "I'm here to help! Jose Garfias can answer your questions in much more detail during a session. He's really knowledgeable and great at explaining things. Want to book with him?"
+
+  utter_basic_reading:
+    - text: "Perfect! The Basic Reading (30 minutes) is great for getting started. It includes a brief birth chart overview and key insights. What's your birth information?"
+
+  utter_comprehensive_reading:
+    - text: "Excellent! The Comprehensive Reading (60 minutes) provides detailed analysis of your birth chart, including all planets, houses, and aspects. I'll need your birth details to proceed."
+
+  utter_premium_reading:
+    - text: "Outstanding choice! The Premium Reading (90 minutes) is our most thorough service, covering your complete astrological profile plus personalized guidance. Let's get your birth information to book this session."
+
+  utter_select_package:
+    - text: "Great choice! Now let me show you available time slots for this package. Please select your preferred date and time."
+
+  utter_select_slot:
+    - text: "Perfect! I have your package and time slot selected. Would you like to confirm this booking?"
+
+  utter_confirm_booking:
+    - text: "Excellent! Your booking has been prepared. To complete the process, please visit our booking page or contact us directly. Your session details will be confirmed shortly!"
+
+  utter_view_bookings:
+    - text: "I can help you view your bookings! Please visit the 'My Bookings' section on our website or contact us directly for your appointment details."
+
+  utter_view_packages:
+    - text: "Here are our available astrology packages. Each package is designed to provide you with comprehensive insights into your birth chart and astrological profile."
+
+actions:
+  - utter_greet
+  - utter_cheer_up
+  - utter_did_that_help
+  - utter_happy
+  - utter_goodbye
+  - utter_ask_booking_details
+  - utter_ask_service_type
+  - utter_ask_availability
+  - utter_booking_confirmed
+  - utter_astrology_question
+  - utter_astrology_help
+  - utter_birth_chart_explanation
+  - utter_birth_chart_work
+  - utter_birth_chart_reading
+  - utter_tarot_reading
+  - utter_astrology_consultation
+  - utter_view_services
+  - utter_ask_questions
+  - utter_basic_reading
+  - utter_comprehensive_reading
+  - utter_premium_reading
+  - utter_zodiac_sign_info
+  - utter_planetary_influence
+  - utter_services_info
+  - utter_pricing_info
+  - utter_packages_info
+  - utter_select_package
+  - utter_select_slot
+  - utter_confirm_booking
+  - utter_view_bookings
+  - utter_view_packages
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

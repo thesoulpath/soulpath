@@ -1,0 +1,477 @@
+/**
+ * Centralized Styling System for SoulPath
+ * 
+ * This file contains reusable style combinations and utility functions
+ * that build upon the design system tokens.
+ * 
+ * Usage:
+ * import { cardStyles, buttonStyles, inputStyles } from '@/lib/styles/common';
+ */
+
+import { colors, spacing, typography, borders, shadows, transitions } from '@/lib/design-system';
+
+// ============================================================================
+// CARD STYLES
+// ============================================================================
+
+export const cardStyles = {
+  // Base card styles
+  base: `
+    bg-[${colors.semantic.surface.primary}]
+    border border-[${colors.border[500]}]
+    rounded-[${borders.radius.lg}]
+    shadow-[${shadows.base}]
+    transition-[${transitions.common.normal}]
+  `,
+
+  // Card variants
+  variants: {
+    default: `
+      bg-[${colors.semantic.surface.primary}]
+      border-[${colors.border[500]}]
+    `,
+    elevated: `
+      bg-[${colors.semantic.surface.secondary}]
+      border-[${colors.border[400]}]
+      shadow-[${shadows.md}]
+    `,
+    outlined: `
+      bg-transparent
+      border-[${colors.border[500]}]
+      shadow-none
+    `,
+    ghost: `
+      bg-transparent
+      border-transparent
+      shadow-none
+    `,
+  },
+
+  // Card sizes
+  sizes: {
+    sm: `p-[${spacing[4]}]`,
+    md: `p-[${spacing[6]}]`,
+    lg: `p-[${spacing[8]}]`,
+    xl: `p-[${spacing[10]}]`,
+  },
+
+  // Interactive states
+  states: {
+    hover: `hover:border-[${colors.accent[500]}]/30 hover:shadow-[${shadows.md}]`,
+    focus: `focus:ring-2 focus:ring-[${colors.accent[500]}]/20 focus:border-[${colors.accent[500]}]`,
+    active: `active:scale-[0.98]`,
+  },
+} as const;
+
+// ============================================================================
+// BUTTON STYLES
+// ============================================================================
+
+export const buttonStyles = {
+  // Base button styles
+  base: `
+    inline-flex items-center justify-center
+    font-[${typography.fontWeight.medium}]
+    rounded-[${borders.radius.md}]
+    transition-[${transitions.common.fast}]
+    focus:outline-none focus:ring-2 focus:ring-offset-2
+    disabled:opacity-50 disabled:cursor-not-allowed
+  `,
+
+  // Button variants
+  variants: {
+    primary: `
+      bg-[${colors.accent[500]}]
+      text-[${colors.text.inverse}]
+      hover:bg-[${colors.accent[600]}]
+      focus:ring-[${colors.accent[500]}]
+      active:bg-[${colors.accent[700]}]
+    `,
+    secondary: `
+      bg-[${colors.semantic.surface.secondary}]
+      text-[${colors.text.primary}]
+      border border-[${colors.border[500]}]
+      hover:bg-[${colors.semantic.surface.tertiary}]
+      focus:ring-[${colors.border[500]}]
+      active:bg-[${colors.semantic.surface.tertiary}]
+    `,
+    outline: `
+      bg-transparent
+      text-[${colors.text.secondary}]
+      border border-[${colors.border[500]}]
+      hover:bg-[${colors.border[500]} hover:text-[${colors.text.primary}]
+      focus:ring-[${colors.border[500]}]
+      active:bg-[${colors.border[600]}]
+    `,
+    ghost: `
+      bg-transparent
+      text-[${colors.text.secondary}]
+      hover:bg-[${colors.semantic.surface.secondary}]
+      hover:text-[${colors.text.primary}]
+      focus:ring-[${colors.border[500]}]
+      active:bg-[${colors.semantic.surface.tertiary}]
+    `,
+    danger: `
+      bg-[${colors.status.error}]
+      text-white
+      hover:bg-[${colors.status.error}]
+      focus:ring-[${colors.status.error}]
+      active:bg-[${colors.status.error}]
+    `,
+    success: `
+      bg-[${colors.status.success}]
+      text-white
+      hover:bg-[${colors.status.success}]
+      focus:ring-[${colors.status.success}]
+      active:bg-[${colors.status.success}]
+    `,
+  },
+
+  // Button sizes
+  sizes: {
+    xs: `
+      px-[${spacing[2]}]
+      py-[${spacing[1]}]
+      text-[${typography.fontSize.xs}]
+      rounded-[${borders.radius.sm}]
+    `,
+    sm: `
+      px-[${spacing[3]}]
+      py-[${spacing[2]}]
+      text-[${typography.fontSize.sm}]
+      rounded-[${borders.radius.md}]
+    `,
+    md: `
+      px-[${spacing[4]}]
+      py-[${spacing[3]}]
+      text-[${typography.fontSize.base}]
+      rounded-[${borders.radius.md}]
+    `,
+    lg: `
+      px-[${spacing[6]}]
+      py-[${spacing[4]}]
+      text-[${typography.fontSize.lg}]
+      rounded-[${borders.radius.lg}]
+    `,
+    xl: `
+      px-[${spacing[8]}]
+      py-[${spacing[6]}]
+      text-[${typography.fontSize.xl}]
+      rounded-[${borders.radius.lg}]
+    `,
+  },
+
+  // Button states
+  states: {
+    loading: `opacity-75 cursor-wait`,
+    disabled: `opacity-50 cursor-not-allowed`,
+  },
+} as const;
+
+// ============================================================================
+// INPUT STYLES
+// ============================================================================
+
+export const inputStyles = {
+  // Base input styles
+  base: `
+    w-full
+    bg-[${colors.semantic.surface.primary}]
+    border border-[${colors.border[500]}]
+    rounded-[${borders.radius.md}]
+    px-[${spacing[4]}]
+    py-[${spacing[3]}]
+    text-[${typography.fontSize.base}]
+    text-[${colors.text.primary}]
+    placeholder:text-[${colors.text.tertiary}]
+    transition-[${transitions.common.fast}]
+    focus:outline-none focus:ring-2 focus:ring-[${colors.accent[500]}]/20 focus:border-[${colors.accent[500]}]
+    disabled:opacity-50 disabled:cursor-not-allowed
+  `,
+
+  // Input variants
+  variants: {
+    default: `
+      bg-[${colors.semantic.surface.primary}]
+      border-[${colors.border[500]}]
+    `,
+    error: `
+      bg-[${colors.semantic.surface.primary}]
+      border-[${colors.status.error}]
+      focus:ring-[${colors.status.error}]/20
+      focus:border-[${colors.status.error}]
+    `,
+    success: `
+      bg-[${colors.semantic.surface.primary}]
+      border-[${colors.status.success}]
+      focus:ring-[${colors.status.success}]/20
+      focus:border-[${colors.status.success}]
+    `,
+  },
+
+  // Input sizes
+  sizes: {
+    sm: `
+      px-[${spacing[3]}]
+      py-[${spacing[2]}]
+      text-[${typography.fontSize.sm}]
+      rounded-[${borders.radius.sm}]
+    `,
+    md: `
+      px-[${spacing[4]}]
+      py-[${spacing[3]}]
+      text-[${typography.fontSize.base}]
+      rounded-[${borders.radius.md}]
+    `,
+    lg: `
+      px-[${spacing[5]}]
+      py-[${spacing[4]}]
+      text-[${typography.fontSize.lg}]
+      rounded-[${borders.radius.lg}]
+    `,
+  },
+} as const;
+
+// ============================================================================
+// SELECT STYLES
+// ============================================================================
+
+export const selectStyles = {
+  // Base select styles
+  base: `
+    w-full
+    bg-[${colors.semantic.surface.primary}]
+    border border-[${colors.border[500]}]
+    rounded-[${borders.radius.md}]
+    px-[${spacing[4]}]
+    py-[${spacing[3]}]
+    text-[${typography.fontSize.base}]
+    text-[${colors.text.primary}]
+    transition-[${transitions.common.fast}]
+    focus:outline-none focus:ring-2 focus:ring-[${colors.accent[500]}]/20 focus:border-[${colors.accent[500]}]
+    disabled:opacity-50 disabled:cursor-not-allowed
+    cursor-pointer
+  `,
+
+  // Select content styles
+  content: `
+    bg-[${colors.semantic.surface.secondary}]
+    border border-[${colors.border[500]}]
+    rounded-[${borders.radius.md}]
+    shadow-[${shadows.lg}]
+    z-[${1000}]
+  `,
+
+  // Select item styles
+  item: `
+    px-[${spacing[4]}]
+    py-[${spacing[3]}]
+    text-[${typography.fontSize.base}]
+    text-[${colors.text.primary}]
+    hover:bg-[${colors.semantic.surface.tertiary}]
+    focus:bg-[${colors.semantic.surface.tertiary}]
+    cursor-pointer
+    transition-[${transitions.common.fast}]
+  `,
+} as const;
+
+// ============================================================================
+// BADGE STYLES
+// ============================================================================
+
+export const badgeStyles = {
+  // Base badge styles
+  base: `
+    inline-flex items-center
+    px-[${spacing[2]}]
+    py-[${spacing[1]}]
+    text-[${typography.fontSize.xs}]
+    font-[${typography.fontWeight.medium}]
+    rounded-[${borders.radius.full}]
+    transition-[${transitions.common.fast}]
+  `,
+
+  // Badge variants
+  variants: {
+    default: `
+      bg-[${colors.semantic.surface.secondary}]
+      text-[${colors.text.secondary}]
+    `,
+    primary: `
+      bg-[${colors.accent[500]}]
+      text-[${colors.text.inverse}]
+    `,
+    success: `
+      bg-[${colors.status.success}]
+      text-white
+    `,
+    warning: `
+      bg-[${colors.status.warning}]
+      text-white
+    `,
+    error: `
+      bg-[${colors.status.error}]
+      text-white
+    `,
+    info: `
+      bg-[${colors.status.info}]
+      text-white
+    `,
+  },
+
+  // Badge sizes
+  sizes: {
+    sm: `
+      px-[${spacing[1.5]}]
+      py-[${spacing[0.5]}]
+      text-[${typography.fontSize.xs}]
+    `,
+    md: `
+      px-[${spacing[2]}]
+      py-[${spacing[1]}]
+      text-[${typography.fontSize.sm}]
+    `,
+    lg: `
+      px-[${spacing[3]}]
+      py-[${spacing[1.5]}]
+      text-[${typography.fontSize.base}]
+    `,
+  },
+} as const;
+
+// ============================================================================
+// LAYOUT STYLES
+// ============================================================================
+
+export const layoutStyles = {
+  // Container styles
+  container: {
+    base: `mx-auto px-[${spacing[4]}]`,
+    sizes: {
+      sm: `max-w-[640px]`,
+      md: `max-w-[768px]`,
+      lg: `max-w-[1024px]`,
+      xl: `max-w-[1280px]`,
+      '2xl': `max-w-[1536px]`,
+      full: `max-w-none`,
+    },
+  },
+
+  // Grid styles
+  grid: {
+    cols: {
+      1: 'grid-cols-1',
+      2: 'grid-cols-2',
+      3: 'grid-cols-3',
+      4: 'grid-cols-4',
+      5: 'grid-cols-5',
+      6: 'grid-cols-6',
+      12: 'grid-cols-12',
+    },
+    gaps: {
+      sm: `gap-[${spacing[2}]`,
+      md: `gap-[${spacing[4}]`,
+      lg: `gap-[${spacing[6}]`,
+      xl: `gap-[${spacing[8}]`,
+    },
+  },
+
+  // Flex styles
+  flex: {
+    center: 'flex items-center justify-center',
+    between: 'flex items-center justify-between',
+    start: 'flex items-center justify-start',
+    end: 'flex items-center justify-end',
+    col: 'flex flex-col',
+    row: 'flex flex-row',
+  },
+} as const;
+
+// ============================================================================
+// ANIMATION STYLES
+// ============================================================================
+
+export const animationStyles = {
+  // Fade animations
+  fade: {
+    in: 'animate-in fade-in duration-200',
+    out: 'animate-out fade-out duration-200',
+    up: 'animate-in fade-in slide-in-from-top-4 duration-200',
+    down: 'animate-in fade-in slide-in-from-bottom-4 duration-200',
+    left: 'animate-in fade-in slide-in-from-left-4 duration-200',
+    right: 'animate-in fade-in slide-in-from-right-4 duration-200',
+  },
+
+  // Scale animations
+  scale: {
+    in: 'animate-in zoom-in-95 duration-200',
+    out: 'animate-out zoom-out-95 duration-200',
+    up: 'animate-in zoom-in-95 slide-in-from-top-4 duration-200',
+    down: 'animate-in zoom-in-95 slide-in-from-bottom-4 duration-200',
+  },
+
+  // Slide animations
+  slide: {
+    up: 'animate-in slide-in-from-top-4 duration-200',
+    down: 'animate-in slide-in-from-bottom-4 duration-200',
+    left: 'animate-in slide-in-from-left-4 duration-200',
+    right: 'animate-in slide-in-from-right-4 duration-200',
+  },
+} as const;
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Combine multiple style classes
+ */
+export function combineStyles(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
+
+/**
+ * Create conditional styles
+ */
+export function conditionalStyles(
+  condition: boolean,
+  trueStyles: string,
+  falseStyles: string = ''
+): string {
+  return condition ? trueStyles : falseStyles;
+}
+
+/**
+ * Create responsive styles
+ */
+export function responsiveStyles(
+  base: string,
+  sm?: string,
+  md?: string,
+  lg?: string,
+  xl?: string
+): string {
+  const styles = [base];
+  if (sm) styles.push(`sm:${sm}`);
+  if (md) styles.push(`md:${md}`);
+  if (lg) styles.push(`lg:${lg}`);
+  if (xl) styles.push(`xl:${xl}`);
+  return styles.join(' ');
+}
+
+// ============================================================================
+// EXPORT ALL STYLES
+// ============================================================================
+
+export default {
+  card: cardStyles,
+  button: buttonStyles,
+  input: inputStyles,
+  select: selectStyles,
+  badge: badgeStyles,
+  layout: layoutStyles,
+  animation: animationStyles,
+  combineStyles,
+  conditionalStyles,
+  responsiveStyles,
+};

@@ -1,0 +1,26 @@
+# Endpoints configuration for Rasa
+# This file contains the different endpoints your model can hit during training, evaluation or inference.
+
+# Action server endpoint
+action_endpoint:
+  url: "http://localhost:5055/webhook"
+
+# Tracker store endpoint
+# Uncomment the following lines to use a tracker store
+# tracker_store:
+#   type: redis
+#   url: localhost
+#   port: 6379
+#   password: ""
+
+# Event broker endpoint
+# Uncomment the following lines to use an event broker
+# event_broker:
+#   type: pika
+#   url: localhost
+#   username: username
+#   password: password
+#   port: 5672
+#   queues:
+#     - rasa_events
+

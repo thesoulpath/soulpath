@@ -1,0 +1,52 @@
+# Configuration for Rasa NLU and Core
+# Best practices: https://rasa.com/docs/rasa/model-configuration/
+
+recipe: default.v1
+
+# Configuration for Rasa NLU (Memory Optimized)
+# https://rasa.com/docs/rasa/nlu/components/
+language: es
+
+pipeline:
+- name: WhitespaceTokenizer
+- name: RegexFeaturizer
+  case_sensitive: false
+- name: LexicalSyntacticFeaturizer
+- name: CountVectorsFeaturizer
+  analyzer: char_wb
+  min_ngram: 1
+  max_ngram: 3  # Reduced from 4
+- name: DIETClassifier
+  epochs: 50  # Reduced from 100
+  entity_recognition: true
+  intent_classification: true
+  use_masked_language_model: false
+  constrain_similarities: true
+  model_confidence: softmax
+  random_seed: 42
+- name: EntitySynonymMapper
+- name: ResponseSelector
+  epochs: 50  # Reduced from 100
+  constrain_similarities: true
+  retrieval_intent: chitchat/ask_name
+  use_gpu: false
+
+# Configuration for Rasa Core (Memory Optimized)
+# https://rasa.com/docs/rasa/policies/
+policies:
+- name: MemoizationPolicy
+  max_history: 3  # Reduced from default
+- name: RulePolicy
+- name: UnexpecTEDIntentPolicy
+  max_history: 3  # Reduced from 5
+  epochs: 50  # Reduced from 100
+  use_gpu: false
+- name: TEDPolicy
+  max_history: 3  # Reduced from 5
+  epochs: 50  # Reduced from 100
+  constrain_similarities: true
+  use_gpu: false
+  model_confidence: softmax
+  random_seed: 42
+
+assistant_id: soulpath-rasa

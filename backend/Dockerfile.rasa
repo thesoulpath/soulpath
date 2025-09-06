@@ -1,0 +1,35 @@
+# Memory-optimized Rasa-only Dockerfile
+FROM python:3.8-slim
+
+# Install system dependencies with minimal footprint
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy and install requirements with timeout handling
+COPY rasa/requirements.txt ./
+RUN pip install --no-cache-dir --timeout=300 -r requirements.txt && \
+    pip install --no-cache-dir --timeout=300 rasa==3.6.21 tensorflow-cpu spacy && \
+    python -c "import spacy.cli; spacy.cli.download('en_core_web_sm')" && \
+    pip cache purge
+
+# Copy Rasa project
+COPY rasa/ ./
+
+# Add cache-busting layer to force rebuild
+RUN echo "Cache busting layer - $(date)" > /tmp/cache_bust.txt
+RUN echo "FORCE_REBUILD_20241209004" > /tmp/force_rebuild.txt
+
+# Copy startup script
+COPY start-rasa.sh /app/start-rasa.sh
+RUN chmod +x /app/start-rasa.sh
+
+# Expose port (Render will override with PORT env var)
+EXPOSE 5005
+
+# Start Rasa server using startup script
+CMD ["/app/start-rasa.sh"]

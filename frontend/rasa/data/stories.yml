@@ -1,0 +1,189 @@
+version: "3.1"
+
+stories:
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+
+- story: booking flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: book_reading
+  - action: utter_ask_booking_details
+  - intent: ask_about_services
+  - action: utter_ask_service_type
+  - intent: check_availability
+  - action: utter_ask_availability
+  - intent: affirm
+  - action: utter_booking_confirmed
+
+- story: astrology question flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: astrology_question
+  - action: utter_astrology_help
+  - intent: birth_chart_question
+  - action: utter_birth_chart_explanation
+  - intent: zodiac_sign_question
+  - action: utter_zodiac_sign_info
+
+- story: services inquiry flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_about_services
+  - action: utter_services_info
+  - intent: ask_about_pricing
+  - action: utter_pricing_info
+  - intent: ask_about_packages
+  - action: utter_packages_info
+
+- story: zodiac sign inquiry
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: zodiac_sign_question
+  - action: utter_zodiac_sign_info
+  - intent: planetary_question
+  - action: utter_planetary_influence
+
+- story: horoscope inquiry
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: horoscope_question
+  - action: utter_astrology_help
+  - intent: birth_chart_question
+  - action: utter_birth_chart_explanation
+
+- story: reschedule booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: reschedule_booking
+  - action: utter_ask_availability
+  - intent: affirm
+  - action: utter_booking_confirmed
+
+- story: cancel booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: cancel_booking
+  - action: utter_goodbye
+
+- story: birth chart work
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: birth_chart_question
+  - action: utter_birth_chart_work
+
+- story: birth chart reading booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: birth_chart_reading
+  - action: utter_birth_chart_reading
+
+- story: tarot reading booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: tarot_reading
+  - action: utter_tarot_reading
+
+- story: astrology consultation booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: astrology_consultation
+  - action: utter_astrology_consultation
+
+- story: view services
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: view_services
+  - action: utter_view_services
+
+- story: ask questions
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_questions
+  - action: utter_ask_questions
+
+- story: basic reading booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: basic_reading
+  - action: utter_basic_reading
+
+- story: comprehensive reading booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: comprehensive_reading
+  - action: utter_comprehensive_reading
+
+- story: premium reading booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: premium_reading
+  - action: utter_premium_reading
+
+- story: package selection
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: select_package
+  - action: utter_select_package
+
+- story: slot selection
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: select_slot
+  - action: utter_select_slot
+
+- story: booking confirmation
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: confirm_booking
+  - action: utter_confirm_booking
+
+- story: view bookings
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: view_bookings
+  - action: utter_view_bookings

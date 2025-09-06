@@ -1,0 +1,456 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - good morning
+    - good evening
+    - moin
+    - my name is neto
+    - I'm neto
+    - I am neto
+    - hello, I'm neto
+    - hi, my name is neto
+    - hey, I'm neto
+    - good morning, I'm neto
+    - good evening, my name is neto
+    - I'm [Neto]
+    - my name is [Neto]
+    - hello there
+    - hi there
+    - hey there
+    - greetings
+    - nice to meet you
+    - pleased to meet you
+    - how are you
+    - how are you doing
+    - what's up
+    - howdy
+    - good day
+    - good afternoon
+    - hello friend
+    - hi friend
+    - hey friend
+
+- intent: goodbye
+  examples: |
+    - good afternoon
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+    - yes I want to work on my astral chart
+    - yes I want to work on my birth chart
+    - yes I want to book a reading
+    - yes I want to learn about astrology
+    - yes I want to understand my chart
+    - yes I want to explore my birth chart
+    - yes I want to study my natal chart
+    - yes I want to develop my astral chart
+    - yes I want to improve my birth chart
+    - yes I want to enhance my astral chart
+
+- intent: deny
+  examples: |
+    - no
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: book_reading
+  examples: |
+    - I want to book a reading
+    - Can I schedule an appointment?
+    - I'd like to book a session
+    - How do I book a reading?
+    - I want to make an appointment
+    - Can I book a birth chart reading?
+    - I need to schedule a consultation
+    - Book me for a reading
+    - I want to book a tarot reading
+    - Can I get a reading appointment?
+
+- intent: check_availability
+  examples: |
+    - What times are available?
+    - When can I book?
+    - What's your availability?
+    - Are you free tomorrow?
+    - What slots do you have?
+    - When are you available?
+    - Can I book for next week?
+    - What dates work?
+    - Do you have any openings?
+    - What's your schedule like?
+
+- intent: reschedule_booking
+  examples: |
+    - I need to reschedule
+    - Can I change my appointment?
+    - I want to move my booking
+    - Can I reschedule for later?
+    - I need to change the time
+    - Can I postpone my reading?
+    - I want to reschedule my session
+    - Can I change the date?
+    - I need to move my appointment
+    - Can I reschedule for next week?
+
+- intent: cancel_booking
+  examples: |
+    - I want to cancel my booking
+    - Can I cancel my appointment?
+    - I need to cancel my reading
+    - Cancel my session
+    - I want to cancel
+    - Can I cancel for tomorrow?
+    - I need to cancel my booking
+    - Cancel my appointment please
+    - I want to cancel my reading
+    - Can I cancel my session?
+
+- intent: astrology_question
+  examples: |
+    - What does my birth chart mean?
+    - Can you explain astrology?
+    - What is a birth chart?
+    - How does astrology work?
+    - What are the planets doing?
+    - Can you tell me about the stars?
+    - What does the moon mean in astrology?
+    - How do I read my chart?
+    - What is my astrological profile?
+    - Can you explain my chart?
+
+- intent: birth_chart_question
+  examples: |
+    - What is my birth chart?
+    - Can you analyze my birth chart?
+    - What does my natal chart show?
+    - How do I read my birth chart?
+    - What are the houses in my chart?
+    - What planets are in my chart?
+    - Can you explain my natal chart?
+    - What does my chart reveal?
+    - How is my birth chart calculated?
+    - What is the significance of my chart?
+    - I want to work on my astral chart
+    - I want to work on my birth chart
+    - I want to work on my natal chart
+    - I want to work on my chart
+    - yes I want to work on my astral chart
+    - yes I want to work on my birth chart
+    - I'd like to work on my chart
+    - Can we work on my birth chart?
+    - Let's work on my astral chart
+    - I want to explore my birth chart
+    - I want to understand my astral chart
+    - I want to learn about my birth chart
+    - I want to study my natal chart
+    - I want to develop my astral chart
+    - I want to improve my birth chart
+    - I want to enhance my astral chart
+
+- intent: horoscope_question
+  examples: |
+    - What's my horoscope for today?
+    - Can you give me my daily horoscope?
+    - What does my horoscope say?
+    - What's my zodiac forecast?
+    - Can you read my horoscope?
+    - What's my astrological forecast?
+    - What does the stars say about me?
+    - Can you tell my future?
+    - What's my cosmic forecast?
+    - What does my horoscope predict?
+
+- intent: zodiac_sign_question
+  examples: |
+    - What does it mean to be a [Aries]?
+    - Tell me about [Taurus] traits
+    - What is [Gemini] like?
+    - Can you explain [Cancer] characteristics?
+    - What are [Leo] traits?
+    - Tell me about [Virgo] personality
+    - What does [Libra] mean?
+    - Can you describe [Scorpio]?
+    - What are [Sagittarius] traits?
+    - Tell me about [Capricorn]
+    - What is [Aquarius] like?
+    - Can you explain [Pisces]?
+
+- intent: planetary_question
+  examples: |
+    - What does [Mercury] represent?
+    - Tell me about [Venus] in astrology
+    - What is [Mars] energy?
+    - Can you explain [Jupiter] influence?
+    - What does [Saturn] mean?
+    - Tell me about [Uranus] in my chart
+    - What is [Neptune] energy?
+    - Can you explain [Pluto] influence?
+    - What does the [Sun] represent?
+    - Tell me about the [Moon] in astrology
+
+- intent: ask_about_services
+  examples: |
+    - What services do you offer?
+    - What types of readings do you have?
+    - What can you help me with?
+    - What services are available?
+    - What do you specialize in?
+    - What readings do you provide?
+    - What can you do for me?
+    - What are your offerings?
+    - What services do you have?
+    - What can you offer me?
+
+- intent: ask_about_pricing
+  examples: |
+    - How much does a reading cost?
+    - What are your prices?
+    - How much do you charge?
+    - What's the cost of a session?
+    - How much for a reading?
+    - What are your rates?
+    - How much does it cost?
+    - What's your pricing?
+    - How much do readings cost?
+    - What are your fees?
+
+- intent: ask_about_packages
+  examples: |
+    - What packages do you offer?
+    - What are your reading packages?
+    - Do you have different packages?
+    - What package options are there?
+    - What bundles do you have?
+    - What are your service packages?
+    - Do you offer packages?
+    - What package deals do you have?
+    - What are your package options?
+    - What packages are available?
+
+- intent: birth_chart_reading
+  examples: |
+    - birth_chart_reading
+    - I want a birth chart reading
+    - Book me for birth chart analysis
+    - I need birth chart consultation
+    - Birth chart reading please
+
+- intent: tarot_reading
+  examples: |
+    - tarot_reading
+    - I want a tarot reading
+    - Book me for tarot cards
+    - I need tarot consultation
+    - Tarot reading please
+
+- intent: astrology_consultation
+  examples: |
+    - astrology_consultation
+    - I want astrology consultation
+    - Book me for astrology session
+    - I need astrological guidance
+    - Astrology consultation please
+
+- intent: view_services
+  examples: |
+    - view_services
+    - Show me your services
+    - What services do you have?
+    - Tell me about your offerings
+    - I want to see your services
+
+- intent: ask_questions
+  examples: |
+    - ask_questions
+    - I have questions
+    - I want to ask something
+    - Can I ask questions?
+    - I need information
+
+- intent: basic_reading
+  examples: |
+    - basic_reading
+    - I want the basic reading
+    - Book me for 30 minutes
+    - Basic package please
+    - 30 minute reading
+
+- intent: comprehensive_reading
+  examples: |
+    - comprehensive_reading
+    - I want the comprehensive reading
+    - Book me for 60 minutes
+    - Comprehensive package please
+    - 60 minute reading
+
+- intent: premium_reading
+  examples: |
+    - premium_reading
+    - I want the premium reading
+    - Book me for 90 minutes
+    - Premium package please
+    - 90 minute reading
+
+- intent: select_package
+  examples: |
+    - select_package_1
+    - select_package_2
+    - select_package_3
+    - I want this package
+    - This package looks good
+    - I'll take this one
+    - Select this package
+
+- intent: select_slot
+  examples: |
+    - select_slot_1_2
+    - select_slot_2_1
+    - select_slot_3_1
+    - This time works for me
+    - I'll take this slot
+    - This time is perfect
+    - Select this time
+
+- intent: confirm_booking
+  examples: |
+    - confirm_booking_1_2
+    - confirm_booking_2_1
+    - confirm_booking_3_1
+    - Yes, confirm my booking
+    - Book it now
+    - Confirm this booking
+    - I'm ready to book
+
+- intent: view_bookings
+  examples: |
+    - view_bookings
+    - Show my bookings
+    - What are my appointments?
+    - My scheduled sessions
+    - View my calendar
+
+- intent: view_packages
+  examples: |
+    - view_packages
+    - Show me packages
+    - What packages do you have?
+    - View available packages
+    - Show all packages
+    - What are your packages?
+
+- intent: provide_all_details
+  examples: |
+    - provide all details
+    - give all information
+    - all details at once
+    - complete information
+
+- intent: step_by_step_details
+  examples: |
+    - step by step
+    - one by one
+    - ask me questions
+    - guide me through
+
+- intent: waiting_for_details
+  examples: |
+    - i'll provide details now
+    - here are my details
+    - my information is
+    - details coming
+
+- intent: collect_country
+  examples: |
+    - collect country
+    - my country is
+    - country
+    - I'm from
+    - I live in
+    - location
+    - where I live
+    - Mexico
+    - United States
+    - Canada
+    - Spain
+    - France
+    - Germany
+    - Italy
+    - Brazil
+    - Argentina
+
+- intent: collect_phone
+  examples: |
+    - collect phone
+    - phone number
+    - my phone is
+    - phone
+    - mobile number
+    - contact number
+    - +52 55 1234 5678
+    - +1 555 123 4567
+    - +44 20 1234 5678
+
+- intent: cancel_booking
+  examples: |
+    - cancel booking
+    - cancel appointment
+    - cancel session
+    - no thanks
+    - cancel

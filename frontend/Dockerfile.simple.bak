@@ -1,0 +1,50 @@
+# Use Node.js base image and install Python
+FROM node:18-alpine
+
+# Install Python and build dependencies with retry logic
+RUN apk update && \
+    apk add --no-cache \
+    python3 \
+    py3-pip \
+    build-base \
+    python3-dev \
+    gcc \
+    musl-dev \
+    linux-headers \
+    curl \
+    bash
+
+# Create symlinks for python
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm ci --only=production
+
+# Copy Python requirements
+COPY rasa/requirements.txt ./rasa/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r rasa/requirements.txt
+RUN pip install --no-cache-dir rasa==3.6.21 tensorflow spacy
+RUN python -m spacy download en_core_web_sm
+
+# Copy application code
+COPY . .
+
+# Train Rasa model
+RUN cd rasa && rasa train
+
+# Make startup script executable
+RUN chmod +x start-servers.sh
+
+# Expose ports
+EXPOSE 3000 5005
+
+# Start both servers
+CMD ["./start-servers.sh"]
