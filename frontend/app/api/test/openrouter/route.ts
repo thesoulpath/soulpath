@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { OpenRouterService } from '@/lib/services/openrouter-service';
 
 export async function GET() {
