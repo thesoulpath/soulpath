@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
       await loggingService.logConversation({
         sessionId: `hybrid_${Date.now()}`,
         userId: userId || 'anonymous',
+        message: message,
         userMessage: message,
         botResponse: response,
         rasaIntent: 'hybrid_chat',
