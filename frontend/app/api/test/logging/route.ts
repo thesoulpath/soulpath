@@ -12,6 +12,7 @@ export async function POST() {
     const logId = await loggingService.logConversation({
       sessionId: `test_${Date.now()}`,
       userId: 'test_user',
+      message: 'Test message from logging test endpoint',
       userMessage: 'Test message from logging test endpoint',
       botResponse: 'Test response from logging test endpoint',
       rasaIntent: 'test',
