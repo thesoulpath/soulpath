@@ -31,6 +31,7 @@ export interface RasaAction {
   action: string;
   confidence: number;
   parameters?: Record<string, any>;
+  response?: string;
 }
 
 export interface APICallResult {
@@ -71,19 +72,31 @@ export interface LLMResponse {
 }
 
 export interface ConversationLog {
-  id: number;
+  id: string | number;
   sessionId: string;
   userId: string | null;
+  message: string;
   userMessage: string;
   botResponse: string | null;
+  llmResponse?: string;
+  rasaResponse?: string;
   timestamp: string;
+  intent?: string;
   rasaIntent: string | null;
+  confidence?: number;
   rasaConfidence: number | null;
+  entities?: any[];
   rasaEntities: any[] | null;
+  action?: string;
   responseGenerator: string;
   bookingStep: string | null;
+  bookingData?: any;
   bookingDataSnapshot: any | null;
   modelVersion: string | null;
+  success?: boolean;
+  apiCalls?: any[];
+  processingTime?: number;
+  error?: string;
   feedback?: UserFeedback[];
 }
 
@@ -118,6 +131,8 @@ export interface ConversationLogsResponse {
     hasPrev: boolean;
   };
   statistics: ConversationStats;
+  error?: string;
+  message?: string;
 }
 
 export interface OrchestratorConfig {
@@ -157,7 +172,7 @@ export interface IntentActionMapping {
     apiEndpoint?: string;
     requiredEntities?: string[];
     optionalEntities?: string[];
-    description: string;
+    description?: string;
   };
 }
 

@@ -8,7 +8,7 @@ import {
   ConversationStats, 
   ConversationLogsResponse 
 } from '@/lib/types/conversational-orchestrator';
-import { badgeStyles, combineStyles } from '@/lib/styles/common';
+import { badgeStyles } from '@/lib/styles/common';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -57,7 +57,7 @@ export default function ConversationLogsManagement() {
   const [logs, setLogs] = useState<ConversationLog[]>([]);
   const [stats, setStats] = useState<ConversationStats | null>(null);
   const [loading, setLoading] = useState(false);
-  const [selectedLogs, setSelectedLogs] = useState<number[]>([]);
+  const [selectedLogs, setSelectedLogs] = useState<(string | number)[]>([]);
   const [selectedLog, setSelectedLog] = useState<ConversationLog | null>(null);
   
   // Filters
@@ -210,7 +210,7 @@ export default function ConversationLogsManagement() {
     setFilters(prev => ({ ...prev, page: newPage }));
   };
 
-  const handleSelectLog = (logId: number) => {
+  const handleSelectLog = (logId: string | number) => {
     setSelectedLogs(prev => 
       prev.includes(logId) 
         ? prev.filter(id => id !== logId)
@@ -287,119 +287,119 @@ export default function ConversationLogsManagement() {
     }
   };
 
-  const testConnection = async () => {
-    if (!user?.access_token) {
-      alert('❌ No authentication token available. Please sign in first.');
-      return;
-    }
+  // const testConnection = async () => {
+  //   if (!user?.access_token) {
+  //     alert('❌ No authentication token available. Please sign in first.');
+  //     return;
+  //   }
 
-    try {
-      console.log('🔍 Testing connection...');
-      const response = await fetch('/api/admin/health', {
-        headers: {
-          'Authorization': `Bearer ${user.access_token}`,
-        },
-      });
+  //   try {
+  //     console.log('🔍 Testing connection...');
+  //     const response = await fetch('/api/admin/health', {
+  //       headers: {
+  //         'Authorization': `Bearer ${user.access_token}`,
+  //       },
+  //     });
 
-      const data = await response.json();
-      console.log('🔍 Health check response:', data);
+  //     const data = await response.json();
+  //     console.log('🔍 Health check response:', data);
       
-      if (data.success) {
-        alert(`✅ Connection test successful!\n\nDatabase: ${data.data.database.status}\nRecords: ${data.data.database.recordCount}\nUser: ${data.data.authentication.user.email}`);
-      } else {
-        alert(`❌ Connection test failed: ${data.error || data.message}`);
-      }
-    } catch (error) {
-      console.error('❌ Connection test error:', error);
-      alert(`❌ Connection test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
+  //     if (data.success) {
+  //       alert(`✅ Connection test successful!\n\nDatabase: ${data.data.database.status}\nRecords: ${data.data.database.recordCount}\nUser: ${data.data.authentication.user.email}`);
+  //     } else {
+  //       alert(`❌ Connection test failed: ${data.error || data.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('❌ Connection test error:', error);
+  //     alert(`❌ Connection test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  //   }
+  // };
 
-  const testDatabase = async () => {
-    try {
-      console.log('🔍 Testing database...');
-      const response = await fetch('/api/test/db');
-      const data = await response.json();
-      console.log('🔍 Database test response:', data);
+  // const testDatabase = async () => {
+  //   try {
+  //     console.log('🔍 Testing database...');
+  //     const response = await fetch('/api/test/db');
+  //     const data = await response.json();
+  //     console.log('🔍 Database test response:', data);
       
-      if (data.success) {
-        const userCount = data.data.userCount;
-        const users = data.data.users;
+  //     if (data.success) {
+  //       const userCount = data.data.userCount;
+  //       const users = data.data.users;
         
-        let message = `✅ Database test successful!\n\nUsers: ${userCount}\n\n`;
+  //       let message = `✅ Database test successful!\n\nUsers: ${userCount}\n\n`;
         
-        if (users.length > 0) {
-          message += 'Existing users:\n';
-          users.forEach((u: any) => {
-            message += `• ${u.email} (${u.role}) - ${u.hasPassword ? 'Has password' : 'No password'}\n`;
-          });
-        } else {
-          message += 'No users found. You may need to create a test user.';
-        }
+  //       if (users.length > 0) {
+  //         message += 'Existing users:\n';
+  //         users.forEach((u: any) => {
+  //           message += `• ${u.email} (${u.role}) - ${u.hasPassword ? 'Has password' : 'No password'}\n`;
+  //         });
+  //       } else {
+  //         message += 'No users found. You may need to create a test user.';
+  //       }
         
-        alert(message);
-      } else {
-        alert(`❌ Database test failed: ${data.error || data.message}`);
-      }
-    } catch (error) {
-      console.error('❌ Database test error:', error);
-      alert(`❌ Database test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
+  //       alert(message);
+  //     } else {
+  //       alert(`❌ Database test failed: ${data.error || data.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('❌ Database test error:', error);
+  //     alert(`❌ Database test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  //   }
+  // };
 
-  const createTestUser = async () => {
-    const email = prompt('Enter email for test user:');
-    const password = prompt('Enter password for test user:');
-    const fullName = prompt('Enter full name (optional):') || 'Test User';
-    const role = prompt('Enter role (admin/user):') || 'admin';
+  // const createTestUser = async () => {
+  //   const email = prompt('Enter email for test user:');
+  //   const password = prompt('Enter password for test user:');
+  //   const fullName = prompt('Enter full name (optional):') || 'Test User';
+  //   const role = prompt('Enter role (admin/user):') || 'admin';
 
-    if (!email || !password) {
-      alert('❌ Email and password are required');
-      return;
-    }
+  //   if (!email || !password) {
+  //     alert('❌ Email and password are required');
+  //     return;
+  //   }
 
-    try {
-      console.log('🔍 Creating test user...');
-      const response = await fetch('/api/test/db', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, fullName, role })
-      });
+  //   try {
+  //     console.log('🔍 Creating test user...');
+  //     const response = await fetch('/api/test/db', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, password, fullName, role })
+  //     });
 
-      const data = await response.json();
-      console.log('🔍 User creation response:', data);
+  //     const data = await response.json();
+  //     console.log('🔍 User creation response:', data);
       
-      if (data.success) {
-        alert(`✅ Test user created successfully!\n\nEmail: ${data.data.email}\nRole: ${data.data.role}\nID: ${data.data.id}`);
-      } else {
-        alert(`❌ User creation failed: ${data.error || data.message}`);
-      }
-    } catch (error) {
-      console.error('❌ User creation error:', error);
-      alert(`❌ User creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
+  //     if (data.success) {
+  //       alert(`✅ Test user created successfully!\n\nEmail: ${data.data.email}\nRole: ${data.data.role}\nID: ${data.data.id}`);
+  //     } else {
+  //       alert(`❌ User creation failed: ${data.error || data.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('❌ User creation error:', error);
+  //     alert(`❌ User creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  //   }
+  // };
 
-  const testPrisma = async () => {
-    try {
-      console.log('🔍 Testing Prisma client...');
-      const response = await fetch('/api/test/prisma');
-      const data = await response.json();
-      console.log('🔍 Prisma test response:', data);
+  // const testPrisma = async () => {
+  //   try {
+  //     console.log('🔍 Testing Prisma client...');
+  //     const response = await fetch('/api/test/prisma');
+  //     const data = await response.json();
+  //     console.log('🔍 Prisma test response:', data);
       
-      if (data.success) {
-        const results = data.data.testQueryResults;
-        alert(`✅ Prisma test successful!\n\nConnection: ${data.data.connectionStatus}\nUser Count: ${results.countQuery}\nFind Many: ${results.findManyQuery}\nFind Unique: ${results.findUniqueQuery}\nRaw Query: ${JSON.stringify(results.rawQuery)}`);
-      } else {
-        alert(`❌ Prisma test failed: ${data.error || data.message}\n\nDetails: ${data.details || 'No details available'}`);
-      }
-    } catch (error) {
-      console.error('❌ Prisma test error:', error);
-      alert(`❌ Prisma test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
+  //     if (data.success) {
+  //       const results = data.data.testQueryResults;
+  //       alert(`✅ Prisma test successful!\n\nConnection: ${data.data.connectionStatus}\nUser Count: ${results.countQuery}\nFind Many: ${results.findManyQuery}\nFind Unique: ${results.findUniqueQuery}\nRaw Query: ${JSON.stringify(results.rawQuery)}`);
+  //     } else {
+  //       alert(`❌ Prisma test failed: ${data.error || data.message}\n\nDetails: ${data.details || 'No details available'}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('❌ Prisma test error:', error);
+  //     alert(`❌ Prisma test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  //   }
+  // };
 
   const getConfidenceBadge = (confidence: number) => {
     if (confidence >= 0.8) {

@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         },
         database: {
           status: dbStatus,
-          error: dbError instanceof Error ? dbError.message : null,
+          error: dbError ? String(dbError) : null,
           tableExists,
           recordCount
         }

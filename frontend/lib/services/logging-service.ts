@@ -63,8 +63,18 @@ export class LoggingService {
     }
   ): Promise<string> {
     const logData: Omit<ConversationLog, 'id' | 'timestamp'> = {
+      sessionId: `error_${Date.now()}`,
       userId,
       message: context.message || 'Error occurred',
+      userMessage: context.message || 'Error occurred',
+      botResponse: 'Error response generated',
+      rasaIntent: context.intent || 'error',
+      rasaConfidence: 0,
+      rasaEntities: [],
+      responseGenerator: context.action || 'error_handling',
+      bookingStep: null,
+      bookingDataSnapshot: null,
+      modelVersion: '1.0.0',
       intent: context.intent || 'error',
       entities: [],
       action: context.action || 'error_handling',

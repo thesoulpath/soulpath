@@ -141,13 +141,23 @@ export class ConversationalOrchestrator {
       // 9. Log de la interacción
       if (this.config.logging.enabled) {
         logId = await this.loggingService.logConversation({
+          sessionId: context.sessionId,
           userId: context.userId,
           message: text,
+          userMessage: text,
+          botResponse: finalResponse,
+          rasaIntent: intent,
+          rasaConfidence: rasaResponse.intent?.confidence || 0.5,
+          rasaEntities: rasaResponse.entities || [],
+          responseGenerator: actionMapping?.action || 'none',
+          bookingStep: null,
+          bookingDataSnapshot: null,
+          modelVersion: '1.0.0',
+          llmResponse: finalResponse,
+          rasaResponse: JSON.stringify(rasaResponse),
           intent: intent,
           entities: rasaResponse.entities || [],
           action: actionMapping?.action || 'none',
-          rasaResponse: JSON.stringify(rasaResponse),
-          llmResponse: finalResponse,
           apiCalls: actionResult ? [actionResult] : [],
           processingTime: Date.now() - startTime,
           success: true
@@ -260,13 +270,23 @@ export class ConversationalOrchestrator {
       // 10. Registrar la interacción
       const processingTime = Date.now() - startTime;
       logId = await this.loggingService.logConversation({
+        sessionId: context.sessionId,
         userId,
         message: userMessage,
-        intent,
-        entities: rasaResponse.entities,
-        action: this.intentActionMapping[intent]?.action || 'unknown',
-        rasaResponse: JSON.stringify(rasaResponse),
+        userMessage: userMessage,
+        botResponse: llmResponse,
+        rasaIntent: intent,
+        rasaConfidence: rasaResponse.intent?.confidence || 0.5,
+        rasaEntities: rasaResponse.entities || [],
+        responseGenerator: this.intentActionMapping[intent]?.action || 'unknown',
+        bookingStep: null,
+        bookingDataSnapshot: null,
+        modelVersion: '1.0.0',
         llmResponse,
+        rasaResponse: JSON.stringify(rasaResponse),
+        intent,
+        entities: rasaResponse.entities || [],
+        action: this.intentActionMapping[intent]?.action || 'unknown',
         apiCalls: apiResults,
         processingTime,
         success: true

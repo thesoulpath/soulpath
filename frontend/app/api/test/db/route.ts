@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as bcrypt from 'bcryptjs';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('🔍 Testing database connection and user creation...');
     
@@ -21,15 +21,16 @@ export async function GET(request: NextRequest) {
         email: true,
         role: true,
         fullName: true,
+        password: true,
         createdAt: true
       }
     });
 
     // Test the specific query that's failing in login
     console.log('🔍 Testing login query...');
-    let testUser;
+    // let testUser;
     try {
-      testUser = await prisma.user.findUnique({
+      await prisma.user.findUnique({
         where: { email: 'test@example.com' }
       });
       console.log('✅ Login query test successful');
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
       email: u.email,
       role: u.role,
       fullName: u.fullName,
-      hasPassword: !!u.hasPassword?.password,
+      hasPassword: !!u.password,
       createdAt: u.createdAt
     })));
 
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
           email: u.email,
           role: u.role,
           fullName: u.fullName,
-          hasPassword: !!u.hasPassword?.password,
+          hasPassword: !!u.password,
           createdAt: u.createdAt
         }))
       }

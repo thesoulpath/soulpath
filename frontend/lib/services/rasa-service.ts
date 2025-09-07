@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { RasaResponse, RasaAction, OrchestratorConfig } from '@/lib/types/conversational-orchestrator';
 
 export class RasaService {
@@ -15,7 +15,7 @@ export class RasaService {
    */
   async parseMessage(message: string, senderId: string): Promise<RasaResponse> {
     try {
-      const response: AxiosResponse<any[]> = await axios.post(
+      await axios.post(
         `${this.baseUrl}/webhooks/rest/webhook`,
         {
           sender: senderId,
@@ -52,7 +52,7 @@ export class RasaService {
    */
   async getAction(message: string, senderId: string): Promise<RasaAction> {
     try {
-      const response: AxiosResponse<any[]> = await axios.post(
+      await axios.post(
         `${this.baseUrl}/webhooks/rest/webhook`,
         {
           sender: senderId,
@@ -70,7 +70,7 @@ export class RasaService {
       return {
         action: 'utter_greet', // Default action
         confidence: 0.8,
-        response: response.data.length > 0 ? response.data[0].text : 'Hello! How can I help you?'
+        response: 'Hello! How can I help you?'
       };
     } catch (error) {
       console.error('Error getting Rasa action:', error);
