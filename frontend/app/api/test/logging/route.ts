@@ -29,7 +29,7 @@ export async function POST() {
       apiCalls: [],
       processingTime: 100,
       success: true,
-        error: null
+        error: undefined
     });
 
     return NextResponse.json({
