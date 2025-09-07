@@ -1,0 +1,493 @@
+version: "3.1"
+
+nlu:
+# GREETINGS - Natural conversation starters
+- intent: greet
+  examples: |
+    # English
+    - hello
+    - hi
+    - hey
+    - good morning
+    - good afternoon
+    - good evening
+    - hi there
+    - hello there
+    - hey there
+    - greetings
+    - what's up
+    - how are you
+    - how's it going
+    - nice to meet you
+    - pleased to meet you
+    # Spanish
+    - hola
+    - buenos días
+    - buenas tardes
+    - buenas noches
+    - qué tal
+    - saludos
+    - cómo estás
+    - qué hay
+    - encantado de conocerte
+    - mucho gusto
+
+# BOOKING INTENT - Natural ways to express wanting a session
+- intent: book_session
+  examples: |
+    # English - Direct booking requests
+    - I want to book a session
+    - I'd like to schedule a reading
+    - Can I book an appointment
+    - I want to make a reservation
+    - I need to schedule something
+    - I want to book with Jose
+    - Can I get a reading
+    - I want a consultation
+    - I need guidance
+    - I want spiritual guidance
+    - I'm looking for a reading
+    - I want to book a natal chart reading
+    - Can I schedule a session
+    - I want to book an astrology session
+    - I need an appointment
+    - I want to meet with Jose
+    - Can I get a consultation
+    - I want to book a spiritual reading
+    - I need help with my life
+    - I want guidance on my path
+    # Spanish - Direct booking requests
+    - quiero reservar una sesión
+    - quiero agendar una cita
+    - quiero una lectura
+    - necesito una consulta
+    - quiero reservar con José
+    - puedo agendar una cita
+    - quiero una sesión
+    - necesito orientación
+    - quiero guía espiritual
+    - busco una lectura
+    - quiero una carta natal
+    - puedo reservar una sesión
+    - quiero una consulta astrológica
+    - necesito una cita
+    - quiero ver a José
+    - puedo tener una consulta
+    - quiero una lectura espiritual
+    - necesito ayuda con mi vida
+    - quiero orientación en mi camino
+    - quiero una sesión de astrología
+
+# SESSION TYPE INQUIRIES - What kind of session they want
+- intent: ask_session_types
+  examples: |
+    # English
+    - what types of sessions do you offer
+    - what kind of readings are available
+    - what services do you have
+    - what can Jose help me with
+    - what types of consultations
+    - what readings do you offer
+    - what kind of guidance
+    - what spiritual services
+    - what astrology services
+    - what can I book
+    - what options do I have
+    - what's available
+    - what do you offer
+    - what services are there
+    - what can I get
+    # Spanish
+    - qué tipos de sesiones ofrecen
+    - qué clases de lecturas hay
+    - qué servicios tienen
+    - con qué puede ayudarme José
+    - qué tipos de consultas
+    - qué lecturas ofrecen
+    - qué tipo de orientación
+    - qué servicios espirituales
+    - qué servicios de astrología
+    - qué puedo reservar
+    - qué opciones tengo
+    - qué hay disponible
+    - qué ofrecen
+    - qué servicios hay
+    - qué puedo obtener
+
+# PRICING INQUIRIES - Natural ways to ask about cost
+- intent: ask_pricing
+  examples: |
+    # English
+    - how much does it cost
+    - what are your prices
+    - how much is a session
+    - what's the price
+    - how much do you charge
+    - what does it cost
+    - how much for a reading
+    - what are your rates
+    - how much is the consultation
+    - what's the fee
+    - how much money
+    - what's the cost
+    - how much will it be
+    - what do you charge
+    - is it expensive
+    - how much does a session cost
+    # Spanish
+    - cuánto cuesta
+    - cuáles son sus precios
+    - cuánto cuesta una sesión
+    - cuál es el precio
+    - cuánto cobran
+    - qué cuesta
+    - cuánto por una lectura
+    - cuáles son sus tarifas
+    - cuánto cuesta la consulta
+    - cuál es la tarifa
+    - cuánto dinero
+    - cuál es el costo
+    - cuánto será
+    - qué cobran
+    - es caro
+    - cuánto cuesta una sesión
+
+# AVAILABILITY INQUIRIES - When can they book
+- intent: ask_availability
+  examples: |
+    # English
+    - when are you available
+    - what times do you have
+    - when can I book
+    - what's your schedule
+    - when is Jose available
+    - what days do you work
+    - what times are open
+    - when can I come
+    - what's available this week
+    - do you have time today
+    - when can we meet
+    - what's your availability
+    - when are you free
+    - what slots are open
+    - when can I schedule
+    # Spanish
+    - cuándo están disponibles
+    - qué horarios tienen
+    - cuándo puedo reservar
+    - cuál es su horario
+    - cuándo está disponible José
+    - qué días trabajan
+    - qué horarios están abiertos
+    - cuándo puedo ir
+    - qué hay disponible esta semana
+    - tienen tiempo hoy
+    - cuándo podemos vernos
+    - cuál es su disponibilidad
+    - cuándo están libres
+    - qué horarios están abiertos
+    - cuándo puedo agendar
+
+# CONTACT INQUIRIES - How to get in touch
+- intent: ask_contact
+  examples: |
+    # English
+    - how can I contact you
+    - what's your phone number
+    - how do I reach you
+    - what's your email
+    - how can I get in touch
+    - where can I find you
+    - how do I contact Jose
+    - what's the best way to reach you
+    - how can I call you
+    - what's your contact info
+    - how do I get in touch
+    - where are you located
+    - how can I reach you
+    - what's your address
+    - how do I contact
+    # Spanish
+    - cómo puedo contactarlos
+    - cuál es su número de teléfono
+    - cómo puedo comunicarme
+    - cuál es su email
+    - cómo puedo ponerme en contacto
+    - dónde puedo encontrarlos
+    - cómo puedo contactar a José
+    - cuál es la mejor forma de comunicarme
+    - cómo puedo llamarlos
+    - cuál es su información de contacto
+    - cómo puedo comunicarme
+    - dónde están ubicados
+    - cómo puedo comunicarme
+    - cuál es su dirección
+    - cómo puedo contactar
+
+# PAYMENT INQUIRIES - How to pay
+- intent: ask_payment
+  examples: |
+    # English
+    - how do I pay
+    - what payment methods do you accept
+    - how can I pay
+    - do you accept credit cards
+    - what forms of payment
+    - how do I make payment
+    - can I pay online
+    - what payment options
+    - how do I pay for this
+    - what payment methods
+    - can I pay with card
+    - do you take cash
+    - how much do I pay
+    - when do I pay
+    - how do I pay you
+    # Spanish
+    - cómo pago
+    - qué métodos de pago aceptan
+    - cómo puedo pagar
+    - aceptan tarjetas de crédito
+    - qué formas de pago
+    - cómo hago el pago
+    - puedo pagar en línea
+    - qué opciones de pago
+    - cómo pago por esto
+    - qué métodos de pago
+    - puedo pagar con tarjeta
+    - aceptan efectivo
+    - cuánto pago
+    - cuándo pago
+    - cómo te pago
+
+# PERSONAL INFO - Name and birth details
+- intent: provide_name
+  examples: |
+    # English
+    - my name is [John](name)
+    - I'm [Sarah](name)
+    - I am [Mike](name)
+    - call me [Lisa](name)
+    - [David](name) is my name
+    - [Emma](name) here
+    - [Alex](name) is my name
+    - I go by [Sam](name)
+    - [Chris](name) is what I'm called
+    - [Taylor](name) is my name
+    # Spanish
+    - me llamo [María](name)
+    - mi nombre es [Carlos](name)
+    - soy [Ana](name)
+    - me llamo [Luis](name)
+    - [Elena](name) es mi nombre
+    - [Roberto](name) aquí
+    - [Carmen](name) es mi nombre
+    - me dicen [Pablo](name)
+    - [Isabel](name) es como me llamo
+    - [Miguel](name) es mi nombre
+
+- intent: provide_birth_date
+  examples: |
+    # English
+    - I was born on [March 15, 1990](date)
+    - my birth date is [15/03/1990](date)
+    - born on [March 15, 1990](date)
+    - [March 15, 1990](date) is my birthday
+    - I'm born [March 15, 1990](date)
+    - my birthday is [15/03/1990](date)
+    - [03/15/1990](date) is when I was born
+    - I was born [March 15, 1990](date)
+    - [15/03/1990](date) is my birth date
+    - born [March 15, 1990](date)
+    # Spanish
+    - nací el [15/03/1990](date)
+    - mi fecha de nacimiento es [15/03/1990](date)
+    - nací en [1990](date)
+    - [15/03/1990](date) es mi cumpleaños
+    - soy nacido el [15/03/1990](date)
+    - mi cumpleaños es [15/03/1990](date)
+    - [15/03/1990](date) es cuando nací
+    - nací [15/03/1990](date)
+    - [15/03/1990](date) es mi fecha de nacimiento
+    - nacido [15/03/1990](date)
+
+# AFFIRMATIONS AND DENIALS
+- intent: affirm
+  examples: |
+    # English
+    - yes
+    - yeah
+    - yep
+    - sure
+    - of course
+    - absolutely
+    - definitely
+    - that sounds good
+    - that works
+    - perfect
+    - great
+    - okay
+    - ok
+    - alright
+    - I agree
+    - that's fine
+    - sounds good
+    - let's do it
+    - I'm interested
+    - I want to
+    - I'd like to
+    - count me in
+    - I'm ready
+    # Spanish
+    - sí
+    - claro
+    - por supuesto
+    - desde luego
+    - definitivamente
+    - por supuesto
+    - perfecto
+    - genial
+    - está bien
+    - de acuerdo
+    - me parece bien
+    - suena bien
+    - hagámoslo
+    - estoy interesado
+    - quiero
+    - me gustaría
+    - cuenten conmigo
+    - estoy listo
+
+- intent: deny
+  examples: |
+    # English
+    - no
+    - nope
+    - not really
+    - I don't think so
+    - maybe later
+    - not now
+    - I'm not sure
+    - I don't want to
+    - not interested
+    - no thanks
+    - I'll pass
+    - not today
+    - maybe another time
+    - I'm not ready
+    - I don't need it
+    - not for me
+    # Spanish
+    - no
+    - no gracias
+    - no creo
+    - tal vez después
+    - no ahora
+    - no estoy seguro
+    - no quiero
+    - no estoy interesado
+    - no gracias
+    - paso
+    - no hoy
+    - tal vez otro día
+    - no estoy listo
+    - no lo necesito
+    - no es para mí
+
+# GOODBYES
+- intent: goodbye
+  examples: |
+    # English
+    - bye
+    - goodbye
+    - see you later
+    - talk to you later
+    - have a good day
+    - take care
+    - see you soon
+    - until next time
+    - farewell
+    - catch you later
+    - see ya
+    - later
+    - peace out
+    - until we meet again
+    - so long
+    # Spanish
+    - adiós
+    - hasta luego
+    - nos vemos
+    - hasta pronto
+    - que tengas buen día
+    - cuídate
+    - hasta la próxima
+    - hasta la vista
+    - hasta otra vez
+    - nos vemos después
+    - hasta luego
+    - hasta pronto
+    - que te vaya bien
+    - hasta que nos veamos de nuevo
+    - hasta la próxima
+
+# HELP AND QUESTIONS
+- intent: ask_help
+  examples: |
+    # English
+    - help
+    - I need help
+    - can you help me
+    - what can you do
+    - how does this work
+    - I don't understand
+    - what should I do
+    - can you explain
+    - I'm confused
+    - what do I do next
+    - how can you help
+    - what are my options
+    - I need guidance
+    - what's next
+    - how do I proceed
+    # Spanish
+    - ayuda
+    - necesito ayuda
+    - puedes ayudarme
+    - qué puedes hacer
+    - cómo funciona esto
+    - no entiendo
+    - qué debo hacer
+    - puedes explicar
+    - estoy confundido
+    - qué hago después
+    - cómo puedes ayudar
+    - cuáles son mis opciones
+    - necesito orientación
+    - qué sigue
+    - cómo procedo
+
+# BOT CHALLENGE
+- intent: bot_challenge
+  examples: |
+    # English
+    - are you a bot
+    - are you human
+    - is this a bot
+    - are you real
+    - are you automated
+    - is this automated
+    - are you a robot
+    - is this a chatbot
+    - are you AI
+    - is this artificial intelligence
+    # Spanish
+    - eres un bot
+    - eres humano
+    - esto es un bot
+    - eres real
+    - estás automatizado
+    - esto está automatizado
+    - eres un robot
+    - esto es un chatbot
+    - eres IA
+    - esto es inteligencia artificial

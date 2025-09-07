@@ -1,0 +1,149 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - provide_name
+  - provide_birth_date
+  - book_session
+  - ask_session_types
+  - ask_pricing
+  - ask_availability
+  - ask_contact
+  - ask_payment
+  - ask_help
+  - bot_challenge
+
+entities:
+  - name
+  - date
+  - time
+  - session_type
+  - price
+  - location
+  - phone
+  - email
+
+slots:
+  name:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: name
+  birth_date:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: date
+  preferred_time:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: time
+  session_type:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: session_type
+
+responses:
+  # GREETINGS - Natural and warm
+  utter_greet:
+    - text: "¡Hola! Soy tu asistente de SoulPath Wellness. ¿En qué puedo ayudarte hoy?"
+    - text: "¡Buenos días! Estoy aquí para ayudarte a reservar una sesión con José Garfias. ¿Cómo puedo asistirte?"
+    - text: "¡Saludos! Bienvenido a SoulPath Wellness. ¿Te gustaría agendar una consulta astrológica?"
+    - text: "Hello! I'm your SoulPath Wellness assistant. How can I help you today?"
+    - text: "Good morning! I'm here to help you book a session with Jose Garfias. How can I assist you?"
+    - text: "Welcome to SoulPath Wellness! Would you like to schedule an astrology consultation?"
+
+  # SESSION TYPE INQUIRY
+  utter_ask_session_type:
+    - text: "¡Perfecto! ¿Qué tipo de sesión te interesa? Tenemos lecturas de carta natal, consultas de relaciones, y sesiones de crecimiento personal."
+    - text: "Excelente! ¿Qué tipo de lectura te gustaría reservar? Puedo ayudarte con carta natal, tarot, o numerología."
+    - text: "Great! What type of session interests you? We offer natal chart readings, relationship consultations, and personal growth sessions."
+    - text: "Perfect! What kind of reading would you like to book? I can help you with natal charts, tarot, or numerology."
+
+  utter_session_types:
+    - text: "Ofrecemos varios tipos de sesiones:\n\n🌟 **Carta Natal** - Análisis completo de tu personalidad y destino\n💕 **Consultas de Relaciones** - Orientación sobre amor y conexiones\n🌱 **Crecimiento Personal** - Desarrollo espiritual y autoconocimiento\n🔮 **Tarot** - Lecturas de cartas para orientación\n📊 **Numerología** - Análisis basado en números\n\n¿Cuál te interesa más?"
+    - text: "We offer several types of sessions:\n\n🌟 **Natal Chart** - Complete analysis of your personality and destiny\n💕 **Relationship Consultations** - Guidance on love and connections\n🌱 **Personal Growth** - Spiritual development and self-knowledge\n🔮 **Tarot** - Card readings for guidance\n📊 **Numerology** - Analysis based on numbers\n\nWhich one interests you most?"
+
+  # NAME COLLECTION
+  utter_ask_name:
+    - text: "¡Excelente elección! Para personalizar tu sesión, ¿podrías decirme tu nombre?"
+    - text: "Perfecto! ¿Cómo te llamas? Quiero poder dirigirme a ti personalmente durante la consulta."
+    - text: "Great choice! To personalize your session, could you tell me your name?"
+    - text: "Perfect! What's your name? I'd like to address you personally during the consultation."
+
+  # BIRTH DATE COLLECTION
+  utter_ask_birth_date:
+    - text: "¡Gracias {name}! Para crear tu carta natal precisa, necesito tu fecha de nacimiento completa (día, mes y año). ¿Podrías compartirla conmigo?"
+    - text: "Perfecto {name}! Para una lectura astrológica precisa, necesito tu fecha de nacimiento. ¿Cuándo naciste?"
+    - text: "Thank you {name}! To create your precise natal chart, I need your complete birth date (day, month, and year). Could you share it with me?"
+    - text: "Perfect {name}! For an accurate astrological reading, I need your birth date. When were you born?"
+
+  # TIME PREFERENCE
+  utter_ask_preferred_time:
+    - text: "¡Excelente! Con tu fecha de nacimiento puedo preparar una lectura muy precisa. ¿Tienes alguna preferencia de horario? José está disponible de lunes a viernes de 9 AM a 6 PM."
+    - text: "Perfecto! Ahora puedo crear tu carta natal. ¿Qué horario te funciona mejor? Tenemos disponibilidad de lunes a viernes."
+    - text: "Excellent! With your birth date I can prepare a very precise reading. Do you have any time preference? Jose is available Monday to Friday from 9 AM to 6 PM."
+    - text: "Perfect! Now I can create your natal chart. What time works best for you? We have availability Monday through Friday."
+
+  # AVAILABILITY
+  utter_availability_options:
+    - text: "Tenemos los siguientes horarios disponibles esta semana:\n\n📅 **Lunes**: 10:00 AM, 2:00 PM, 4:00 PM\n📅 **Martes**: 9:00 AM, 11:00 AM, 3:00 PM\n📅 **Miércoles**: 10:00 AM, 1:00 PM, 5:00 PM\n📅 **Jueves**: 9:00 AM, 2:00 PM, 4:00 PM\n📅 **Viernes**: 11:00 AM, 3:00 PM, 5:00 PM\n\n¿Cuál te conviene más?"
+    - text: "We have the following times available this week:\n\n📅 **Monday**: 10:00 AM, 2:00 PM, 4:00 PM\n📅 **Tuesday**: 9:00 AM, 11:00 AM, 3:00 PM\n📅 **Wednesday**: 10:00 AM, 1:00 PM, 5:00 PM\n📅 **Thursday**: 9:00 AM, 2:00 PM, 4:00 PM\n📅 **Friday**: 11:00 AM, 3:00 PM, 5:00 PM\n\nWhich works best for you?"
+
+  # PRICING INFORMATION
+  utter_pricing_info:
+    - text: "Los precios de nuestras sesiones son:\n\n🌟 **Carta Natal (60 min)**: $80 USD\n💕 **Consulta de Relaciones (45 min)**: $60 USD\n🌱 **Crecimiento Personal (90 min)**: $120 USD\n🔮 **Tarot (30 min)**: $40 USD\n📊 **Numerología (45 min)**: $60 USD\n\n¿Te parece bien el precio?"
+    - text: "Our session prices are:\n\n🌟 **Natal Chart (60 min)**: $80 USD\n💕 **Relationship Consultation (45 min)**: $60 USD\n🌱 **Personal Growth (90 min)**: $120 USD\n🔮 **Tarot (30 min)**: $40 USD\n📊 **Numerology (45 min)**: $60 USD\n\nDoes the price work for you?"
+
+  # PAYMENT METHODS
+  utter_payment_methods:
+    - text: "Aceptamos los siguientes métodos de pago:\n\n💳 **Tarjeta de Crédito/Débito** (Visa, Mastercard, American Express)\n💰 **PayPal**\n🏦 **Transferencia Bancaria**\n💵 **Efectivo** (solo para sesiones presenciales)\n\n¿Cuál prefieres usar?"
+    - text: "We accept the following payment methods:\n\n💳 **Credit/Debit Card** (Visa, Mastercard, American Express)\n💰 **PayPal**\n🏦 **Bank Transfer**\n💵 **Cash** (for in-person sessions only)\n\nWhich would you prefer to use?"
+
+  # BOOKING CONFIRMATION
+  utter_booking_confirmation:
+    - text: "¡Perfecto! Resumiendo tu reserva:\n\n👤 **Nombre**: {name}\n📅 **Fecha de Nacimiento**: {birth_date}\n⏰ **Horario Preferido**: {preferred_time}\n💰 **Precio**: $80 USD\n\n¿Confirmas esta reserva?"
+    - text: "Perfect! Summarizing your booking:\n\n👤 **Name**: {name}\n📅 **Birth Date**: {birth_date}\n⏰ **Preferred Time**: {preferred_time}\n💰 **Price**: $80 USD\n\nDo you confirm this booking?"
+
+  # BOOKING SUCCESS
+  utter_booking_success:
+    - text: "¡Excelente! Tu sesión ha sido confirmada. José se pondrá en contacto contigo en las próximas 24 horas para coordinar los detalles finales. ¡Gracias por elegir SoulPath Wellness!"
+    - text: "Excellent! Your session has been confirmed. Jose will contact you within the next 24 hours to coordinate final details. Thank you for choosing SoulPath Wellness!"
+
+  # CONTACT INFORMATION
+  utter_contact_info:
+    - text: "Puedes contactarnos de las siguientes maneras:\n\n📞 **Teléfono**: +1 (555) 123-4567\n📧 **Email**: info@soulpathwellness.com\n🌐 **Website**: www.soulpathwellness.com\n📍 **Dirección**: 123 Wellness St, City, State\n\n¿Te gustaría agendar una sesión?"
+    - text: "You can contact us in the following ways:\n\n📞 **Phone**: +1 (555) 123-4567\n📧 **Email**: info@soulpathwellness.com\n🌐 **Website**: www.soulpathwellness.com\n📍 **Address**: 123 Wellness St, City, State\n\nWould you like to schedule a session?"
+
+  # HELP INFORMATION
+  utter_help_info:
+    - text: "¡Estoy aquí para ayudarte! Puedo asistirte con:\n\n📅 **Reservar sesiones** con José Garfias\n💰 **Información de precios** y paquetes\n⏰ **Disponibilidad** y horarios\n📞 **Información de contacto**\n🔮 **Tipos de sesiones** disponibles\n\n¿En qué te puedo ayudar específicamente?"
+    - text: "I'm here to help you! I can assist you with:\n\n📅 **Booking sessions** with Jose Garfias\n💰 **Pricing information** and packages\n⏰ **Availability** and schedules\n📞 **Contact information**\n🔮 **Types of sessions** available\n\nWhat can I help you with specifically?"
+
+  # BOT CHALLENGE RESPONSE
+  utter_bot_challenge_response:
+    - text: "Soy un asistente virtual diseñado para ayudarte a reservar sesiones con José Garfias. Aunque no soy humano, estoy aquí para hacer que tu experiencia de reserva sea fácil y agradable. ¿Te gustaría agendar una consulta?"
+    - text: "I'm a virtual assistant designed to help you book sessions with Jose Garfias. While I'm not human, I'm here to make your booking experience easy and pleasant. Would you like to schedule a consultation?"
+
+  # DENIAL RESPONSE
+  utter_understand_denial:
+    - text: "Entiendo perfectamente. No hay problema. Si cambias de opinión más tarde, estaré aquí para ayudarte. ¿Hay algo más en lo que pueda asistirte?"
+    - text: "I understand perfectly. No problem at all. If you change your mind later, I'll be here to help you. Is there anything else I can assist you with?"
+
+  # GOODBYES
+  utter_goodbye:
+    - text: "¡Hasta luego! Que tengas un excelente día. Si necesitas algo más, no dudes en contactarnos."
+    - text: "Goodbye! Have an excellent day. If you need anything else, don't hesitate to contact us."
+    - text: "¡Adiós! Que las estrellas te guíen en tu camino."
+    - text: "Farewell! May the stars guide you on your path."
+
+actions:
+  - action_booking_confirmation
+  - action_send_booking_email
+  - action_validate_birth_date
+  - action_calculate_pricing

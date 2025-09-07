@@ -1,246 +1,401 @@
-import axios, { AxiosResponse } from 'axios';
-import { LLMRequest, LLMResponse, OrchestratorConfig, PromptMessage, SystemPrompt, UserPrompt } from '@/lib/types/conversational-orchestrator';
+interface OpenRouterResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: Array<{
+    index: number;
+    message: {
+      role: string;
+      content: string;
+    };
+    finish_reason: string;
+  }>;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+interface OpenRouterRequest {
+  model: string;
+  messages: Array<{
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+  }>;
+  max_tokens?: number;
+  temperature?: number;
+  top_p?: number;
+}
 
 export class OpenRouterService {
-  private config: OrchestratorConfig['openrouter'];
-  private baseUrl: string;
+  private apiKey: string;
+  private baseUrl: string = 'https://openrouter.ai/api/v1';
+  private defaultModel: string = 'meta-llama/llama-3.3-8b-instruct:free';
 
-  constructor(config: OrchestratorConfig['openrouter']) {
-    this.config = config;
-    this.baseUrl = config.baseUrl;
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey || process.env.OPENROUTER_API_KEY || '';
+    if (!this.apiKey) {
+      console.warn('⚠️ OpenRouter API key is not set. OpenRouter features will be disabled.');
+    }
   }
 
   /**
-   * Genera una respuesta usando el LLM a través de OpenRouter
+   * Generate a dynamic, empathetic response for the booking flow
    */
-  async generateResponse(
-    messages: PromptMessage[],
-    _context?: {
-      intent?: string;
-      entities?: Record<string, any>;
-      apiData?: any;
-      conversationHistory?: Array<{role: string, message: string, timestamp: string}>;
+  async generateBookingResponse(context: {
+    userMessage: string;
+    bookingState: any;
+    missingDetails: string[];
+    emotionalTone?: 'urgent' | 'calm' | 'confused' | 'excited';
+    persona: 'empathetic' | 'professional' | 'spiritual';
+  }): Promise<string> {
+    if (!this.apiKey) {
+      return "I'd be happy to help you with your booking. Please let me know what type of session you're interested in.";
     }
-  ): Promise<string> {
-    try {
-      const request: LLMRequest = {
-        messages: messages as any,
-        model: this.config.model,
-        temperature: this.config.temperature,
-        max_tokens: this.config.maxTokens
-      };
+    const systemPrompt = this.buildSystemPrompt(context);
+    const userPrompt = this.buildUserPrompt(context);
 
-      const response: AxiosResponse<LLMResponse> = await axios.post(
-        `${this.baseUrl}/chat/completions`,
-        request,
-        {
-          headers: {
-            'Authorization': `Bearer ${this.config.apiKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://your-app.com', // Reemplazar con tu dominio
-            'X-Title': 'Conversational Orchestrator' // Nombre de tu aplicación
-          },
-          timeout: 30000
-        }
-      );
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      max_tokens: 300,
+      temperature: 0.7
+    });
 
-      if (response.data.choices && response.data.choices.length > 0) {
-        return response.data.choices[0].message.content;
+    return response.choices[0]?.message?.content || 'I apologize, but I had trouble generating a response. Could you please try again?';
+  }
+
+  /**
+   * Handle NLU fallback when Rasa confidence is low
+   */
+  async extractEntitiesFromFallback(context: {
+    userMessage: string;
+    conversationHistory: Array<{ role: string; content: string }>;
+    requiredEntities: string[];
+  }): Promise<{
+    intent: string;
+    confidence: number;
+    entities: Record<string, any>;
+  }> {
+    const systemPrompt = `You are an expert at extracting structured information from natural language. 
+    Extract booking-related entities from user messages and return them in JSON format.
+    
+    Required entities: ${context.requiredEntities.join(', ')}
+    
+    Return format:
+    {
+      "intent": "book_reading" | "provide_info" | "chitchat" | "nlu_fallback",
+      "confidence": 0.0-1.0,
+      "entities": {
+        "person_name": "extracted name",
+        "email_address": "extracted email",
+        "phone_number": "extracted phone",
+        "birth_date": "extracted birth date",
+        "birth_time": "extracted birth time",
+        "birth_place": "extracted birth place",
+        "question_text": "extracted question",
+        "language_preference": "extracted language"
       }
+    }`;
 
-      throw new Error('No response generated from LLM');
+    const userPrompt = `Extract entities from this message: "${context.userMessage}"
+    
+    Conversation history:
+    ${context.conversationHistory.map(msg => `${msg.role}: ${msg.content}`).join('\n')}`;
+
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      max_tokens: 500,
+      temperature: 0.3
+    });
+
+    try {
+      const extracted = JSON.parse(response.choices[0]?.message?.content || '{}');
+      return {
+        intent: extracted.intent || 'nlu_fallback',
+        confidence: extracted.confidence || 0.5,
+        entities: extracted.entities || {}
+      };
     } catch (error) {
-      console.error('Error calling OpenRouter API:', error);
-      throw new Error(`OpenRouter API error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error parsing OpenRouter response:', error);
+      return {
+        intent: 'nlu_fallback',
+        confidence: 0.3,
+        entities: {}
+      };
     }
   }
 
   /**
-   * Genera una respuesta contextual basada en datos de API
+   * Handle general questions and chitchat
+   */
+  async handleChitchat(context: {
+    userMessage: string;
+    conversationHistory: Array<{ role: string; content: string }>;
+    brandContext: {
+      astrologerName: string;
+      services: string[];
+      specialties: string[];
+    };
+  }): Promise<string> {
+    const systemPrompt = `You are a knowledgeable and empathetic assistant for SoulPath Wellness, representing ${context.brandContext.astrologerName}.
+    
+    About our services:
+    - ${context.brandContext.services.join('\n- ')}
+    
+    Our specialties:
+    - ${context.brandContext.specialties.join('\n- ')}
+    
+    Keep responses SHORT and CONCISE (1-2 sentences max). Be warm and helpful. 
+    
+    IMPORTANT: If the user introduces themselves or mentions their name (in Spanish or English), acknowledge it warmly and ask how you can help them.
+    
+    If you don't know something specific, gently guide the user to book a reading for personalized answers.`;
+
+    const userPrompt = `User question: "${context.userMessage}"
+    
+    Conversation context:
+    ${context.conversationHistory.map(msg => `${msg.role}: ${msg.content}`).join('\n')}`;
+
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      max_tokens: 150,
+      temperature: 0.8
+    });
+
+    return response.choices[0]?.message?.content || 'I\'d be happy to help you with that! Would you like to book a reading to get personalized insights?';
+  }
+
+  /**
+   * Generate training data variations for Rasa
+   */
+  async generateTrainingVariations(originalMessage: string, intent: string): Promise<string[]> {
+    const systemPrompt = `Generate 5 different ways to express the same intent as the given message. 
+    Keep the same meaning but use different words, phrasing, and style. Make them sound natural and conversational.
+    
+    Intent: ${intent}
+    Original message: "${originalMessage}"`;
+
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `Generate variations for: "${originalMessage}"` }
+      ],
+      max_tokens: 300,
+      temperature: 0.9
+    });
+
+    const content = response.choices[0]?.message?.content || '';
+    return content.split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0 && !line.startsWith('-'))
+      .slice(0, 5);
+  }
+
+  private buildSystemPrompt(context: any): string {
+    const basePrompt = `You are an empathetic, intuitive, and spiritually aware astrology booking assistant for SoulPath Wellness. 
+    You help users book readings with Jose Garfias, a renowned astrologer.
+    
+    Your personality:
+    - Warm and welcoming
+    - Patient and understanding
+    - Spiritually aware and intuitive
+    - Professional yet personal
+    - Encouraging and supportive
+    
+    Current booking state: ${JSON.stringify(context.bookingState, null, 2)}
+    Missing details: ${context.missingDetails.join(', ')}
+    
+    Your goal is to gently guide the user through the booking process while maintaining a spiritual, 
+    empathetic tone that reflects the transformative nature of astrology readings.`;
+
+    if (context.persona === 'spiritual') {
+      return basePrompt + `\n\nEmphasize the spiritual and transformative aspects of the reading. 
+      Use language that speaks to the soul and personal growth.`;
+    } else if (context.persona === 'professional') {
+      return basePrompt + `\n\nMaintain a professional yet warm tone. Focus on the practical aspects 
+      of the booking while being helpful and efficient.`;
+    }
+
+    return basePrompt;
+  }
+
+  private buildUserPrompt(context: any): string {
+    let prompt = `User message: "${context.userMessage}"\n\n`;
+    
+    if (context.missingDetails.length > 0) {
+      prompt += `The user still needs to provide: ${context.missingDetails.join(', ')}\n\n`;
+    }
+    
+    if (context.emotionalTone) {
+      prompt += `Emotional tone detected: ${context.emotionalTone}\n\n`;
+    }
+    
+    prompt += `Please respond in a way that moves the conversation forward while being empathetic and helpful.`;
+    
+    return prompt;
+  }
+
+  /**
+   * Generate an error response when something goes wrong
+   */
+  async generateErrorResponse(
+    errorMessage: string,
+    userMessage: string,
+    intent: string
+  ): Promise<string> {
+    const systemPrompt = `You are a helpful astrology booking assistant. Something went wrong, but be helpful and guide them toward booking a reading.
+
+Error: ${errorMessage}
+User: "${userMessage}"
+Intent: ${intent}
+
+Keep response SHORT (1-2 sentences).`;
+
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ],
+      max_tokens: 200,
+      temperature: 0.7
+    });
+
+    return response.choices[0]?.message?.content || 'I apologize, but I encountered an issue. Please try again or contact support for assistance.';
+  }
+
+  /**
+   * Generate a clarification response when intent is ambiguous
+   */
+  async generateClarificationResponse(
+    userMessage: string,
+    alternativeIntents: any[],
+    entities: Record<string, any>
+  ): Promise<string> {
+    const systemPrompt = `You are a helpful astrology booking assistant. The user's message was unclear, and you need to ask for clarification.
+
+User's message: "${userMessage}"
+Possible intents: ${alternativeIntents.map(i => i.name).join(', ')}
+Extracted entities: ${JSON.stringify(entities)}
+
+Please ask a clarifying question to help the user get the assistance they need.`;
+
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ],
+      max_tokens: 200,
+      temperature: 0.7
+    });
+
+    return response.choices[0]?.message?.content || 'I want to make sure I understand you correctly. Could you please clarify what you need help with?';
+  }
+
+  /**
+   * Generate a contextual response with full conversation context
    */
   async generateContextualResponse(
     userMessage: string,
     intent: string,
     entities: Record<string, any>,
     apiData: any,
-    conversationHistory: Array<{role: string, message: string, timestamp: string}> = []
+    conversationHistory: any[]
   ): Promise<string> {
-    const systemPrompt = this.buildSystemPrompt(intent, entities, apiData);
-    const userPrompt = this.buildUserPrompt(userMessage, intent, entities, apiData);
-    const historyPrompts = this.buildHistoryPrompts(conversationHistory);
+    const systemPrompt = `You are a helpful astrology booking assistant for SoulPath Wellness. Help users book readings with Jose Garfias.
 
-    const messages: PromptMessage[] = [
-      systemPrompt,
-      ...historyPrompts,
-      userPrompt
+Intent: ${intent}
+Entities: ${JSON.stringify(entities)}
+API Data: ${JSON.stringify(apiData)}
+
+IMPORTANT: Keep responses SHORT and CONCISE (1-2 sentences max). Be warm but brief.`;
+
+    const messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = [
+      { role: 'system', content: systemPrompt }
     ];
 
-    return this.generateResponse(messages, { intent, entities, apiData, conversationHistory });
+    // Add conversation history
+    conversationHistory.slice(-10).forEach(msg => {
+      messages.push({
+        role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant' | 'system',
+        content: msg.message || msg.content
+      });
+    });
+
+    // Add current message
+    messages.push({ role: 'user', content: userMessage });
+
+    const response = await this.makeRequest({
+      model: this.defaultModel,
+      messages,
+      max_tokens: 300,
+      temperature: 0.7
+    });
+
+    return response.choices[0]?.message?.content || 'I\'m here to help you with your astrology reading needs. How can I assist you today?';
   }
 
   /**
-   * Construye el prompt del sistema basado en la intención y datos
-   */
-  private buildSystemPrompt(
-    intent: string,
-    entities: Record<string, any>,
-    apiData: any
-  ): SystemPrompt {
-    const basePrompt = `Eres un asistente conversacional especializado en servicios de astrología y consultas espirituales. 
-    Tu objetivo es proporcionar respuestas útiles, precisas y conversacionales basadas en la información disponible.
-
-    REGLAS IMPORTANTES:
-    1. NUNCA inventes información que no esté disponible en los datos proporcionados
-    2. Si no tienes información suficiente, pide aclaraciones de manera natural
-    3. Mantén un tono profesional pero cálido, apropiado para WhatsApp
-    4. Usa emojis de manera moderada y apropiada
-    5. Responde en el idioma del usuario (español o inglés)
-    6. Si la información es sensible, sé discreto pero útil
-
-    CONTEXTO ACTUAL:
-    - Intención detectada: ${intent}
-    - Entidades extraídas: ${JSON.stringify(entities)}
-    - Datos de API disponibles: ${JSON.stringify(apiData, null, 2)}
-
-    INSTRUCCIONES ESPECÍFICAS:`;
-
-    let specificInstructions = '';
-
-    switch (intent) {
-      case 'consulta_estado':
-        specificInstructions = `
-        El usuario está consultando el estado de algo. Usa los datos de la API para proporcionar información precisa sobre el estado actual.
-        Si el estado no está claro, explica qué información necesitas para ayudar mejor.`;
-        break;
-      case 'agendar_cita':
-        specificInstructions = `
-        El usuario quiere agendar una cita. Usa la información de horarios disponibles y paquetes para ayudar con la reserva.
-        Si hay conflictos o información faltante, pide aclaraciones específicas.`;
-        break;
-      case 'consultar_paquetes':
-        specificInstructions = `
-        El usuario está consultando sobre paquetes disponibles. Presenta la información de manera clara y atractiva,
-        destacando beneficios y precios. Si hay descuentos o promociones, menciónalas.`;
-        break;
-      case 'pagar_servicio':
-        specificInstructions = `
-        El usuario quiere realizar un pago. Proporciona información clara sobre métodos de pago disponibles,
-        montos y pasos a seguir. Sé específico sobre confirmaciones y recibos.`;
-        break;
-      case 'cancelar_cita':
-        specificInstructions = `
-        El usuario quiere cancelar una cita. Confirma los detalles de la cancelación y explica cualquier política relevante.
-        Si hay opciones de reprogramación, menciónalas.`;
-        break;
-      default:
-        specificInstructions = `
-        El usuario tiene una consulta general. Proporciona una respuesta útil basada en la información disponible.
-        Si necesitas más información para ayudar mejor, pide aclaraciones específicas.`;
-    }
-
-    return {
-      role: 'system',
-      content: basePrompt + specificInstructions
-    };
-  }
-
-  /**
-   * Construye el prompt del usuario
-   */
-  private buildUserPrompt(
-    userMessage: string,
-    _intent: string,
-    _entities: Record<string, any>,
-    _apiData: any
-  ): UserPrompt {
-    return {
-      role: 'user',
-      content: userMessage
-    };
-  }
-
-  /**
-   * Construye los prompts del historial de conversación
-   */
-  private buildHistoryPrompts(
-    conversationHistory: Array<{role: string, message: string, timestamp: string}>
-  ): PromptMessage[] {
-    return conversationHistory
-      .slice(-6) // Últimas 6 interacciones para mantener contexto
-      .map(entry => ({
-        role: entry.role as 'user' | 'assistant',
-        content: entry.message
-      }));
-  }
-
-  /**
-   * Genera una respuesta de error amigable
-   */
-  async generateErrorResponse(
-    error: string,
-    userMessage: string,
-    intent?: string
-  ): Promise<string> {
-    const messages: PromptMessage[] = [
-      {
-        role: 'system',
-        content: `Eres un asistente que debe manejar errores de manera amigable. 
-        El usuario envió: "${userMessage}"
-        Hubo un error técnico: ${error}
-        Intención detectada: ${intent || 'desconocida'}
-        
-        Responde de manera empática, explica que hay un problema técnico temporal y ofrece alternativas o sugiere intentar más tarde.`
-      },
-      {
-        role: 'user',
-        content: userMessage
-      }
-    ];
-
-    return this.generateResponse(messages);
-  }
-
-  /**
-   * Genera una respuesta para intenciones ambiguas
-   */
-  async generateClarificationResponse(
-    userMessage: string,
-    possibleIntents: Array<{name: string, confidence: number}>,
-    entities: Record<string, any>
-  ): Promise<string> {
-    const messages: PromptMessage[] = [
-      {
-        role: 'system',
-        content: `El usuario envió un mensaje que puede interpretarse de varias maneras. 
-        Intenciones posibles: ${JSON.stringify(possibleIntents)}
-        Entidades detectadas: ${JSON.stringify(entities)}
-        
-        Pide aclaración de manera natural y ofrece opciones específicas para ayudar al usuario.`
-      },
-      {
-        role: 'user',
-        content: userMessage
-      }
-    ];
-
-    return this.generateResponse(messages);
-  }
-
-  /**
-   * Verifica el estado de salud del servicio OpenRouter
+   * Health check for OpenRouter service
    */
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await axios.get(`${this.baseUrl}/models`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.apiKey}`,
-        },
-        timeout: 10000
+      const response = await this.makeRequest({
+        model: this.defaultModel,
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant.' },
+          { role: 'user', content: 'Hello' }
+        ],
+        max_tokens: 10,
+        temperature: 0.1
       });
-      return response.status === 200;
+      return response.choices && response.choices.length > 0;
     } catch (error) {
       console.error('OpenRouter health check failed:', error);
       return false;
     }
   }
+
+  private async makeRequest(request: OpenRouterRequest): Promise<OpenRouterResponse> {
+    if (!this.apiKey) {
+      throw new Error('OpenRouter API key is not configured');
+    }
+    const response = await fetch(`${this.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
+        'X-Title': 'SoulPath Wellness Platform'
+      },
+      body: JSON.stringify(request)
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('OpenRouter API key invalid or missing');
+      }
+      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  }
 }
+
+export default OpenRouterService;

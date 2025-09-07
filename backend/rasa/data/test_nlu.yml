@@ -1,0 +1,66 @@
+version: "3.1"
+
+nlu:
+# Test cases for greeting
+- intent: greet
+  examples: |
+    - hola buenos días
+    - hey qué tal
+    - hello there
+    - saludos
+
+# Test cases for booking
+- intent: book_session
+  examples: |
+    - quiero agendar una cita de astrología
+    - necesito reservar una sesión de tarot
+    - me gustaría programar una consulta
+    - can I book a reading session
+
+# Test cases for astrology questions
+- intent: astrology_question
+  examples: |
+    - soy Leo y quiero saber sobre mi signo
+    - cuéntame sobre mi horóscopo
+    - qué significa ser Aries
+    - I'm a Scorpio, tell me about my sign
+
+# Test cases for pricing
+- intent: ask_pricing
+  examples: |
+    - cuánto cuesta una sesión
+    - qué precios tienen
+    - how much does it cost
+    - what are your rates
+
+# Test cases for availability
+- intent: ask_availability
+  examples: |
+    - cuándo tienen disponibilidad
+    - qué horarios manejan
+    - when are you available
+    - what's your schedule
+
+# Test cases for contact
+- intent: ask_contact
+  examples: |
+    - cómo los contacto
+    - cuál es su teléfono
+    - how can I reach you
+    - what's your phone number
+
+# Test cases for help
+- intent: ask_help
+  examples: |
+    - necesito ayuda
+    - no entiendo
+    - I need help
+    - can you help me
+
+# Test cases for goodbye
+- intent: goodbye
+  examples: |
+    - adiós gracias
+    - hasta luego
+    - goodbye
+    - see you later

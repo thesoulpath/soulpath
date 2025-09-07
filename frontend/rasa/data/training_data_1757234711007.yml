@@ -1,0 +1,19 @@
+version: "3.1"
+
+nlu:
+- intent: nlu_fallback
+  examples: |
+    - Here are 5 different ways to express the same intent:
+    - 1. "Let's give it a try"
+    - 2. "Run the experiment"
+    - 3. "See how it works"
+    - 4. "Try it out and see what happens"
+    - Here are 5 different ways to express the same intent:
+    - 1. "Soy María" - This is a more concise and informal way to introduce yourself.
+    - 2. "Llamo a María" - This phrase is similar to the original but uses a more formal tone.
+    - 3. "Me presento, soy María" - This variation is more conversational and includes a common phrase for introducing oneself.
+    - 4. "Mi nombre es María" - This phrase is a more literal translation and uses a more formal structure.
+    - Here are 5 different ways to express the same intent:
+    - 1. "See you later!"
+    - 2. "Bye for now"
+

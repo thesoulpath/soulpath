@@ -153,7 +153,7 @@ async function triggerRevalidation() {
     
     // Also trigger the revalidation API for additional pages
     try {
-      const revalResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/revalidate?path=/&tag=sections`, {
+      const revalResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || `http://localhost:${process.env.PORT || 3000}`}/api/revalidate?path=/&tag=sections`, {
         method: 'POST'
       });
       

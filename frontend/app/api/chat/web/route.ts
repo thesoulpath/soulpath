@@ -28,7 +28,7 @@ const orchestratorConfig: OrchestratorConfig = {
     storage: (process.env.LOGGING_STORAGE as 'database' | 'file' | 'console') || 'console'
   },
   apis: {
-    baseUrl: process.env.API_BASE_URL || 'http://localhost:3000/api',
+    baseUrl: process.env.API_BASE_URL || `${process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`}/api`,
     timeout: parseInt(process.env.API_TIMEOUT || '10000'),
     retries: parseInt(process.env.API_RETRIES || '3')
   }

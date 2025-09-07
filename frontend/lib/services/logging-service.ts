@@ -220,18 +220,41 @@ export class LoggingService {
    * Registra en la base de datos
    */
   private async logToDatabase(log: ConversationLog): Promise<void> {
-    await this.prisma.$executeRaw`
-      INSERT INTO conversation_logs (
-        id, user_id, message, intent, entities, action, 
-        rasa_response, llm_response, api_calls, processing_time, 
-        success, error, timestamp
-      ) VALUES (
-        ${log.id}, ${log.userId}, ${log.message}, ${log.intent}, 
-        ${JSON.stringify(log.entities)}, ${log.action}, 
-        ${log.rasaResponse}, ${log.llmResponse}, ${JSON.stringify(log.apiCalls)}, 
-        ${log.processingTime}, ${log.success}, ${log.error || null}, ${log.timestamp}
-      )
-    `;
+    try {
+      // For Telegram users (numeric chat IDs), always set userId to null since they don't exist in users table
+      // This avoids foreign key constraint issues
+      const isTelegramUser = log.userId && /^\d+$/.test(log.userId);
+      const userId = isTelegramUser ? null : log.userId;
+
+      await this.prisma.conversationLog.create({
+        data: {
+          sessionId: log.sessionId || `session_${Date.now()}`,
+          userId: userId,
+          userMessage: log.message,
+          botResponse: log.llmResponse || log.rasaResponse || 'No response generated',
+          rasaIntent: log.intent,
+          rasaConfidence: log.confidence || 0.5,
+          rasaEntities: log.entities || [],
+          responseGenerator: log.action || 'unknown',
+          bookingStep: log.bookingStep || null,
+          bookingDataSnapshot: log.bookingData || null,
+          modelVersion: log.modelVersion || '1.0.0'
+        }
+      });
+      
+      console.log('✅ Conversation log saved to database successfully');
+    } catch (error) {
+      console.error('Error saving conversation log to database:', error);
+      // Fallback to console logging instead of throwing
+      console.log('📝 [FALLBACK LOG]', {
+        id: log.id,
+        timestamp: log.timestamp,
+        userId: log.userId,
+        message: log.message,
+        intent: log.intent,
+        action: log.action
+      });
+    }
   }
 
   /**

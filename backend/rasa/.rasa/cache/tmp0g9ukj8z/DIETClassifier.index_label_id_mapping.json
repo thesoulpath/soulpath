@@ -1,0 +1,18 @@
+{
+  "0": "affirm",
+  "1": "ask_availability",
+  "2": "ask_contact",
+  "3": "ask_help",
+  "4": "ask_pricing",
+  "5": "astrology_question",
+  "6": "astrology_sign",
+  "7": "birth_date",
+  "8": "book_session",
+  "9": "bot_challenge",
+  "10": "deny",
+  "11": "goodbye",
+  "12": "greet",
+  "13": "mood_great",
+  "14": "mood_unhappy",
+  "15": "provide_name"
+}

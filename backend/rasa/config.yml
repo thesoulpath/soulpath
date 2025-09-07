@@ -1,52 +1,85 @@
-# Configuration for Rasa NLU and Core
-# Best practices: https://rasa.com/docs/rasa/model-configuration/
+# Configuration for Rasa NLU and Core with spaCy
+# https://rasa.com/docs/rasa/model-configuration/
 
 recipe: default.v1
 
-# Configuration for Rasa NLU (Memory Optimized)
+# The assistant project unique identifier
+assistant_id: soulpath-rasa
+
+# Configuration for Rasa NLU with spaCy
 # https://rasa.com/docs/rasa/nlu/components/
 language: es
 
 pipeline:
+# Enhanced tokenization (spaCy-compatible)
 - name: WhitespaceTokenizer
+
+# Advanced text preprocessing
+- name: LexicalSyntacticFeaturizer
+
+# Regex features for patterns
 - name: RegexFeaturizer
   case_sensitive: false
+
+# Lexical and syntactic features
 - name: LexicalSyntacticFeaturizer
+
+# Character-level features (improved)
 - name: CountVectorsFeaturizer
   analyzer: char_wb
   min_ngram: 1
-  max_ngram: 3  # Reduced from 4
+  max_ngram: 5
+  max_features: 15000
+  lowercase: true
+
+# Word-level features (improved)
+- name: CountVectorsFeaturizer
+  analyzer: word
+  min_ngram: 1
+  max_ngram: 3
+  max_features: 15000
+  lowercase: true
+
+# Enhanced DIET classifier
 - name: DIETClassifier
-  epochs: 50  # Reduced from 100
+  epochs: 150
   entity_recognition: true
   intent_classification: true
   use_masked_language_model: false
   constrain_similarities: true
   model_confidence: softmax
   random_seed: 42
+  learning_rate: 0.001
+  hidden_layers_sizes:
+    text: [256, 128]
+    label: [256, 128]
+  dropout: 0.2
+
+# Entity synonym mapping
 - name: EntitySynonymMapper
+
+# Response selection (improved)
 - name: ResponseSelector
-  epochs: 50  # Reduced from 100
+  epochs: 150
   constrain_similarities: true
   retrieval_intent: chitchat/ask_name
   use_gpu: false
+  learning_rate: 0.001
 
-# Configuration for Rasa Core (Memory Optimized)
-# https://rasa.com/docs/rasa/policies/
+# Enhanced fallback handling
+- name: FallbackClassifier
+  threshold: 0.4
+  ambiguity_threshold: 0.15
+
+# Configuration for Rasa Core (Enhanced)
+# https://rasa.com/docs/rasa/core/policies/
 policies:
 - name: MemoizationPolicy
-  max_history: 3  # Reduced from default
 - name: RulePolicy
 - name: UnexpecTEDIntentPolicy
-  max_history: 3  # Reduced from 5
-  epochs: 50  # Reduced from 100
-  use_gpu: false
+  max_history: 5
+  epochs: 100
 - name: TEDPolicy
-  max_history: 3  # Reduced from 5
-  epochs: 50  # Reduced from 100
+  max_history: 5
+  epochs: 100
   constrain_similarities: true
-  use_gpu: false
-  model_confidence: softmax
-  random_seed: 42
-
-assistant_id: soulpath-rasa

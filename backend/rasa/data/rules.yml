@@ -1,0 +1,33 @@
+version: "3.1"
+
+rules:
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Greet the user anytime they say hello
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Handle name provision
+  steps:
+  - intent: provide_name
+  - action: action_handle_name_provision
+
+- rule: Handle astrology sign
+  steps:
+  - intent: astrology_sign
+  - action: utter_astrology_sign
+
+- rule: Handle birth date
+  steps:
+  - intent: birth_date
+  - action: utter_birth_date

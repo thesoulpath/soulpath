@@ -1,0 +1,9 @@
+version: "3.1"
+
+nlu:
+- intent: nlu_fallback
+  examples: |
+    - Here are 5 different ways to express the same intent:
+    - 1. "Can you verify?"
+    - 2. "Let's give it a go"
+

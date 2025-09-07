@@ -21,7 +21,9 @@ import {
   User,
   Star,
   Video,
-  Zap
+  Zap,
+  Brain,
+  MessageSquare
 } from 'lucide-react';
 
 import { useAuth } from '../hooks/useAuth';
@@ -45,6 +47,9 @@ import { BugReportSystem } from './BugReportSystem';
 import { AstrologyManagement } from './AstrologyManagement';
 import { LiveSessionConfigManagement } from './LiveSessionConfigManagement';
 import { ExternalAPIManagement } from './ExternalAPIManagement';
+import { RasaMonitoring } from './RasaMonitoring';
+import { RasaModelTuning } from './RasaModelTuning';
+import ConversationLogsManagement from './admin/ConversationLogsManagement';
 import Link from 'next/link';
 
 interface AdminDashboardProps {
@@ -152,6 +157,9 @@ export function AdminDashboard({ onClose, isModal = true, children }: AdminDashb
           <div className="space-y-1">
             {[
               { key: 'astrology', icon: Star, label: 'Astrology Charts' },
+              { key: 'rasa-monitoring', icon: Brain, label: 'Rasa AI Monitoring' },
+              { key: 'rasa-tuning', icon: Settings, label: 'Model Tuning' },
+              { key: 'conversation-logs', icon: MessageSquare, label: 'Conversation Logs' },
               { key: 'clients', icon: Users, label: 'Client Management' },
               { key: 'bookings', icon: Calendar, label: 'Bookings Management' },
               { key: 'schedules', icon: Clock, label: 'Schedule Management' },
@@ -230,6 +238,9 @@ export function AdminDashboard({ onClose, isModal = true, children }: AdminDashb
                   {activeTab === 'bug-reports' && <BugReportManagement ref={bugReportManagementRef} />}
 
                   {activeTab === 'astrology' && <AstrologyManagement />}
+                  {activeTab === 'rasa-monitoring' && <RasaMonitoring />}
+                  {activeTab === 'rasa-tuning' && <RasaModelTuning />}
+                  {activeTab === 'conversation-logs' && <ConversationLogsManagement />}
                 </motion.div>
               </AnimatePresence>
             )}

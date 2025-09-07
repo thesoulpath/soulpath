@@ -1,0 +1,15 @@
+{
+  "0": "affirm",
+  "1": "ask_availability",
+  "2": "ask_contact",
+  "3": "ask_help",
+  "4": "ask_pricing",
+  "5": "astrology_question",
+  "6": "book_session",
+  "7": "bot_challenge",
+  "8": "deny",
+  "9": "goodbye",
+  "10": "greet",
+  "11": "mood_great",
+  "12": "mood_unhappy"
+}

@@ -33,6 +33,20 @@ export async function GET(request: NextRequest) {
 
     console.log('✅ Admin user authenticated:', user.email);
 
+    // Test database connection
+    try {
+      await prisma.$connect();
+      console.log('✅ Database connection successful');
+    } catch (dbError) {
+      console.error('❌ Database connection failed:', dbError);
+      return NextResponse.json({
+        success: false,
+        error: 'Database connection failed',
+        message: 'Unable to connect to database',
+        details: dbError instanceof Error ? dbError.message : 'Unknown database error'
+      }, { status: 500 });
+    }
+
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
     const validation = querySchema.safeParse(queryParams);
@@ -122,19 +136,55 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total count for pagination
-    const totalCount = await prisma.conversationLog.count({ where });
+    let totalCount: number;
+    try {
+      totalCount = await prisma.conversationLog.count({ where });
+      console.log('✅ Total count query successful:', totalCount);
+    } catch (countError) {
+      console.error('❌ Count query failed:', countError);
+      return NextResponse.json({
+        success: false,
+        error: 'Database query failed',
+        message: 'Unable to count conversation logs',
+        details: countError instanceof Error ? countError.message : 'Unknown count error'
+      }, { status: 500 });
+    }
 
     // Get the logs
-    const logs = await prisma.conversationLog.findMany({
-      where,
-      select,
-      orderBy: { timestamp: 'desc' },
-      skip: offset,
-      take: limit
-    });
+    let logs: any[];
+    try {
+      logs = await prisma.conversationLog.findMany({
+        where,
+        select,
+        orderBy: { timestamp: 'desc' },
+        skip: offset,
+        take: limit
+      });
+      console.log('✅ Logs query successful:', logs.length, 'logs found');
+    } catch (logsError) {
+      console.error('❌ Logs query failed:', logsError);
+      return NextResponse.json({
+        success: false,
+        error: 'Database query failed',
+        message: 'Unable to fetch conversation logs',
+        details: logsError instanceof Error ? logsError.message : 'Unknown logs error'
+      }, { status: 500 });
+    }
 
     // Calculate statistics
-    const stats = await calculateConversationStats(where);
+    let stats: any;
+    try {
+      stats = await calculateConversationStats(where);
+      console.log('✅ Statistics calculation successful');
+    } catch (statsError) {
+      console.error('❌ Statistics calculation failed:', statsError);
+      return NextResponse.json({
+        success: false,
+        error: 'Statistics calculation failed',
+        message: 'Unable to calculate conversation statistics',
+        details: statsError instanceof Error ? statsError.message : 'Unknown stats error'
+      }, { status: 500 });
+    }
 
     console.log(`✅ Found ${logs.length} conversation logs (${totalCount} total)`);
 
@@ -256,48 +306,63 @@ export async function POST(request: NextRequest) {
 }
 
 async function calculateConversationStats(where: any) {
-  const [
-    totalLogs,
-    lowConfidenceLogs,
-    highConfidenceLogs,
-    logsWithFeedback,
-    topIntents,
-    averageConfidence
-  ] = await Promise.all([
-    prisma.conversationLog.count({ where }),
-    prisma.conversationLog.count({ 
-      where: { ...where, rasaConfidence: { lte: 0.6 } } 
-    }),
-    prisma.conversationLog.count({ 
-      where: { ...where, rasaConfidence: { gte: 0.8 } } 
-    }),
-    prisma.conversationLog.count({ 
-      where: { ...where, feedback: { some: {} } } 
-    }),
-    prisma.conversationLog.groupBy({
-      by: ['rasaIntent'],
-      where,
-      _count: { rasaIntent: true },
-      orderBy: { _count: { rasaIntent: 'desc' } },
-      take: 10
-    }),
-    prisma.conversationLog.aggregate({
-      where,
-      _avg: { rasaConfidence: true }
-    })
-  ]);
+  try {
+    console.log('🔍 Calculating conversation statistics...');
+    
+    const [
+      totalLogs,
+      lowConfidenceLogs,
+      highConfidenceLogs,
+      logsWithFeedback,
+      topIntents,
+      averageConfidence
+    ] = await Promise.all([
+      prisma.conversationLog.count({ where }),
+      prisma.conversationLog.count({ 
+        where: { ...where, rasaConfidence: { lte: 0.6 } } 
+      }),
+      prisma.conversationLog.count({ 
+        where: { ...where, rasaConfidence: { gte: 0.8 } } 
+      }),
+      prisma.conversationLog.count({ 
+        where: { ...where, feedback: { some: {} } } 
+      }),
+      prisma.conversationLog.groupBy({
+        by: ['rasaIntent'],
+        where,
+        _count: { rasaIntent: true },
+        orderBy: { _count: { rasaIntent: 'desc' } },
+        take: 10
+      }),
+      prisma.conversationLog.aggregate({
+        where,
+        _avg: { rasaConfidence: true }
+      })
+    ]);
 
-  return {
-    totalLogs,
-    lowConfidenceLogs,
-    highConfidenceLogs,
-    logsWithFeedback,
-    averageConfidence: averageConfidence._avg.rasaConfidence || 0,
-    topIntents: topIntents.map(item => ({
-      intent: item.rasaIntent,
-      count: item._count.rasaIntent
-    }))
-  };
+    console.log('✅ Statistics calculated successfully:', {
+      totalLogs,
+      lowConfidenceLogs,
+      highConfidenceLogs,
+      logsWithFeedback,
+      averageConfidence: averageConfidence._avg.rasaConfidence
+    });
+
+    return {
+      totalLogs,
+      lowConfidenceLogs,
+      highConfidenceLogs,
+      logsWithFeedback,
+      averageConfidence: averageConfidence._avg.rasaConfidence || 0,
+      topIntents: topIntents.map(item => ({
+        intent: item.rasaIntent,
+        count: item._count.rasaIntent
+      }))
+    };
+  } catch (error) {
+    console.error('❌ Error calculating conversation statistics:', error);
+    throw error;
+  }
 }
 
 function convertToRasaFormat(logs: any[]): string {

@@ -1,0 +1,5 @@
+# Requirements for Rasa Actions Server
+rasa-sdk==3.6.1
+requests==2.31.0
+python-dateutil==2.8.2
+typing-extensions==4.7.1

@@ -29,10 +29,159 @@ export class ConversationalOrchestrator {
     this.intentActionMapping = intentActionMapping;
     
     this.rasaService = new RasaService(config.rasa);
-    this.openRouterService = new OpenRouterService(config.openrouter);
+    this.openRouterService = new OpenRouterService(config.openrouter.apiKey);
     this.twilioService = new TwilioService(config.twilio);
     this.apiService = new APIService(config.apis, intentActionMapping);
     this.loggingService = new LoggingService(config.logging);
+  }
+
+  /**
+   * Procesa un mensaje genérico (para Telegram, web chat, etc.)
+   */
+  async processMessage(text: string, context: ConversationContext): Promise<OrchestratorResponse> {
+    const startTime = Date.now();
+    let logId: string | undefined;
+
+    try {
+      // 1. Obtener o crear contexto de conversación
+      const conversationContext = this.getOrCreateConversationContext(context.userId, context.sessionId);
+      
+      // 2. Enviar mensaje a Rasa para detectar intención
+      const rasaResponse = await this.rasaService.parseMessage(text, context.userId);
+      
+      if (!rasaResponse || !rasaResponse.intent) {
+        return this.createErrorResponse('RASA_ERROR', 'Failed to get intent from Rasa');
+      }
+
+      // 3. Procesar la intención detectada
+      const intent = rasaResponse.intent.name;
+      const confidence = rasaResponse.intent.confidence;
+      
+      // 4. Verificar confianza mínima
+      if (confidence < this.config.rasa.confidence_threshold) {
+        let clarificationResponse: string;
+        try {
+          clarificationResponse = await this.openRouterService.generateContextualResponse(
+            text,
+            'low_confidence',
+            {},
+            null,
+            []
+          );
+        } catch (error) {
+          // Fallback response when OpenRouter is not available
+          clarificationResponse = "I'm not sure I understand. Could you please rephrase your question? I'm here to help with SoulPath wellness services!";
+        }
+        
+        return this.createSuccessResponse({
+          text: clarificationResponse,
+          intent: 'low_confidence',
+          confidence: confidence,
+          entities: rasaResponse.entities || []
+        });
+      }
+
+      // 5. Ejecutar acción según la intención
+      const actionMapping = this.intentActionMapping[intent];
+      if (!actionMapping) {
+        // Intención no mapeada, usar LLM para respuesta general
+        let generalResponse: string;
+        try {
+          generalResponse = await this.openRouterService.generateContextualResponse(
+            text,
+            intent,
+            rasaResponse.entities || {},
+            null,
+            []
+          );
+        } catch (error) {
+          // Fallback response when OpenRouter is not available
+          generalResponse = this.getFallbackResponse(intent, text);
+        }
+        
+        return this.createSuccessResponse({
+          text: generalResponse,
+          intent: intent,
+          confidence: confidence,
+          entities: rasaResponse.entities || []
+        });
+      }
+
+      // 6. Ejecutar acción específica
+      let actionResult: any = null;
+      if (actionMapping.apiEndpoint) {
+        actionResult = await this.apiService.executeAction(actionMapping.action, rasaResponse.entities || [], context.userId);
+      }
+
+      // 7. Generar respuesta final
+      let finalResponse: string;
+      if (actionMapping.description) {
+        finalResponse = actionMapping.description;
+        if (actionResult) {
+          finalResponse += `\n\n${JSON.stringify(actionResult, null, 2)}`;
+        }
+      } else {
+        try {
+          finalResponse = await this.openRouterService.generateContextualResponse(
+            text,
+            intent,
+            rasaResponse.entities || {},
+            actionResult,
+            []
+          );
+        } catch (error) {
+          // Fallback response when OpenRouter is not available
+          finalResponse = this.getFallbackResponse(intent, text);
+        }
+      }
+
+      // 8. Actualizar contexto de conversación
+      this.updateConversationContext(conversationContext, text, finalResponse, intent, rasaResponse.entities || []);
+
+      // 9. Log de la interacción
+      if (this.config.logging.enabled) {
+        logId = await this.loggingService.logConversation({
+          userId: context.userId,
+          message: text,
+          intent: intent,
+          entities: rasaResponse.entities || [],
+          action: actionMapping?.action || 'none',
+          rasaResponse: JSON.stringify(rasaResponse),
+          llmResponse: finalResponse,
+          apiCalls: actionResult ? [actionResult] : [],
+          processingTime: Date.now() - startTime,
+          success: true
+        });
+      }
+
+      return this.createSuccessResponse({
+        text: finalResponse,
+        intent: intent,
+        confidence: confidence,
+        entities: rasaResponse.entities || [],
+        action: actionMapping.action,
+        actionResult: actionResult,
+        logId: logId
+      });
+
+    } catch (error) {
+      console.error('Error processing message:', error);
+      
+      // Log del error
+      if (this.config.logging.enabled) {
+        await this.loggingService.logError(
+          context.userId,
+          error instanceof Error ? error.message : 'Unknown error',
+          {
+            message: text,
+            intent: 'error',
+            action: 'error_handling'
+          }
+        );
+      }
+
+      return this.createErrorResponse('PROCESSING_ERROR', 'An error occurred while processing your message');
+    }
   }
 
   /**
@@ -297,6 +446,24 @@ export class ConversationalOrchestrator {
       success: true,
       data
     };
+  }
+
+  /**
+   * Provides fallback responses when OpenRouter is not available
+   */
+  private getFallbackResponse(intent: string, _text: string): string {
+    const fallbackResponses: Record<string, string> = {
+      'greet': '¡Hola! ¿En qué puedo ayudarte?',
+      'goodbye': '¡Hasta luego! 🌟',
+      'book_session': 'Para reservar una sesión, contacta con nosotros. ¿Te interesa algún paquete?',
+      'ask_packages': 'Tenemos varios paquetes. ¿Cuál te interesa?',
+      'ask_pricing': 'Los precios varían. ¿Qué servicio necesitas?',
+      'ask_availability': '¿Cuál es tu horario preferido?',
+      'thank_you': '¡De nada! 😊',
+      'default': '¿En qué puedo ayudarte?'
+    };
+
+    return fallbackResponses[intent] || fallbackResponses['default'];
   }
 
   /**

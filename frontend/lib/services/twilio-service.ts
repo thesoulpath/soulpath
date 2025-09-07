@@ -7,11 +7,11 @@ export class TwilioService {
   private phoneNumber: string;
 
   constructor(config: OrchestratorConfig['twilio']) {
-    this.config = config;
-    this.phoneNumber = config.phoneNumber;
+    this.config = config || {};
+    this.phoneNumber = config?.phoneNumber || '';
     
     // Only initialize Twilio if credentials are available
-    if (config.accountSid && config.authToken) {
+    if (config?.accountSid && config?.authToken) {
       this.client = twilio(config.accountSid, config.authToken);
     } else {
       console.warn('Twilio credentials not configured, WhatsApp messaging disabled');

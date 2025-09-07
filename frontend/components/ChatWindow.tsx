@@ -12,11 +12,6 @@ interface Message {
   sender: 'user' | 'assistant';
   timestamp: Date;
   isTyping?: boolean;
-  quickReplies?: string[];
-  buttons?: Array<{
-    title: string;
-    payload: string;
-  }>;
 }
 
 // interface QuickReply {
@@ -60,10 +55,11 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
       const welcomeMessage: Message = {
         id: 'welcome',
         content: language === 'es'
-          ? '¡Hola! Soy tu asistente de astrología. ¿En qué puedo ayudarte hoy?\n\n📅 Agendar citas\n📦 Consultar paquetes\n💳 Información de pagos\n📊 Estado de solicitudes\n❓ Preguntas generales'
-          : 'Hello! I\'m your astrology assistant. How can I help you today?\n\n📅 Schedule appointments\n📦 View packages\n💳 Payment information\n📊 Request status\n❓ General questions',
+          ? '🌟 ¡Hola! Soy tu asistente personal de SoulPath Wellness\n\nEstoy aquí para ayudarte a explorar el fascinante mundo de la astrología con Jose Garfias. ¿Qué te gustaría hacer hoy?\n\n✨ **Descubre tu camino espiritual**\n🔮 **Lecturas personalizadas**\n📚 **Información sobre paquetes**\n💫 **Preguntas sobre astrología**'
+          : '🌟 Hello! I\'m your SoulPath Wellness assistant\n\nI\'m here to help you explore the fascinating world of astrology with Jose Garfias. What would you like to do today?\n\n✨ **Discover your spiritual path**\n🔮 **Personalized readings**\n📚 **Package information**\n💫 **Questions about astrology**',
         sender: 'assistant',
         timestamp: new Date(),
+        // Buttons removed for natural conversation
       };
       setMessages([welcomeMessage]);
     }
@@ -78,11 +74,14 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
     setIsMinimized(!isMinimized);
   };
 
+  const generateUniqueId = () => `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
+    const messageId = generateUniqueId();
     const userMessage: Message = {
-      id: `user_${Date.now()}`,
+      id: `user_${messageId}`,
       content: inputValue.trim(),
       sender: 'user',
       timestamp: new Date(),
@@ -93,52 +92,57 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
     setIsTyping(true);
 
     try {
-      // Send message to our simple chat API
-      const response = await fetch('/api/chat/simple', {
+      console.log('🤖 ChatWindow: Sending message...', { message: userMessage.content, messageId });
+
+      const response = await fetch('/api/chat/hybrid', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: userMessage.content,
-          userId: `web_user_${Date.now()}`, // Generate a unique user ID for web users
+          userId: `web_user_${messageId}`,
+          conversationHistory: messages.map(msg => ({ role: msg.sender, content: msg.content }))
         }),
       });
 
+      console.log('🤖 ChatWindow: Response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('🤖 ChatWindow: Response data:', data);
 
       if (data.success && data.response) {
+        const assistantMessageId = generateUniqueId();
         const assistantMessage: Message = {
-          id: `assistant_${Date.now()}`,
+          id: `assistant_${assistantMessageId}`,
           content: data.response,
           sender: 'assistant',
           timestamp: new Date(),
-          buttons: data.buttons || []
+          // Buttons removed for natural conversation
         };
         setMessages(prev => [...prev, assistantMessage]);
       } else {
-        // Handle error
-        const errorMessage: Message = {
-          id: `error_${Date.now()}`,
-          content: data.error || (language === 'es'
-            ? 'Lo siento, hubo un error al procesar tu mensaje. Por favor intenta de nuevo.'
-            : 'Sorry, there was an error processing your message. Please try again.'),
-          sender: 'assistant',
-          timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, errorMessage]);
+        throw new Error(data.error || 'No response received');
       }
     } catch (error) {
-      console.error('Chat error:', error);
-      const errorMessage: Message = {
-        id: `error_${Date.now()}`,
+      console.error('❌ ChatWindow: Error:', error);
+
+      // Ultimate fallback - provide helpful static response
+      const fallbackMessageId = generateUniqueId();
+      const fallbackMessage: Message = {
+        id: `fallback_${fallbackMessageId}`,
         content: language === 'es'
-          ? 'Error de conexión. Verifica tu conexión a internet e intenta de nuevo.'
-          : 'Connection error. Check your internet connection and try again.',
+          ? '¡Hola! Soy tu asistente de astrología de SoulPath. ¿En qué puedo ayudarte hoy?\n\nPuedes preguntarme sobre:\n• 📅 Agendar una lectura\n• 📦 Información de paquetes\n• 💳 Precios y pagos\n• 📊 Estado de citas\n• ❓ Preguntas generales sobre astrología'
+          : 'Hello! I\'m your SoulPath astrology assistant. How can I help you today?\n\nYou can ask me about:\n• 📅 Schedule a reading\n• 📦 Package information\n• 💳 Pricing and payments\n• 📊 Appointment status\n• ❓ General questions about astrology',
         sender: 'assistant',
         timestamp: new Date(),
+        // Buttons removed for natural conversation
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, fallbackMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -151,68 +155,7 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
     }
   };
 
-  const handleButtonClick = async (payload: string) => {
-    // Add the button text as a user message
-    const userMessage: Message = {
-      id: `user_${Date.now()}`,
-      content: payload,
-      sender: 'user',
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setIsTyping(true);
-
-    try {
-      // Send the button payload to the API
-      const response = await fetch('/api/chat/simple', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: payload,
-          userId: `web_user_${Date.now()}`,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.response) {
-        const assistantMessage: Message = {
-          id: `assistant_${Date.now()}`,
-          content: data.response,
-          sender: 'assistant',
-          timestamp: new Date(),
-          buttons: data.buttons || []
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      } else {
-        const errorMessage: Message = {
-          id: `error_${Date.now()}`,
-          content: data.error || (language === 'es'
-            ? 'Lo siento, hubo un error al procesar tu mensaje. Por favor intenta de nuevo.'
-            : 'Sorry, there was an error processing your message. Please try again.'),
-          sender: 'assistant',
-          timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, errorMessage]);
-      }
-    } catch (error) {
-      console.error('Chat error:', error);
-      const errorMessage: Message = {
-        id: `error_${Date.now()}`,
-        content: language === 'es'
-          ? 'Error de conexión. Verifica tu conexión a internet e intenta de nuevo.'
-          : 'Connection error. Check your internet connection and try again.',
-        sender: 'assistant',
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
+  // Button handling completely removed - now using natural conversation flow
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString(language === 'es' ? 'es-ES' : 'en-US', {
@@ -318,22 +261,7 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
                             }`}>
                               <div className="whitespace-pre-wrap">{message.content}</div>
                               
-                              {/* Buttons */}
-                              {message.buttons && message.buttons.length > 0 && (
-                                <div className="mt-3 space-y-2">
-                                  {message.buttons.map((button, index) => (
-                                    <motion.button
-                                      key={index}
-                                      onClick={() => handleButtonClick(button.payload)}
-                                      whileHover={{ scale: 1.02 }}
-                                      whileTap={{ scale: 0.98 }}
-                                      className="w-full text-left px-3 py-2 bg-[#FFD700]/10 hover:bg-[#FFD700]/20 border border-[#FFD700]/30 rounded-lg text-[#FFD700] text-sm transition-all duration-200"
-                                    >
-                                      {button.title}
-                                    </motion.button>
-                                  ))}
-                                </div>
-                              )}
+                              {/* Buttons removed - natural conversation flow */}
                               
                               <div className={`text-xs mt-1 ${
                                 message.sender === 'user' ? 'text-[#0A0A23]/70' : 'text-[#C0C0C0]'

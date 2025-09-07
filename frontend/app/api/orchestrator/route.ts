@@ -12,7 +12,7 @@ const orchestratorConfig: OrchestratorConfig = {
   openrouter: {
     apiKey: process.env.OPENROUTER_API_KEY || '',
     baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
-    model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.1-8b-instruct:free',
+    model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-8b-instruct:free',
     temperature: parseFloat(process.env.OPENROUTER_TEMPERATURE || '0.7'),
     maxTokens: parseInt(process.env.OPENROUTER_MAX_TOKENS || '1000')
   },
@@ -28,7 +28,7 @@ const orchestratorConfig: OrchestratorConfig = {
     storage: (process.env.LOGGING_STORAGE as 'database' | 'file' | 'console') || 'console'
   },
   apis: {
-    baseUrl: process.env.API_BASE_URL || 'http://localhost:3000/api',
+    baseUrl: process.env.API_BASE_URL || `${process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`}/api`,
     timeout: parseInt(process.env.API_TIMEOUT || '10000'),
     retries: parseInt(process.env.API_RETRIES || '3')
   }

@@ -187,3 +187,82 @@ stories:
   - action: utter_greet
   - intent: view_bookings
   - action: utter_view_bookings
+
+- story: flexible booking with complete details
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: book_reading
+  - action: utter_ask_for_details
+  - intent: provide_booking_details
+  - action: action_extract_booking_details
+  - action: action_validate_booking_details
+  - action: utter_confirm_booking_details
+  - intent: affirm
+  - action: utter_booking_confirmed
+
+- story: flexible booking with partial details
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: book_reading
+  - action: utter_ask_for_details
+  - intent: provide_name_only
+  - action: action_extract_booking_details
+  - action: action_ask_for_missing_details
+  - intent: provide_email_only
+  - action: action_extract_booking_details
+  - action: action_ask_for_missing_details
+  - intent: provide_birth_info
+  - action: action_extract_booking_details
+  - action: action_ask_for_missing_details
+  - intent: provide_question_info
+  - action: action_extract_booking_details
+  - action: action_validate_booking_details
+  - action: utter_confirm_booking_details
+  - intent: affirm
+  - action: utter_booking_confirmed
+
+- story: natural conversation booking
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: book_reading
+  - action: utter_ask_for_details
+  - intent: provide_name_only
+  - action: action_extract_booking_details
+  - action: utter_thank_you_for_details
+  - intent: provide_email_only
+  - action: action_extract_booking_details
+  - action: utter_thank_you_for_details
+  - intent: provide_birth_info
+  - action: action_extract_booking_details
+  - action: utter_thank_you_for_details
+  - intent: provide_question_info
+  - action: action_extract_booking_details
+  - action: action_validate_booking_details
+  - action: utter_confirm_booking_details
+  - intent: affirm
+  - action: utter_booking_confirmed
+
+- story: booking with missing details
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: book_reading
+  - action: utter_ask_for_details
+  - intent: provide_name_only
+  - action: action_extract_booking_details
+  - action: action_ask_for_missing_details
+  - intent: provide_email_only
+  - action: action_extract_booking_details
+  - action: action_ask_for_missing_details
+  - intent: provide_birth_info
+  - action: action_extract_booking_details
+  - action: action_ask_for_missing_details
+  - intent: provide_phone_info
+  - action: action_extract_booking_details
+  - action: action_validate_booking_details
+  - action: utter_confirm_booking_details
+  - intent: affirm
+  - action: utter_booking_confirmed

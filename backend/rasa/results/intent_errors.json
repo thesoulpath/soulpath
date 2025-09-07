@@ -1,0 +1,98 @@
+[
+  {
+    "text": "cuánto cuesta una sesión",
+    "intent": "ask_pricing",
+    "intent_prediction": {
+      "name": "book_session",
+      "confidence": 0.27027177810668945
+    }
+  },
+  {
+    "text": "qué precios tienen",
+    "intent": "ask_pricing",
+    "intent_prediction": {
+      "name": "ask_contact",
+      "confidence": 0.21248508989810944
+    }
+  },
+  {
+    "text": "how much does it cost",
+    "intent": "ask_pricing",
+    "intent_prediction": {
+      "name": "book_session",
+      "confidence": 0.2201261967420578
+    }
+  },
+  {
+    "text": "what are your rates",
+    "intent": "ask_pricing",
+    "intent_prediction": {
+      "name": "ask_contact",
+      "confidence": 0.21464617550373077
+    }
+  },
+  {
+    "text": "cuándo tienen disponibilidad",
+    "intent": "ask_availability",
+    "intent_prediction": {
+      "name": "astrology_question",
+      "confidence": 0.612311840057373
+    }
+  },
+  {
+    "text": "qué horarios manejan",
+    "intent": "ask_availability",
+    "intent_prediction": {
+      "name": "astrology_question",
+      "confidence": 0.5385672450065613
+    }
+  },
+  {
+    "text": "when are you available",
+    "intent": "ask_availability",
+    "intent_prediction": {
+      "name": "astrology_question",
+      "confidence": 0.44615769386291504
+    }
+  },
+  {
+    "text": "what's your schedule",
+    "intent": "ask_availability",
+    "intent_prediction": {
+      "name": "astrology_question",
+      "confidence": 0.42542222142219543
+    }
+  },
+  {
+    "text": "necesito ayuda",
+    "intent": "ask_help",
+    "intent_prediction": {
+      "name": "book_session",
+      "confidence": 0.177198126912117
+    }
+  },
+  {
+    "text": "no entiendo",
+    "intent": "ask_help",
+    "intent_prediction": {
+      "name": "ask_contact",
+      "confidence": 0.19097669422626495
+    }
+  },
+  {
+    "text": "I need help",
+    "intent": "ask_help",
+    "intent_prediction": {
+      "name": "astrology_question",
+      "confidence": 0.2770191729068756
+    }
+  },
+  {
+    "text": "can you help me",
+    "intent": "ask_help",
+    "intent_prediction": {
+      "name": "astrology_question",
+      "confidence": 0.2293906807899475
+    }
+  }
+]
