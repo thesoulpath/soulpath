@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenRouterService from '@/lib/services/openrouter-service';
+import { LoggingService } from '@/lib/services/logging-service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +15,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Initialize logging service
+    const loggingService = new LoggingService({
+      enabled: true,
+      storage: 'database',
+      level: 'info'
+    });
 
     let response = '';
     const lowerMessage = message.toLowerCase();
@@ -65,13 +73,13 @@ export async function POST(request: NextRequest) {
       console.log('Rasa not available, using fallback methods');
     }
 
-    // If Rasa didn't provide a response, use pattern matching
+    // If Rasa didn't provide a response, use pattern matching for simple greetings only
     if (!response) {
       response = getSimpleResponse(lowerMessage, conversationHistory) || '';
     }
 
-    // If still no response, use OpenRouter
-    if (!response) {
+    // For complex queries or if no simple response, use OpenRouter
+    if (!response || isComplexQuery(lowerMessage)) {
       try {
         const openRouter = new OpenRouterService();
         response = await openRouter.handleChitchat({
@@ -103,6 +111,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Log the conversation
+    try {
+      await loggingService.logConversation({
+        sessionId: `hybrid_${Date.now()}`,
+        userId: userId || 'anonymous',
+        userMessage: message,
+        botResponse: response,
+        rasaIntent: 'hybrid_chat',
+        rasaConfidence: 0.8,
+        rasaEntities: [],
+        responseGenerator: 'hybrid_chat',
+        bookingStep: null,
+        bookingDataSnapshot: null,
+        modelVersion: '1.0.0',
+        intent: 'hybrid_chat',
+        entities: [],
+        action: 'hybrid_chat',
+        rasaResponse: response,
+        llmResponse: response,
+        apiCalls: [],
+        processingTime: 0,
+        success: true,
+        error: null
+      });
+    } catch (logError) {
+      console.error('Error logging conversation:', logError);
+    }
+
     return NextResponse.json({
       success: true,
       response: response,
@@ -120,6 +156,24 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// Helper function to detect complex queries that need OpenRouter
+function isComplexQuery(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+  
+  // Complex query indicators
+  const complexPatterns = [
+    'confused', 'confundido', 'guidance', 'orientación', 'help me', 'ayúdame',
+    'career', 'carrera', 'work', 'trabajo', 'job', 'empleo', 'future', 'futuro',
+    'relationship', 'relación', 'love', 'amor', 'family', 'familia', 'problem',
+    'problema', 'issue', 'asunto', 'difficult', 'difícil', 'struggling', 'luchando',
+    'advice', 'consejo', 'suggestion', 'sugerencia', 'recommendation', 'recomendación',
+    'what should', 'qué debería', 'how can', 'cómo puedo', 'why', 'por qué',
+    'feeling', 'sintiendo', 'emotion', 'emoción', 'mood', 'estado de ánimo'
+  ];
+  
+  return complexPatterns.some(pattern => lowerMessage.includes(pattern));
 }
 
 // Helper function for simple pattern matching (fallback)

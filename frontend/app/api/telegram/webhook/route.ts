@@ -23,9 +23,9 @@ const orchestratorConfig: OrchestratorConfig = {
     webhookUrl: process.env.TWILIO_WEBHOOK_URL || ''
   },
   logging: {
-    enabled: process.env.LOGGING_ENABLED === 'true',
+    enabled: process.env.LOGGING_ENABLED !== 'false', // Enable by default unless explicitly disabled
     level: (process.env.LOGGING_LEVEL as 'debug' | 'info' | 'warn' | 'error') || 'info',
-    storage: (process.env.LOGGING_STORAGE as 'database' | 'file' | 'console') || 'console'
+    storage: (process.env.LOGGING_STORAGE as 'database' | 'file' | 'console') || 'database'
   },
   apis: {
     baseUrl: process.env.API_BASE_URL || `${process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`}/api`,

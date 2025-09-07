@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     // Test database connection
     let dbStatus = 'unknown';
-    let dbError = null;
+    const dbError = null;
     try {
       await prisma.$connect();
       await prisma.$queryRaw`SELECT 1`;

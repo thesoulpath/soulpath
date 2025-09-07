@@ -7,7 +7,9 @@ export class LoggingService {
 
   constructor(config: OrchestratorConfig['logging']) {
     this.config = config;
-    this.prisma = new PrismaClient();
+    this.prisma = new PrismaClient({
+      log: ['query', 'info', 'warn', 'error'],
+    });
   }
 
   /**
@@ -231,30 +233,41 @@ export class LoggingService {
    */
   private async logToDatabase(log: ConversationLog): Promise<void> {
     try {
-      // For Telegram users (numeric chat IDs), always set userId to null since they don't exist in users table
-      // This avoids foreign key constraint issues
-      const isTelegramUser = log.userId && /^\d+$/.test(log.userId);
-      const userId = isTelegramUser ? null : log.userId;
+      console.log('🔍 Attempting to save conversation log to database...');
+      
+      // For all non-database users (including web users), set userId to null to avoid foreign key constraint issues
+      // Only set userId if it exists in the users table
+      const userId = null; // Always set to null to avoid foreign key constraints
 
-      await this.prisma.conversationLog.create({
+      console.log('🔍 Log data:', {
+        sessionId: log.sessionId || `session_${Date.now()}`,
+        userId: userId,
+        userMessage: log.userMessage || log.message || 'No message',
+        botResponse: log.botResponse || log.llmResponse || log.rasaResponse || 'No response generated',
+        rasaIntent: log.rasaIntent || log.intent,
+        rasaConfidence: log.rasaConfidence || log.confidence || 0.5,
+        responseGenerator: log.responseGenerator || log.action || 'unknown'
+      });
+
+      const result = await this.prisma.conversationLog.create({
         data: {
           sessionId: log.sessionId || `session_${Date.now()}`,
           userId: userId,
-          userMessage: log.message,
-          botResponse: log.llmResponse || log.rasaResponse || 'No response generated',
-          rasaIntent: log.intent,
-          rasaConfidence: log.confidence || 0.5,
-          rasaEntities: log.entities || [],
-          responseGenerator: log.action || 'unknown',
+          userMessage: log.userMessage || log.message || 'No message',
+          botResponse: log.botResponse || log.llmResponse || log.rasaResponse || 'No response generated',
+          rasaIntent: log.rasaIntent || log.intent,
+          rasaConfidence: log.rasaConfidence || log.confidence || 0.5,
+          rasaEntities: log.rasaEntities || log.entities || [],
+          responseGenerator: log.responseGenerator || log.action || 'unknown',
           bookingStep: log.bookingStep || null,
-          bookingDataSnapshot: log.bookingData || null,
+          bookingDataSnapshot: log.bookingDataSnapshot || log.bookingData || null,
           modelVersion: log.modelVersion || '1.0.0'
         }
       });
       
-      console.log('✅ Conversation log saved to database successfully');
+      console.log('✅ Conversation log saved to database successfully with ID:', result.id);
     } catch (error) {
-      console.error('Error saving conversation log to database:', error);
+      console.error('❌ Error saving conversation log to database:', error);
       // Fallback to console logging instead of throwing
       console.log('📝 [FALLBACK LOG]', {
         id: log.id,

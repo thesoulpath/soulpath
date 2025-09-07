@@ -100,17 +100,17 @@ export async function POST(request: NextRequest) {
 }
 
 async function saveTrainingDataToFile(trainingData: any[]): Promise<string> {
-  const fs = require('fs').promises;
-  const path = require('path');
+  const fs = await import('fs/promises');
+  const path = await import('path');
   
-  const rasaDataDir = path.join(process.cwd(), 'rasa', 'data');
+  const rasaDataDir = path.default.join(process.cwd(), 'rasa', 'data');
   const fileName = `training_data_${Date.now()}.yml`;
-  const filePath = path.join(rasaDataDir, fileName);
+  const filePath = path.default.join(rasaDataDir, fileName);
 
   // Convert training data to Rasa NLU format
   const rasaFormat = convertToRasaFormat(trainingData);
   
-  await fs.writeFile(filePath, rasaFormat, 'utf8');
+  await fs.default.writeFile(filePath, rasaFormat, 'utf8');
   return filePath;
 }
 
@@ -147,8 +147,8 @@ function convertToRasaFormat(trainingData: any[]): string {
 }
 
 async function trainRasaModel(): Promise<string> {
-  const { exec } = require('child_process');
-  const { promisify } = require('util');
+  const { exec } = await import('child_process');
+  const { promisify } = await import('util');
   const execAsync = promisify(exec);
   
   const rasaDir = path.join(process.cwd(), 'rasa');
