@@ -71,23 +71,53 @@ export interface LLMResponse {
 }
 
 export interface ConversationLog {
-  id: string;
-  userId: string;
-  message: string;
-  intent: string;
-  entities: Array<{
-    entity: string;
-    value: string;
-    confidence: number;
-  }>;
-  action: string;
-  rasaResponse: string;
-  llmResponse: string;
-  apiCalls: APICallResult[];
+  id: number;
+  sessionId: string;
+  userId: string | null;
+  userMessage: string;
+  botResponse: string | null;
   timestamp: string;
-  processingTime: number;
+  rasaIntent: string | null;
+  rasaConfidence: number | null;
+  rasaEntities: any[] | null;
+  responseGenerator: string;
+  bookingStep: string | null;
+  bookingDataSnapshot: any | null;
+  modelVersion: string | null;
+  feedback?: UserFeedback[];
+}
+
+export interface UserFeedback {
+  id: number;
+  conversationLogId: number;
+  sessionId: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  reviewedForTraining: boolean;
+}
+
+export interface ConversationStats {
+  totalLogs: number;
+  lowConfidenceLogs: number;
+  highConfidenceLogs: number;
+  logsWithFeedback: number;
+  averageConfidence: number;
+  topIntents: Array<{intent: string, count: number}>;
+}
+
+export interface ConversationLogsResponse {
   success: boolean;
-  error?: string;
+  data: ConversationLog[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  statistics: ConversationStats;
 }
 
 export interface OrchestratorConfig {
