@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         apiCalls: [],
         processingTime: 0,
         success: true,
-        error: null
+        error: undefined
       });
     } catch (logError) {
       console.error('Error logging conversation:', logError);
