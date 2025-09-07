@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenRouterService } from '@/lib/services/openrouter-service';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const openRouterService = new OpenRouterService();
     
