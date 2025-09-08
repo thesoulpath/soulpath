@@ -175,7 +175,8 @@ export async function POST(request: NextRequest) {
 // Helper function to fetch packages from API
 async function fetchPackagesFromAPI(): Promise<string> {
   try {
-    const response = await fetch('http://localhost:3000/api/packages?active=true', {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+    const response = await fetch(`${baseUrl}/api/packages?active=true`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -226,7 +227,8 @@ async function fetchPackagesFromAPI(): Promise<string> {
 // Helper function to fetch specific package details
 async function fetchPackageDetailsFromAPI(packageName?: string, packageId?: string): Promise<string> {
   try {
-    const response = await fetch('http://localhost:3000/api/packages?active=true', {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+    const response = await fetch(`${baseUrl}/api/packages?active=true`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -409,10 +411,33 @@ async function getSimpleResponse(lowerMessage: string, conversationHistory: any[
     return await fetchPackagesFromAPI();
   }
 
-  // Pricing questions
-  if (lowerMessage.includes('precio') || lowerMessage.includes('price') || lowerMessage.includes('cost') ||
-      lowerMessage.includes('costo') || lowerMessage.includes('cuanto cuesta')) {
-    return '💰 **Precios:**\n• Consulta Básica: $50 (30 min)\n• Carta Natal: $75 (60 min)\n• Compatibilidad: $85 (75 min)\n• Coaching: $70 (50 min)\n\n💎 **Paquetes:**\n• Descubrimiento: $120\n• Transformación: $180\n• Iluminación: $250\n\n¿Te interesa algún paquete específico?';
+  // Pricing questions - use same API as packages
+  if (lowerMessage.includes('precio') || lowerMessage.includes('price') || 
+      lowerMessage.includes('cost') || lowerMessage.includes('costo') || 
+      lowerMessage.includes('cuanto cuesta') || lowerMessage.includes('how much') ||
+      lowerMessage.includes('tarifa') || lowerMessage.includes('rate') ||
+      lowerMessage.includes('valor') || lowerMessage.includes('value') ||
+      lowerMessage.includes('coste') || lowerMessage.includes('costes') ||
+      lowerMessage.includes('cuanto vale') || lowerMessage.includes('worth') ||
+      lowerMessage.includes('tarifario') || lowerMessage.includes('pricing') ||
+      lowerMessage.includes('lista de precios') || lowerMessage.includes('price list') ||
+      lowerMessage.includes('tabla de precios') || lowerMessage.includes('price table') ||
+      lowerMessage.includes('catálogo de precios') || lowerMessage.includes('price catalog') ||
+      lowerMessage.includes('información de precios') || lowerMessage.includes('pricing information') ||
+      lowerMessage.includes('detalles de precios') || lowerMessage.includes('pricing details') ||
+      lowerMessage.includes('opciones de precios') || lowerMessage.includes('price options') ||
+      lowerMessage.includes('rangos de precios') || lowerMessage.includes('price range') ||
+      lowerMessage.includes('estructura de precios') || lowerMessage.includes('pricing structure') ||
+      lowerMessage.includes('política de precios') || lowerMessage.includes('pricing policy') ||
+      lowerMessage.includes('cost structure') || lowerMessage.includes('fee structure') ||
+      lowerMessage.includes('rate structure') || lowerMessage.includes('cost breakdown') ||
+      lowerMessage.includes('price breakdown') || lowerMessage.includes('pricing guide') ||
+      lowerMessage.includes('price guide') || lowerMessage.includes('cost guide') ||
+      lowerMessage.includes('rate guide') || lowerMessage.includes('fee guide') ||
+      lowerMessage.includes('pricing sheet') || lowerMessage.includes('price sheet') ||
+      lowerMessage.includes('cost sheet') || lowerMessage.includes('rate sheet') ||
+      lowerMessage.includes('fee sheet')) {
+    return await fetchPackagesFromAPI();
   }
 
   // Contact questions

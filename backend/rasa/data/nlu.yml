@@ -88,8 +88,6 @@ nlu:
     - What types of readings do you offer?
     - Can you tell me about your packages?
     - What's included in each package?
-    - How much do readings cost?
-    - What are your prices?
     - What's the difference between packages?
     - Can you explain your services?
     - What reading packages are available?
@@ -101,8 +99,6 @@ nlu:
     - ¿Qué tipos de lecturas ofreces?
     - ¿Puedes contarme sobre tus paquetes?
     - ¿Qué incluye cada paquete?
-    - ¿Cuánto cuestan las lecturas?
-    - ¿Cuáles son tus precios?
     - ¿Cuál es la diferencia entre paquetes?
     - ¿Puedes explicar tus servicios?
     - ¿Qué paquetes de lectura están disponibles?
@@ -110,9 +106,154 @@ nlu:
     - ¿Qué puedo reservar?
     - ¿Qué servicios proporcionas?
     - ¿Qué incluyen los paquetes?
-    - ¿Cuánto cuesta cada paquete?
     - ¿Qué paquetes ofrecen?
     - ¿Qué servicios tienen disponibles?
+
+- intent: ask_pricing
+  examples: |
+    - What are your prices?
+    - How much do you charge?
+    - What are your rates?
+    - How much does it cost?
+    - What's the price?
+    - What are the costs?
+    - How much for a reading?
+    - What's the fee?
+    - What are your fees?
+    - How much do sessions cost?
+    - What's the pricing?
+    - Show me prices
+    - I want to know the prices
+    - Tell me about pricing
+    - What are the rates for readings?
+    - How much are your services?
+    - What do you charge for sessions?
+    - What's the cost of a consultation?
+    - How much for astrology reading?
+    - cost
+    - costs
+    - rate
+    - rates
+    - value
+    - values
+    - ¿Cuáles son los precios?
+    - ¿Cuánto cuesta?
+    - ¿Cuál es el precio?
+    - ¿Cuáles son los costos?
+    - ¿Cuánto cobras?
+    - ¿Cuáles son las tarifas?
+    - ¿Cuánto cuesta una lectura?
+    - ¿Cuál es la tarifa?
+    - ¿Cuáles son las tarifas?
+    - ¿Cuánto cuestan las sesiones?
+    - ¿Cuál es el precio?
+    - Muéstrame los precios
+    - Quiero saber los precios
+    - Cuéntame sobre precios
+    - ¿Cuáles son las tarifas para lecturas?
+    - ¿Cuánto cuestan tus servicios?
+    - ¿Cuánto cobras por las sesiones?
+    - ¿Cuál es el costo de una consulta?
+    - ¿Cuánto cuesta una lectura de astrología?
+    - costo
+    - costos
+    - tarifa
+    - tarifas
+    - valor
+    - valores
+    - What are your package prices?
+    - Show me the pricing options
+    - I need pricing information
+    - What are the costs for packages?
+    - ¿Cuáles son tus precios?
+    - ¿Cuánto cobras?
+    - ¿Cuáles son tus tarifas?
+    - ¿Cuánto cuesta?
+    - ¿Cuál es el precio?
+    - valor
+    - valores
+    - cuál es el valor
+    - cuáles son los valores
+    - qué valor tiene
+    - cuánto vale
+    - cuánto valen
+    - precio de
+    - precio para
+    - coste
+    - costes
+    - cuánto cuesta
+    - cuánto cuestan
+    - cuál es el coste
+    - cuáles son los costes
+    - tarifario
+    - lista de precios
+    - tabla de precios
+    - catálogo de precios
+    - información de precios
+    - detalles de precios
+    - opciones de precios
+    - rangos de precios
+    - estructura de precios
+    - política de precios
+    - value
+    - values
+    - what's the value
+    - what are the values
+    - how much is it worth
+    - what's it worth
+    - pricing structure
+    - price list
+    - price range
+    - price options
+    - pricing details
+    - pricing information
+    - cost structure
+    - fee structure
+    - rate structure
+    - pricing policy
+    - price catalog
+    - price table
+    - cost breakdown
+    - price breakdown
+    - what does it cost
+    - how much does it cost
+    - what's the cost
+    - what are the costs
+    - pricing guide
+    - price guide
+    - cost guide
+    - rate guide
+    - fee guide
+    - pricing sheet
+    - price sheet
+    - cost sheet
+    - rate sheet
+    - fee sheet
+    - ¿Cuáles son los costos?
+    - ¿Cuánto por una lectura?
+    - ¿Cuál es la tarifa?
+    - ¿Cuáles son tus tarifas?
+    - ¿Cuánto cuestan las sesiones?
+    - ¿Cuál es el precio?
+    - Muéstrame los precios
+    - Quiero saber los precios
+    - Cuéntame sobre los precios
+    - ¿Cuáles son las tarifas para lecturas?
+    - ¿Cuánto cuestan tus servicios?
+    - ¿Cuánto cobras por las sesiones?
+    - ¿Cuál es el costo de una consulta?
+    - ¿Cuánto por una lectura de astrología?
+    - ¿Cuáles son los precios de los paquetes?
+    - Muéstrame las opciones de precios
+    - Necesito información de precios
+    - ¿Cuáles son los costos de los paquetes?
+    - ¿Cuánto vale cada paquete?
+    - ¿Qué precio tienen?
+    - ¿Cuánto sale?
+    - ¿Cuál es el costo?
+    - Dame los precios
+    - Quiero ver los precios
+    - Necesito saber los precios
 
 - intent: ask_packages
   examples: |

@@ -2,6 +2,7 @@
 Custom actions for the wellness astrology chatbot
 """
 import logging
+import os
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -32,8 +33,10 @@ class ActionDefaultFallback(Action):
         last_message = tracker.latest_message.get('text', '')
 
         # Try to understand the intent better
-        if any(word in last_message.lower() for word in ['precio', 'costo', 'tarifa', 'price', 'cost']):
-            dispatcher.utter_message(response="utter_pricing")
+        if any(word in last_message.lower() for word in ['precio', 'costo', 'tarifa', 'price', 'cost', 'cuánto', 'how much', 'rates', 'fees']):
+            dispatcher.utter_message(response="utter_ask_packages")
+            # Call the same action as packages to show pricing
+            return [ActionExecuted("action_fetch_packages")]
         elif any(word in last_message.lower() for word in ['horario', 'disponibilidad', 'schedule', 'available']):
             dispatcher.utter_message(response="utter_availability")
         elif any(word in last_message.lower() for word in ['contacto', 'teléfono', 'email', 'contact', 'phone']):
@@ -334,20 +337,31 @@ class ActionFetchPackages(Action):
     ) -> List[Dict[Text, Any]]:
 
         try:
-            # Make request to Next.js API
-            api_url = "http://localhost:3000/api/packages"  # Adjust URL as needed
+            # Build dynamic base URL from environment with sensible fallbacks
+            base_url = (
+                os.getenv("NEXT_PUBLIC_BASE_URL")
+                or os.getenv("FRONTEND_BASE_URL")
+                or os.getenv("API_BASE_URL")
+            )
+            if not base_url:
+                port = os.getenv("PORT") or os.getenv("FRONTEND_PORT") or "3001"
+                base_url = f"http://localhost:{port}"
+
+            api_url = f"{base_url}/api/packages"
             response = requests.get(api_url, timeout=10)
 
             if response.status_code == 200:
-                packages_data = response.json()
+                raw = response.json()
+                # Support both array and { packages: [...] } shapes
+                packages_list = raw.get('packages') if isinstance(raw, dict) else raw
 
                 # Format packages for display
-                if isinstance(packages_data, list) and packages_data:
-                    formatted_message = self._format_packages_message(packages_data)
+                if isinstance(packages_list, list) and packages_list:
+                    formatted_message = self._format_packages_message(packages_list)
                     dispatcher.utter_message(text=formatted_message)
 
                     # Store available packages in slot
-                    return [SlotSet("available_packages", packages_data)]
+                    return [SlotSet("available_packages", packages_list)]
                 else:
                     dispatcher.utter_message(
                         text="Lo siento, no pude obtener la información de paquetes en este momento. ¿Te gustaría que te ayude con algo más?"
@@ -432,8 +446,17 @@ class ActionFetchPackageDetails(Action):
             return []
 
         try:
-            # Make request to Next.js API
-            api_url = "http://localhost:3000/api/packages"  # Adjust URL as needed
+            # Build dynamic base URL from environment with sensible fallbacks
+            base_url = (
+                os.getenv("NEXT_PUBLIC_BASE_URL")
+                or os.getenv("FRONTEND_BASE_URL")
+                or os.getenv("API_BASE_URL")
+            )
+            if not base_url:
+                port = os.getenv("PORT") or os.getenv("FRONTEND_PORT") or "3001"
+                base_url = f"http://localhost:{port}"
+
+            api_url = f"{base_url}/api/packages"
             response = requests.get(api_url, timeout=10)
 
             if response.status_code == 200:

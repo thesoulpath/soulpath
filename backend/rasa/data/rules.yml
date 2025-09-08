@@ -31,3 +31,10 @@ rules:
   steps:
   - intent: birth_date
   - action: utter_birth_date
+
+# Ensure pricing goes straight to packages API
+- rule: Pricing triggers packages fetch
+  steps:
+  - intent: ask_pricing
+  - action: utter_ask_packages
+  - action: action_fetch_packages

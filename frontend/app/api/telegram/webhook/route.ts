@@ -88,6 +88,30 @@ function getTelegramOrchestrator(): ConversationalOrchestrator {
   return orchestrator;
 }
 
+function getBaseUrl(): string {
+  // In production, use the public base URL
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+  
+  // In development, try to detect the actual port being used
+  // Check if we're running on a different port
+  let port = process.env.PORT || 3000;
+  
+  // If PORT is not set, try to detect from the request or use common ports
+  if (!process.env.PORT) {
+    // Try common development ports
+    const commonPorts = [3000, 3001, 3002, 3003];
+    // For now, let's use 3001 since we know that's what Next.js is using
+    port = 3001;
+  }
+  
+  // For server-side requests, we need to use localhost with the correct port
+  const baseUrl = `http://localhost:${port}`;
+  console.log(`🔧 Constructed base URL: ${baseUrl} (PORT: ${port}, process.env.PORT: ${process.env.PORT})`);
+  return baseUrl;
+}
+
 export async function GET(_request: NextRequest) {
   try {
     console.log('🔍 GET /api/telegram/webhook - Health check');
@@ -147,7 +171,12 @@ export async function POST(request: NextRequest) {
                               lowerText.includes('lista') || lowerText.includes('list') ||
                               lowerText.includes('mostrar') || lowerText.includes('show') ||
                               lowerText.includes('ver') || lowerText.includes('see') ||
-                              lowerText.includes('dame') || lowerText.includes('give me');
+                              lowerText.includes('dame') || lowerText.includes('give me') ||
+                              lowerText.includes('precios') || lowerText.includes('prices') ||
+                              lowerText.includes('precio') || lowerText.includes('price') ||
+                              lowerText.includes('costo') || lowerText.includes('cost') ||
+                              lowerText.includes('tarifa') || lowerText.includes('rates') ||
+                              lowerText.includes('cuánto') || lowerText.includes('how much');
 
       console.log(`🔍 Text: "${text}" -> Lower: "${lowerText}" -> IsPackageRequest: ${isPackageRequest}`);
 
@@ -155,8 +184,10 @@ export async function POST(request: NextRequest) {
 
       if (isPackageRequest) {
         console.log('🔄 Package request detected, using hybrid chat directly...');
+        const baseUrl = getBaseUrl();
+        console.log(`🔗 Using base URL: ${baseUrl}`);
         try {
-          const hybridResponse = await fetch('http://localhost:3000/api/chat/hybrid', {
+          const hybridResponse = await fetch(`${baseUrl}/api/chat/hybrid`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -196,8 +227,10 @@ export async function POST(request: NextRequest) {
       // If orchestrator also failed, use hybrid chat as final fallback
       if (!response || !('success' in response) || !response.success || !response.data || !response.data.text) {
         console.log('🔄 Orchestrator failed, trying hybrid chat fallback...');
+        const baseUrl = getBaseUrl();
+        console.log(`🔗 Using base URL for fallback: ${baseUrl}`);
         try {
-          const hybridResponse = await fetch('http://localhost:3000/api/chat/hybrid', {
+          const hybridResponse = await fetch(`${baseUrl}/api/chat/hybrid`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
