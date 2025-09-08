@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: rasa-server
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m rasa run --enable-api --cors "*" --port $PORT --credentials credentials.yml --endpoints endpoints.yml
+    envVars:
+      - key: PORT
+        generateValue: true
+      - key: RASA_MODEL_SERVER
+        value: null
+      - key: RASA_CORE_ENDPOINTS
+        value: endpoints.yml
+      - key: RASA_NLU_ENDPOINTS
+        value: endpoints.yml
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+
+  - type: web
+    name: rasa-actions
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m rasa run actions --port $ACTIONS_PORT
+    envVars:
+      - key: ACTIONS_PORT
+        value: 5055
+      - key: RASA_MODEL_SERVER
+        value: null
+      - key: PYTHONPATH
+        value: /opt/render/project/src

@@ -1,0 +1,7 @@
+# Procfile for Render deployment
+
+# Main Rasa server
+web: bash start.sh
+
+# Actions server (if deploying separately)
+actions: python -m rasa run actions --port $ACTIONS_PORT
