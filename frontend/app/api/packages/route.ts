@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
         name: pkg.name,
         description: pkg.description || '',
         sessionsCount: pkg.sessionsCount,
-        price: price ? Number(price.price) : 0,
+        price: price ? (isNaN(Number(price.price)) ? 0 : Number(price.price)) : 0,
         currency: price?.currency?.symbol || '$',
         duration: pkg.sessionDuration.duration_minutes,
         isPopular: pkg.id === 1, // Mark first package as popular, adjust as needed

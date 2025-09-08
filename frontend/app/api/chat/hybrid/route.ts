@@ -72,8 +72,8 @@ export async function POST(request: NextRequest) {
             case 'package_details':
               // Use Rasa actions to fetch specific package details
               const entities = rasaData.entities || [];
-              const packageName = entities.find(e => e.entity === 'package_name')?.value;
-              const packageId = entities.find(e => e.entity === 'package_id')?.value;
+              const packageName = entities.find((e: any) => e.entity === 'package_name')?.value;
+              const packageId = entities.find((e: any) => e.entity === 'package_id')?.value;
               response = await fetchPackageDetailsFromAPI(packageName, packageId);
               break;
             default:
@@ -200,8 +200,8 @@ async function fetchPackagesFromAPI(): Promise<string> {
         const sessions = pkg.sessionsCount || 1;
         const duration = pkg.duration || 60;
         const isPopular = pkg.isPopular || false;
-        
-        const priceText = price > 0 ? `${currency}${price.toFixed(0)}` : 'Contactar para precio';
+
+        const priceText = (typeof price === 'number' && !isNaN(price) && price > 0) ? `${currency}${price.toFixed(0)}` : 'Contactar para precio';
         const popularBadge = isPopular ? ' ⭐ POPULAR' : '';
         
         message += `**${index + 1}. ${name}**${popularBadge}\n`;
@@ -257,8 +257,8 @@ async function fetchPackageDetailsFromAPI(packageName?: string, packageId?: stri
         const packageType = targetPackage.packageType || 'Estándar';
         const maxGroup = targetPackage.maxGroupSize || 1;
         const isPopular = targetPackage.isPopular || false;
-        
-        const priceText = price > 0 ? `${currency}${price.toFixed(0)}` : 'Contactar para precio';
+
+        const priceText = (typeof price === 'number' && !isNaN(price) && price > 0) ? `${currency}${price.toFixed(0)}` : 'Contactar para precio';
         const popularBadge = isPopular ? ' ⭐ POPULAR' : '';
         
         let message = `🌟 **${name}**${popularBadge}\n\n`;

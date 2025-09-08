@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -829,6 +830,29 @@ async function main() {
   });
   console.log('✅ Admin client profile created:', adminClient.id);
 
+  // 16.6. Create new admin user with password
+  console.log('👤 Creating new admin user (beto@soulpath.lat)...');
+  const hashedPassword = await bcrypt.hash('soulpath', 12);
+  const newAdminUser = await prisma.user.upsert({
+    where: { email: 'beto@soulpath.lat' },
+    update: {},
+    create: {
+      email: 'beto@soulpath.lat',
+      password: hashedPassword,
+      fullName: 'Beto Admin',
+      role: 'admin',
+      phone: '+1234567890',
+      status: 'active',
+      birthDate: new Date('1990-01-15'),
+      birthTime: new Date('1990-01-15T10:30:00'),
+      birthPlace: 'New York, USA',
+      question: 'How can I help manage the SOULPATH wellness system?',
+      language: 'en',
+      adminNotes: 'System administrator with full access'
+    }
+  });
+  console.log('✅ New admin user created:', newAdminUser.email);
+
   // 17. Create test purchases first
   console.log('💳 Creating test purchases...');
   const purchases = await Promise.all([
@@ -1107,6 +1131,7 @@ async function main() {
   console.log(`   💳 Test payment records: ${paymentRecords.length}`);
   console.log(`   👤 Admin profiles: skipped (model doesn't exist)`);
   console.log(`   👤 Admin client profile: ${adminClient.id}`);
+  console.log(`   👤 New admin user: ${newAdminUser.email}`);
   console.log(`   🖼️ Profile image: ${profileImage.id}`);
   console.log(`   🖼️ Test images: ${images.length}`);
   console.log(`   🐛 Test bug reports: ${bugReports.length}`);
@@ -1117,6 +1142,7 @@ async function main() {
   console.log('🔑 Test Credentials:');
   console.log('   Admin: admin@soulpath.lat');
   console.log('   Admin: coco@soulpath.lat (password: soulpath2025!)');
+  console.log('   Admin: beto@soulpath.lat (password: soulpath)');
   console.log('   Client 1: john.doe@example.com');
   console.log('   Client 2: maria.garcia@example.com');
   console.log('   Client 3: test@example.com');

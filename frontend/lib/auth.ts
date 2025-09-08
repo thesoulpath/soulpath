@@ -50,6 +50,7 @@ export async function requireAuth(request: NextRequest): Promise<AuthenticatedUs
     const isAdminByEmail = user.email && [
       'admin@soulpath.lat',
       'coco@soulpath.lat',
+      'beto@soulpath.lat',
       'admin@matmax.world',
       'alberto@matmax.world'
     ].includes(user.email);

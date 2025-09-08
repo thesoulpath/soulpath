@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star, Clock, Users, DollarSign, Calendar } from 'lucide-react';
+import { Star, Clock, Users, Calendar } from 'lucide-react';
 
-interface Package {
+export interface Package {
   id: number;
   name: string;
   description: string;
@@ -59,7 +59,7 @@ export function PackageDisplay({ packages, onPackageSelect, className = '' }: Pa
               )}
             </div>
             <div className="text-[#FFD700] font-bold text-sm">
-              {pkg.currency}{pkg.price.toFixed(0)}
+              {pkg.currency}{(typeof pkg.price === 'number' && !isNaN(pkg.price) ? pkg.price.toFixed(0) : 'Consultar precio')}
             </div>
           </div>
           

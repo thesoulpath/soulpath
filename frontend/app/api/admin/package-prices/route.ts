@@ -94,15 +94,15 @@ export async function GET(request: NextRequest) {
           }
         }
       },
-      currency: {
-        select: {
-          id: true,
-          code: true,
-          name: true,
-          symbol: true,
-          isDefault: true
+        currency: {
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            symbol: true,
+            is_default: true
+          }
         }
-      }
     };
 
     // Enhanced mode includes usage statistics
