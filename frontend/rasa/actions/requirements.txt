@@ -1,0 +1,2 @@
+rasa-sdk==1.10.3
+requests==2.31.0

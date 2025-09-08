@@ -97,6 +97,130 @@ nlu:
     - What can I book?
     - What services do you provide?
 
+- intent: ask_packages
+  examples: |
+    - Show me packages
+    - I want to see packages
+    - Can you show me available packages?
+    - What packages are available?
+    - Show available packages
+    - I'd like to see your packages
+    - Display packages
+    - List packages
+    - Show me what you offer
+    - I want to see your offerings
+    - Show me the packages
+    - Can I see the packages?
+    - What do you have available?
+    - Show me your services
+    - I want to see your services
+    - Display your packages
+    - List your packages
+    - Show me all packages
+    - I'd like to see all packages
+    - Can you list all packages?
+    - What packages do you offer?
+    - Show me your reading packages
+    - I want to see reading packages
+    - Display reading packages
+    - List reading packages
+    - Show me astrology packages
+    - I want to see astrology packages
+    - Display astrology packages
+    - List astrology packages
+    - Dame los paquetes
+    - Quiero ver los paquetes
+    - Muéstrame los paquetes
+    - Dame la lista
+    - Quiero ver paquetes
+    - Muéstrame paquetes
+    - Dame la lista de paquetes
+    - Quiero ver la lista
+    - Muéstrame la lista
+    - ¿Qué paquetes tienes?
+    - ¿Qué paquetes ofreces?
+    - Dame los paquetes disponibles
+    - Quiero ver los paquetes disponibles
+    - Muéstrame los paquetes disponibles
+
+- intent: show_packages
+  examples: |
+    - Show packages
+    - Display packages
+    - List packages
+    - Show me packages
+    - I want packages
+    - Show available packages
+    - Display available packages
+    - List available packages
+    - Show me available packages
+    - I want to see packages
+    - Show me what's available
+    - Display what's available
+    - List what's available
+    - Show me your packages
+    - Display your packages
+    - List your packages
+    - Dame los paquetes
+    - Quiero ver los paquetes
+    - Muéstrame los paquetes
+    - Dame la lista
+    - Quiero ver paquetes
+    - Muéstrame paquetes
+    - Dame la lista de paquetes
+    - Quiero ver la lista
+    - Muéstrame la lista
+    - ¿Qué paquetes tienes?
+    - ¿Qué paquetes ofreces?
+    - Dame los paquetes disponibles
+    - Quiero ver los paquetes disponibles
+    - Muéstrame los paquetes disponibles
+    - Show me your offerings
+    - Display your offerings
+    - List your offerings
+    - Show me your services
+    - Display your services
+    - List your services
+    - Show me your readings
+    - Display your readings
+    - List your readings
+    - Show me your astrology services
+    - Display your astrology services
+    - List your astrology services
+
+- intent: package_details
+  examples: |
+    - Tell me about the [Basic Reading](package_name)
+    - What's in the [Premium Package](package_name)?
+    - I want details about [package 1](package_name)
+    - Can you explain the [Deluxe Reading](package_name)?
+    - What does the [Standard Package](package_name) include?
+    - I need more info about [package 2](package_name)
+    - Tell me more about the [Comprehensive Reading](package_name)
+    - What's included in [package 3](package_name)?
+    - I want to know about the [Basic](package_name)
+    - Can you tell me about [package 1](package_id)?
+    - What's in [package 2](package_id)?
+    - Tell me about [package 3](package_id)
+    - I want details about [package 1](package_id)
+    - Can you explain [package 2](package_id)?
+    - What does [package 3](package_id) include?
+    - I need more info about [package 1](package_id)
+    - Tell me more about [package 2](package_id)
+    - What's included in [package 3](package_id)?
+    - I want to know about [package 1](package_id)
+    - Can you tell me about [package 2](package_id)?
+    - What's in [package 3](package_id)?
+    - Tell me about [package 1](package_id)
+    - I want details about [package 2](package_id)
+    - Can you explain [package 3](package_id)?
+    - What does [package 1](package_id) include?
+    - I need more info about [package 2](package_id)
+    - Tell me more about [package 3](package_id)
+    - What's included in [package 1](package_id)?
+    - I want to know about [package 2](package_id)
+    - Can you tell me about [package 3](package_id)?
+
 - intent: select_package
   examples: |
     - I want the [Basic Reading](package_name)

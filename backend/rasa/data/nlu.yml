@@ -1,154 +1,470 @@
 version: "3.1"
 
 nlu:
+# ============================================================================
+# CORE BOOKING INTENTS
+# ============================================================================
+
 - intent: greet
   examples: |
-    - hey
     - hello
     - hi
-    - hello there
+    - hey
     - good morning
     - good evening
-    - moin
+    - greetings
+    - nice to meet you
+    - how are you
+    - what's up
     - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
+    - hello there
+    - good day
     - good afternoon
-    - hola
-    - buenos días
-    - buenas tardes
-    - buenas noches
-    - qué tal
-    - saludos
+    - howdy
+    - hi friend
+    - hello friend
 
 - intent: goodbye
   examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
     - bye
     - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
     - see you later
-    - adiós
-    - hasta luego
-    - nos vemos
-    - hasta pronto
-    - que tengas buen día
+    - have a nice day
+    - good night
+    - take care
+    - catch you later
+    - until next time
+    - farewell
+    - see you around
+
+- intent: book_reading
+  examples: |
+    - I want to book a reading
+    - I'd like to schedule a reading
+    - Can I book an astrology reading?
+    - I want to book with Jose
+    - I need a reading
+    - I want to schedule a session
+    - Can I get a reading?
+    - I want to book a natal chart reading
+    - I'd like to book a session
+    - I want to make an appointment
+    - I need to book a reading
+    - I want to schedule an astrology session
+    - Can I book a consultation?
+    - I'd like to book a reading with Jose Garfias
+    - I want to get a reading
+    - I need to schedule a reading
+    - I want to book a spiritual reading
+    - Can I make a booking?
+    - I'd like to schedule a consultation
+    - I want to book an appointment
+
+- intent: provide_info
+  examples: |
+    - My name is [John Smith](person_name)
+    - I am [Sarah Johnson](person_name)
+    - I'm [Mike Davis](person_name)
+    - My email is [john@example.com](email_address)
+    - Email: [sarah@gmail.com](email_address)
+    - My phone is [555-123-4567](phone_number)
+    - Phone number: [+1-555-987-6543](phone_number)
+    - I was born on [January 15, 1990](birth_date)
+    - Birth date: [March 22, 1985](birth_date)
+    - My birth time is [2:30 PM](birth_time)
+    - I was born at [3:45 AM](birth_time)
+    - Birth place: [New York City](birth_place)
+    - I was born in [Los Angeles, California](birth_place)
+    - My question is about [my career](question_text)
+    - I want to know about [my love life](question_text)
+    - I'm curious about [my future](question_text)
+    - Language: [English](language_preference)
+    - I prefer [Spanish](language_preference)
+
+- intent: ask_package_info
+  examples: |
+    - What packages do you have?
+    - What are your reading options?
+    - What types of readings do you offer?
+    - Can you tell me about your packages?
+    - What's included in each package?
+    - How much do readings cost?
+    - What are your prices?
+    - What's the difference between packages?
+    - Can you explain your services?
+    - What reading packages are available?
+    - Tell me about your offerings
+    - What can I book?
+    - What services do you provide?
+    - ¿Qué paquetes tienes disponibles?
+    - ¿Cuáles son tus opciones de lectura?
+    - ¿Qué tipos de lecturas ofreces?
+    - ¿Puedes contarme sobre tus paquetes?
+    - ¿Qué incluye cada paquete?
+    - ¿Cuánto cuestan las lecturas?
+    - ¿Cuáles son tus precios?
+    - ¿Cuál es la diferencia entre paquetes?
+    - ¿Puedes explicar tus servicios?
+    - ¿Qué paquetes de lectura están disponibles?
+    - Cuéntame sobre tus ofertas
+    - ¿Qué puedo reservar?
+    - ¿Qué servicios proporcionas?
+    - ¿Qué incluyen los paquetes?
+    - ¿Cuánto cuesta cada paquete?
+    - ¿Qué paquetes ofrecen?
+    - ¿Qué servicios tienen disponibles?
+
+- intent: ask_packages
+  examples: |
+    - Show me packages
+    - I want to see packages
+    - Can you show me available packages?
+    - What packages are available?
+    - Show available packages
+    - I'd like to see your packages
+    - Display packages
+    - List packages
+    - Show me what you offer
+    - I want to see your offerings
+    - Show me the packages
+    - Can I see the packages?
+    - What do you have available?
+    - Show me your services
+    - I want to see your services
+    - Display your packages
+    - List your packages
+    - Show me all packages
+    - I'd like to see all packages
+    - Can you list all packages?
+    - What packages do you offer?
+    - Show me your reading packages
+    - I want to see reading packages
+    - Display reading packages
+    - List reading packages
+    - Show me astrology packages
+    - I want to see astrology packages
+    - Display astrology packages
+    - List astrology packages
+    - Dame los paquetes
+    - Quiero ver los paquetes
+    - Muéstrame los paquetes
+    - Dame la lista
+    - Quiero ver paquetes
+    - Muéstrame paquetes
+    - Dame la lista de paquetes
+    - Quiero ver la lista
+    - Muéstrame la lista
+    - ¿Qué paquetes tienes?
+    - ¿Qué paquetes ofreces?
+    - Dame los paquetes disponibles
+    - Quiero ver los paquetes disponibles
+    - Muéstrame los paquetes disponibles
+
+- intent: show_packages
+  examples: |
+    - Show me what's available
+    - Display what's available
+    - List what's available
+    - Show me your offerings
+    - Display your offerings
+    - List your offerings
+    - Show me your readings
+    - Display your readings
+    - List your readings
+    - Show me your astrology services
+    - Display your astrology services
+    - List your astrology services
+
+- intent: package_details
+  examples: |
+    - Tell me about the [Basic Reading](package_name)
+    - What's in the [Premium Package](package_name)?
+    - I want details about [package 1](package_name)
+    - Can you explain the [Deluxe Reading](package_name)?
+    - What does the [Standard Package](package_name) include?
+    - I need more info about [package 2](package_name)
+    - Tell me more about the [Comprehensive Reading](package_name)
+    - What's included in [package 3](package_name)?
+    - I want to know about the [Basic](package_name)
+    - Can you tell me about [package 1](package_id)?
+    - What's in [package 2](package_id)?
+    - Tell me about [package 3](package_id)
+    - I want details about [package 1](package_id)
+    - Can you explain [package 2](package_id)?
+    - What does [package 3](package_id) include?
+    - I need more info about [package 1](package_id)
+    - Tell me more about [package 2](package_id)
+    - What's included in [package 3](package_id)?
+    - I want to know about [package 1](package_id)
+    - Can you tell me about [package 2](package_id)?
+    - What's in [package 3](package_id)?
+    - Tell me about [package 1](package_id)
+    - I want details about [package 2](package_id)
+    - Can you explain [package 3](package_id)?
+    - What does [package 1](package_id) include?
+    - I need more info about [package 2](package_id)
+    - Tell me more about [package 3](package_id)
+    - What's included in [package 1](package_id)?
+    - I want to know about [package 2](package_id)
+    - Can you tell me about [package 3](package_id)?
+
+- intent: ask_name
+  examples: |
+    - What's your name?
+    - What should I call you?
+    - Who are you?
+    - What is your name?
+    - May I know your name?
+    - ¿Cuál es tu nombre?
+    - ¿Cómo te llamas?
+    - ¿Quién eres?
+
+- intent: ask_session_types
+  examples: |
+    - What types of sessions do you offer?
+    - What services are available?
+    - What can you help me with?
+    - What do you offer?
+    - Tell me about your services
+    - What kinds of readings do you do?
+    - ¿Qué tipos de sesiones ofreces?
+    - ¿Qué servicios están disponibles?
+    - ¿Con qué puedes ayudarme?
+    - ¿Qué ofreces?
+    - Cuéntame sobre tus servicios
+
+- intent: ask_payment
+  examples: |
+    - How do I pay?
+    - What are the payment options?
+    - How can I make payment?
+    - What payment methods do you accept?
+    - How do I pay for the session?
+    - ¿Cómo pago?
+    - ¿Cuáles son las opciones de pago?
+    - ¿Cómo puedo hacer el pago?
+    - ¿Qué métodos de pago aceptas?
+    - ¿Cómo pago por la sesión?
+
+- intent: provide_birth_date
+  examples: |
+    - My birth date is [January 15, 1990](date)
+    - I was born on [March 22, 1985](date)
+    - My birthday is [January 15](date)
+    - Born [1990](date)
+    - My date of birth is [15/03/1990](date)
+    - Mi fecha de nacimiento es [15 de enero de 1990](date)
+    - Nací el [22 de marzo de 1985](date)
+    - Mi cumpleaños es [15 de enero](date)
+    - Nací en [1990](date)
+    - Fecha de nacimiento [15/03/1990](date)
+
+- intent: select_package
+  examples: |
+    - I want the [Basic Reading](package_name)
+    - I'll take the [Premium Package](package_name)
+    - I choose the [Deluxe Reading](package_name)
+    - I'd like the [Standard Package](package_name)
+    - I want package [1](package_name)
+    - I'll go with the [Comprehensive Reading](package_name)
+    - I select the [Basic](package_name)
+    - I want the [Premium](package_name)
+    - I choose [package 2](package_name)
+    - I'll take the [Deluxe](package_name)
+
+- intent: select_timeslot
+  examples: |
+    - I want [Monday at 2 PM](date)
+    - I'll take [Tuesday morning](date)
+    - I choose [Wednesday at 3:30 PM](date)
+    - I want [Thursday afternoon](date)
+    - I'll go with [Friday at 10 AM](date)
+    - I select [Saturday evening](date)
+    - I want [next Monday](date)
+    - I'll take [tomorrow at 2 PM](date)
+    - I choose [this Friday](date)
+    - I want [Monday morning](date)
+    - Quiero [lunes a las 2 PM](date)
+    - Tomaré [mañana por la mañana](date)
+    - Elijo [miércoles a las 3:30 PM](date)
+    - Quiero [jueves por la tarde](date)
+    - Me quedo con [viernes a las 10 AM](date)
+    - Selecciono [sábado por la noche](date)
+    - Quiero [el próximo lunes](date)
+    - Tomaré [mañana a las 2 PM](date)
+    - Elijo [este viernes](date)
+    - Quiero [lunes por la mañana](date)
+
+- intent: confirm_booking
+  examples: |
+    - Yes, please book it
+    - Confirm the appointment
+    - Yes, I want to proceed
+    - Book it for me
+    - Go ahead and schedule it
+    - Yes, that's perfect
+    - Proceed with the booking
+    - Yes, book the session
+    - Confirm my appointment
+    - Sí, por favor reserva
+    - Confirma la cita
+    - Sí, quiero proceder
+    - Resérvalo para mí
+    - Adelante y prográmalo
+    - Sí, es perfecto
+    - Confirmo
+    - Procede con la reserva
+    - Sí, reserva la sesión
+    - Confirma mi cita
+    - Quiero confirmar la reserva
+    - Sí, adelante con la cita
 
 - intent: affirm
   examples: |
     - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
+    - yeah
+    - yep
+    - sure
+    - absolutely
     - correct
+    - right
+    - that's right
+    - exactly
+    - of course
+    - definitely
+    - I agree
+    - sounds good
+    - okay
+    - ok
+    - alright
+    - confirmed
+    - sí
+    - claro
+    - por supuesto
+    - definitivamente
+    - estoy de acuerdo
+    - suene bien
 
 - intent: deny
   examples: |
     - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
+    - nope
     - not really
+    - I don't think so
+    - that's not right
+    - incorrect
+    - wrong
+    - I disagree
+    - no thanks
+    - not interested
+    - I don't want to
+    - cancel
+    - stop
+    - never mind
+    - forget it
+    - I changed my mind
+    - never
+    - no quiero
+    - no me interesa
+    - cancela
+    - detente
+    - olvídate
 
-- intent: mood_great
+- intent: chitchat
   examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
+    - What is astrology?
+    - How does a natal chart work?
+    - What can you tell me about Jose?
+    - Who is Jose Garfias?
+    - What makes you different?
+    - How long have you been doing this?
+    - What should I expect?
+    - Is this accurate?
+    - How does this work?
+    - What is a reading like?
+    - Tell me about yourself
+    - What do you do?
+    - How are you?
+    - What's the weather like?
+    - How's your day?
+    - What time is it?
+    - Where are you located?
+    - Do you have a website?
+    - Can I call you?
+    - What's your phone number?
+    - ¿Qué es la astrología?
+    - ¿Cómo funciona una carta natal?
+    - ¿Qué me puedes contar sobre José?
+    - ¿Quién es José Garfias?
+    - ¿Qué te hace diferente?
+    - ¿Cuánto tiempo llevas haciendo esto?
+    - ¿Qué debo esperar?
+    - ¿Es esto preciso?
+    - ¿Cómo funciona esto?
+    - ¿Cómo es una lectura?
+    - Cuéntame sobre ti
+    - ¿Qué haces?
+    - ¿Cómo estás?
+    - ¿Qué tiempo hace?
+    - ¿Cómo está tu día?
+    - ¿Qué hora es?
+    - ¿Dónde están ubicados?
+    - ¿Tienen un sitio web?
+    - ¿Puedo llamarte?
+    - ¿Cuál es tu número de teléfono?
+    - ¿Qué opinas sobre mi signo?
+    - ¿Cómo es el horóscopo de hoy?
+    - ¿Qué significa mi ascendente?
+    - ¿Qué planetas están retrógrados?
+    - ¿Cuándo es mi próximo retorno solar?
 
-- intent: mood_unhappy
+- intent: nlu_fallback
   examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
-
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
-
-- intent: provide_name
-  examples: |
-    - me llamo [Maria](name)
-    - mi nombre es [Carlos](name)
-    - soy [Ana](name)
-    - I am [John](name)
-    - my name is [Sarah](name)
-    - I'm [Mike](name)
-    - me llamo [Beto](name)
-    - mi nombre es [Luis](name)
-    - soy [Elena](name)
-
-- intent: astrology_sign
-  examples: |
-    - mi signo
-    - cuál es mi signo
-    - what is my sign
-    - my sign is [leo](sign)
-    - soy [leo](sign)
-    - soy [aries](sign)
-    - soy [tauro](sign)
-    - soy [géminis](sign)
-    - soy [cáncer](sign)
-    - soy [virgo](sign)
-    - soy [libra](sign)
-    - soy [escorpio](sign)
-    - soy [sagitario](sign)
-    - soy [capricornio](sign)
-    - soy [acuario](sign)
-    - soy [piscis](sign)
-    - I am [leo](sign)
-    - I am [aries](sign)
-    - I am [taurus](sign)
-    - I am [gemini](sign)
-    - I am [cancer](sign)
-    - I am [virgo](sign)
-    - I am [libra](sign)
-    - I am [scorpio](sign)
-    - I am [sagittarius](sign)
-    - I am [capricorn](sign)
-    - I am [aquarius](sign)
-    - I am [pisces](sign)
-
-- intent: birth_date
-  examples: |
-    - nací el [15/03/1990](date)
-    - nací en [1990](date)
-    - mi fecha de nacimiento es [15/03/1990](date)
-    - born on [March 15, 1990](date)
-    - my birth date is [15/03/1990](date)
-    - I was born on [15/03/1990](date)
+    - asdfghjkl
+    - random text
+    - gibberish
+    - 123456789
+    - !@#$%^&*()
+    - qwertyuiop
+    - zxcvbnm
+    - lorem ipsum
+    - test test test
+    - hello world hello world
+    - what?
+    - huh?
+    - this doesn't make sense
+    - I'm lost
+    - help me understand
+    - what are you talking about?
+    - I don't get it
+    - can you explain?
+    - I'm not sure
+    - maybe
+    - possibly
+    - I think so
+    - I guess
+    - perhaps
+    - might be
+    - could be
+    - probably
+    - likely
+    - unlikely
+    - definitely not
+    - absolutely not
+    - always
+    - sometimes
+    - often
+    - rarely
+    - usually
+    - normally
+    - typically
+    - generally
+    - specifically
+    - particularly
+    - especially
+    - mainly
+    - mostly
+    - primarily
+    - essentially
+    - basically
+    - fundamentally

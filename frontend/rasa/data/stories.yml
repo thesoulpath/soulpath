@@ -266,3 +266,42 @@ stories:
   - action: utter_confirm_booking_details
   - intent: affirm
   - action: utter_booking_confirmed
+
+- story: ask for packages
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_packages
+  - action: action_fetch_packages
+
+- story: show packages
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: show_packages
+  - action: action_fetch_packages
+
+- story: package details request
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: package_details
+  - action: action_fetch_package_details
+
+- story: package selection after viewing
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_packages
+  - action: action_fetch_packages
+  - intent: select_package
+  - action: utter_ask_timeslot
+
+- story: package info inquiry
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_package_info
+  - action: action_fetch_packages
+  - intent: package_details
+  - action: action_fetch_package_details

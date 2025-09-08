@@ -19,11 +19,15 @@ services:
 
   rasa-actions:
     image: rasa/rasa:3.6.20-full
+    ports:
+      - "5055:5055"
     volumes:
       - ./rasa/actions:/app/actions
     command:
       - run
       - actions
+      - --port
+      - "5055"
       - --debug
     depends_on:
       - rasa

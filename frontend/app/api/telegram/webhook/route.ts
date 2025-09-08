@@ -46,6 +46,16 @@ const intentActionMapping: IntentActionMapping = {
     apiEndpoint: '/bookings',
     description: 'Te ayudo a reservar una sesión. ¿Qué tipo de sesión te interesa?'
   },
+  'ask_packages': {
+    action: 'view_packages',
+    apiEndpoint: '/packages',
+    description: 'Aquí tienes nuestros paquetes disponibles:'
+  },
+  'show_packages': {
+    action: 'view_packages',
+    apiEndpoint: '/packages',
+    description: 'Aquí tienes nuestros paquetes disponibles:'
+  },
   'view_packages': {
     action: 'view_packages',
     apiEndpoint: '/packages',
@@ -131,9 +141,92 @@ export async function POST(request: NextRequest) {
         conversationHistory: []
       };
 
-      // Procesar con el orquestador
-      const orchestrator = getTelegramOrchestrator();
-      const response = await orchestrator.processMessage(text, conversationContext);
+      // Check if this is a package request first (before trying orchestrator)
+      const lowerText = text.toLowerCase();
+      const isPackageRequest = lowerText.includes('paquetes') || lowerText.includes('packages') || 
+                              lowerText.includes('lista') || lowerText.includes('list') ||
+                              lowerText.includes('mostrar') || lowerText.includes('show') ||
+                              lowerText.includes('ver') || lowerText.includes('see') ||
+                              lowerText.includes('dame') || lowerText.includes('give me');
+
+      console.log(`🔍 Text: "${text}" -> Lower: "${lowerText}" -> IsPackageRequest: ${isPackageRequest}`);
+
+      let response;
+
+      if (isPackageRequest) {
+        console.log('🔄 Package request detected, using hybrid chat directly...');
+        try {
+          const hybridResponse = await fetch('http://localhost:3000/api/chat/hybrid', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: text,
+              userId: chatId.toString(),
+              conversationHistory: []
+            }),
+          });
+
+          if (hybridResponse.ok) {
+            const hybridData = await hybridResponse.json();
+            if (hybridData.success && hybridData.response) {
+              response = {
+                success: true,
+                data: {
+                  text: hybridData.response,
+                  intent: 'package_request',
+                  confidence: 0.9,
+                  entities: []
+                }
+              };
+            }
+          }
+        } catch (error) {
+          console.error('❌ Hybrid chat failed:', error);
+        }
+      }
+
+      // If not a package request or hybrid chat failed, try orchestrator
+      if (!response) {
+        const orchestrator = getTelegramOrchestrator();
+        response = await orchestrator.processMessage(text, conversationContext);
+      }
+
+      // If orchestrator also failed, use hybrid chat as final fallback
+      if (!response || !('success' in response) || !response.success || !response.data || !response.data.text) {
+        console.log('🔄 Orchestrator failed, trying hybrid chat fallback...');
+        try {
+          const hybridResponse = await fetch('http://localhost:3000/api/chat/hybrid', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: text,
+              userId: chatId.toString(),
+              conversationHistory: []
+            }),
+          });
+
+          if (hybridResponse.ok) {
+            const hybridData = await hybridResponse.json();
+            if (hybridData.success && hybridData.response) {
+              response = {
+                success: true,
+                data: {
+                  text: hybridData.response,
+                  intent: 'hybrid_fallback',
+                  confidence: 0.8,
+                  entities: []
+                }
+              };
+            }
+          }
+        } catch (error) {
+          console.error('❌ Hybrid chat fallback failed:', error);
+        }
+      }
 
       // Enviar respuesta a Telegram
       if (response && 'success' in response && response.success && response.data && response.data.text) {

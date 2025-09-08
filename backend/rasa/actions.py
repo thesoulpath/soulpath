@@ -319,3 +319,181 @@ class ActionHandleNameProvision(Action):
             )
 
         return []
+
+class ActionFetchPackages(Action):
+    """Fetch packages from the Next.js API"""
+
+    def name(self) -> Text:
+        return "action_fetch_packages"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        try:
+            # Make request to Next.js API
+            api_url = "http://localhost:3000/api/packages"  # Adjust URL as needed
+            response = requests.get(api_url, timeout=10)
+
+            if response.status_code == 200:
+                packages_data = response.json()
+
+                # Format packages for display
+                if isinstance(packages_data, list) and packages_data:
+                    formatted_message = self._format_packages_message(packages_data)
+                    dispatcher.utter_message(text=formatted_message)
+
+                    # Store available packages in slot
+                    return [SlotSet("available_packages", packages_data)]
+                else:
+                    dispatcher.utter_message(
+                        text="Lo siento, no pude obtener la información de paquetes en este momento. ¿Te gustaría que te ayude con algo más?"
+                    )
+            else:
+                dispatcher.utter_message(
+                    text="Disculpa, hay un problema técnico. ¿Podrías intentarlo de nuevo en unos momentos?"
+                )
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error fetching packages: {e}")
+            dispatcher.utter_message(
+                text="Lo siento, no pude conectarme al servicio de paquetes. ¿Te gustaría información sobre nuestros servicios?"
+            )
+        except Exception as e:
+            logger.error(f"Unexpected error in action_fetch_packages: {e}")
+            dispatcher.utter_message(
+                text="Hubo un error inesperado. ¿En qué más puedo ayudarte?"
+            )
+
+        return []
+
+    def _format_packages_message(self, packages: List[Dict]) -> str:
+        """Format packages data into a readable message"""
+        message = "🌟 **Paquetes Disponibles:**\n\n"
+
+        for i, package in enumerate(packages, 1):
+            name = package.get('name', f'Paquete {i}')
+            description = package.get('description', 'Descripción no disponible')
+            price = package.get('price', 'Precio no disponible')
+            currency = package.get('currency', '$')
+            sessions_count = package.get('sessionsCount', 1)
+            duration = package.get('duration', 60)
+
+            message += f"**{i}. {name}**\n"
+            if package.get('isPopular'):
+                message += "   ⭐ POPULAR\n"
+            message += f"   💰 Precio: {currency}{price}\n"
+            message += f"   📅 Sesiones: {sessions_count}\n"
+            message += f"   ⏱️ Duración: {duration} minutos cada una\n"
+            message += f"   📝 {description}\n\n"
+
+        message += "💫 **¿Listo para reservar?** Solo dime qué paquete te interesa y te ayudo a comenzar."
+
+        return message
+
+class ActionFetchPackageDetails(Action):
+    """Fetch specific package details from the Next.js API"""
+
+    def name(self) -> Text:
+        return "action_fetch_package_details"
+
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        # Get package information from entities or slots
+        package_name = None
+        package_id = None
+
+        # Check entities first
+        entities = tracker.latest_message.get('entities', [])
+        for entity in entities:
+            if entity['entity'] == 'package_name':
+                package_name = entity['value']
+            elif entity['entity'] == 'package_id':
+                package_id = entity['value']
+
+        # Check slots if no entities found
+        if not package_name:
+            package_name = tracker.get_slot('package_name')
+        if not package_id:
+            package_id = tracker.get_slot('package_id')
+
+        if not package_name and not package_id:
+            dispatcher.utter_message(
+                text="¿Podrías especificar qué paquete te interesa? Puedo darte más detalles sobre cualquiera de nuestros paquetes disponibles."
+            )
+            return []
+
+        try:
+            # Make request to Next.js API
+            api_url = "http://localhost:3000/api/packages"  # Adjust URL as needed
+            response = requests.get(api_url, timeout=10)
+
+            if response.status_code == 200:
+                packages_data = response.json()
+
+                # Find the specific package
+                target_package = None
+                if isinstance(packages_data, list):
+                    for package in packages_data:
+                        if (package_name and package.get('name', '').lower() == package_name.lower()) or \
+                           (package_id and str(package.get('id', '')) == str(package_id)):
+                            target_package = package
+                            break
+
+                if target_package:
+                    formatted_message = self._format_package_details(target_package)
+                    dispatcher.utter_message(text=formatted_message)
+
+                    # Store selected package in slot
+                    return [SlotSet("selected_package", target_package)]
+                else:
+                    dispatcher.utter_message(
+                        text=f"No encontré el paquete '{package_name or package_id}'. ¿Te gustaría ver todos nuestros paquetes disponibles?"
+                    )
+            else:
+                dispatcher.utter_message(
+                    text="Disculpa, hay un problema técnico. ¿Podrías intentarlo de nuevo en unos momentos?"
+                )
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error fetching package details: {e}")
+            dispatcher.utter_message(
+                text="Lo siento, no pude conectarme al servicio de paquetes. ¿Te gustaría información sobre nuestros servicios?"
+            )
+        except Exception as e:
+            logger.error(f"Unexpected error in action_fetch_package_details: {e}")
+            dispatcher.utter_message(
+                text="Hubo un error inesperado. ¿En qué más puedo ayudarte?"
+            )
+
+        return []
+
+    def _format_package_details(self, package: Dict) -> str:
+        """Format single package details into a readable message"""
+        name = package.get('name', 'Paquete')
+        description = package.get('description', 'Descripción no disponible')
+        price = package.get('price', 'Precio no disponible')
+        currency = package.get('currency', '$')
+        sessions_count = package.get('sessionsCount', 1)
+        duration = package.get('duration', 60)
+
+        message = f"📋 **Detalles del Paquete: {name}**\n\n"
+
+        if package.get('isPopular'):
+            message += "⭐ **POPULAR**\n\n"
+
+        message += f"💰 **Precio:** {currency}{price}\n"
+        message += f"📅 **Sesiones:** {sessions_count}\n"
+        message += f"⏱️ **Duración:** {duration} minutos por sesión\n\n"
+        message += f"📝 **Descripción:**\n{description}\n\n"
+        message += "💫 **¿Te gustaría reservar este paquete?**"
+
+        return message

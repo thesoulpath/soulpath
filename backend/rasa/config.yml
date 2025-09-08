@@ -11,38 +11,38 @@ assistant_id: soulpath-rasa
 language: es
 
 pipeline:
-# Enhanced tokenization (spaCy-compatible)
+# Enhanced tokenization for Spanish
 - name: WhitespaceTokenizer
 
-# Advanced text preprocessing
+# Advanced text preprocessing for Spanish
 - name: LexicalSyntacticFeaturizer
 
-# Regex features for patterns
+# Regex features for Spanish patterns
 - name: RegexFeaturizer
   case_sensitive: false
 
-# Lexical and syntactic features
+# Additional lexical features
 - name: LexicalSyntacticFeaturizer
 
-# Character-level features (improved)
+# Character-level features (optimized for Spanish)
 - name: CountVectorsFeaturizer
   analyzer: char_wb
   min_ngram: 1
   max_ngram: 5
-  max_features: 15000
+  max_features: 20000
   lowercase: true
 
-# Word-level features (improved)
+# Word-level features (optimized for Spanish)
 - name: CountVectorsFeaturizer
   analyzer: word
   min_ngram: 1
   max_ngram: 3
-  max_features: 15000
+  max_features: 20000
   lowercase: true
 
-# Enhanced DIET classifier
+# Enhanced DIET classifier for Spanish
 - name: DIETClassifier
-  epochs: 150
+  epochs: 200
   entity_recognition: true
   intent_classification: true
   use_masked_language_model: false
@@ -54,32 +54,43 @@ pipeline:
     text: [256, 128]
     label: [256, 128]
   dropout: 0.2
+  number_of_transformer_layers: 2
+  transformer_size: 256
 
 # Entity synonym mapping
 - name: EntitySynonymMapper
 
-# Response selection (improved)
+# Response selection (enhanced for Spanish)
 - name: ResponseSelector
-  epochs: 150
+  epochs: 200
   constrain_similarities: true
   retrieval_intent: chitchat/ask_name
   use_gpu: false
   learning_rate: 0.001
+  number_of_transformer_layers: 1
+  transformer_size: 128
 
-# Enhanced fallback handling
+# Enhanced fallback handling for Spanish
 - name: FallbackClassifier
-  threshold: 0.4
-  ambiguity_threshold: 0.15
+  threshold: 0.35
+  ambiguity_threshold: 0.1
 
-# Configuration for Rasa Core (Enhanced)
+# Configuration for Rasa Core (Enhanced for Spanish)
 # https://rasa.com/docs/rasa/core/policies/
 policies:
 - name: MemoizationPolicy
+  max_history: 3
 - name: RulePolicy
+  max_history: 3
 - name: UnexpecTEDIntentPolicy
   max_history: 5
-  epochs: 100
+  epochs: 150
+  use_gpu: false
+  random_seed: 42
 - name: TEDPolicy
   max_history: 5
-  epochs: 100
+  epochs: 150
   constrain_similarities: true
+  use_gpu: false
+  random_seed: 42
+  learning_rate: 0.001

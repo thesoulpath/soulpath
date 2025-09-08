@@ -19,6 +19,19 @@ intents:
   - mood_great
   - mood_unhappy
   - bot_challenge
+  - ask_packages
+  - show_packages
+  - package_details
+  - select_package
+  - ask_package_info
+  - book_reading
+  - provide_birth_date
+  - ask_payment
+  - chitchat
+  - provide_info
+  - select_timeslot
+  - confirm_booking
+  - nlu_fallback
 
 entities:
   - name
@@ -30,6 +43,8 @@ entities:
   - location
   - phone
   - email
+  - package_name
+  - package_id
 
 slots:
   name:
@@ -57,6 +72,37 @@ slots:
     mappings:
     - type: from_entity
       entity: session_type
+  package_name:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: package_name
+  package_id:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: package_id
+  available_packages:
+    type: text
+    mappings:
+    - type: from_text
+  selected_package:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: package_name
+  selected_timeslot:
+    type: text
+    mappings:
+    - type: from_text
+  sentiment:
+    type: text
+    mappings:
+    - type: from_text
+  missing_details:
+    type: text
+    mappings:
+    - type: from_text
 
 responses:
   utter_greet:
@@ -137,6 +183,74 @@ responses:
   utter_did_that_help:
     - text: "¿Te ayudó eso?"
 
+  utter_ask_packages:
+    - text: "¡Excelente! Te mostraré nuestros paquetes disponibles. Déjame obtener la información más actualizada para ti."
+    - text: "¡Perfecto! Tengo varios paquetes de astrología y bienestar. Te los muestro enseguida."
+
+  utter_show_packages:
+    - text: "Aquí tienes nuestros paquetes disponibles. ¿Te gustaría saber más detalles sobre alguno?"
+    - text: "Estos son nuestros paquetes actuales. ¿Cuál te interesa más?"
+
+  utter_package_details:
+    - text: "¡Claro! Te daré más detalles sobre ese paquete. Déjame obtener la información específica."
+    - text: "Excelente elección. Te proporciono toda la información detallada sobre ese paquete."
+
+  utter_default:
+    - text: "Disculpa, no entendí completamente tu mensaje. ¿Podrías reformularlo o decirme en qué puedo ayudarte?"
+    - text: "Lo siento, no pude procesar eso correctamente. ¿Me puedes explicar de otra manera?"
+
+  utter_fallback:
+    - text: "No estoy seguro de entender exactamente lo que necesitas. ¿Podrías darme más detalles?"
+    - text: "Disculpa, esa consulta es un poco compleja para mí. ¿Puedes ser más específico?"
+
+  utter_ask_session_type:
+    - text: "¿Qué tipo de sesión te interesa? Ofrecemos astrología, tarot, numerología, meditación, terapia y coaching espiritual."
+    - text: "¿Qué tipo de lectura prefieres? Tengo disponibles: astrología, tarot, numerología, meditación, terapia holística y coaching."
+
+  utter_ask_birth_date:
+    - text: "Para darte una lectura precisa, necesito tu fecha de nacimiento completa (día, mes y año). ¿Podrías compartirla conmigo?"
+    - text: "Para crear tu carta natal necesito tu fecha de nacimiento. ¿Cuál es?"
+
+  utter_ask_preferred_time:
+    - text: "¿Qué horario te queda mejor? Puedo revisar la disponibilidad para ti."
+    - text: "¿En qué momento del día prefieres tu sesión?"
+
+  utter_availability_options:
+    - text: "Estos son nuestros horarios disponibles esta semana. ¿Cuál prefieres?"
+    - text: "Aquí tienes las opciones de horario disponibles. ¿Cuándo te conviene?"
+
+  utter_ask_payment:
+    - text: "¿Cómo prefieres hacer el pago? Aceptamos diferentes métodos de pago."
+    - text: "¿Qué método de pago te resulta más conveniente?"
+
+  utter_pricing_info:
+    - text: "Nuestros precios varían según el tipo de sesión. ¿Te gustaría saber más sobre algún servicio específico?"
+    - text: "Los precios dependen del tipo de lectura. ¿Sobre cuál quieres información?"
+
+  utter_payment_methods:
+    - text: "Aceptamos pagos por transferencia bancaria, tarjetas de crédito y efectivo. ¿Cuál prefieres?"
+    - text: "Puedes pagar mediante transferencia, tarjeta o en efectivo según tu preferencia."
+
+  utter_booking_success:
+    - text: "¡Excelente! Tu cita ha sido agendada exitosamente. Te enviaremos los detalles por email."
+    - text: "¡Perfecto! Tu reserva está confirmada. Recibirás toda la información necesaria."
+
+  utter_contact_info:
+    - text: "Puedes contactarnos por WhatsApp al +52 55 1234 5678, email: info@soulpath.lat, o visitarnos en Ciudad de México."
+    - text: "Nuestros datos de contacto: 📱 WhatsApp: +52 55 1234 5678, 📧 Email: info@soulpath.lat"
+
+  utter_help_info:
+    - text: "¡Claro que te ayudo! Puedo agendar citas, dar información sobre servicios, precios y horarios. ¿Qué necesitas?"
+    - text: "Estoy aquí para ayudarte. Puedo asistirte con reservas, información de servicios o cualquier pregunta que tengas."
+
+  utter_bot_challenge_response:
+    - text: "Soy un asistente de IA especializado en astrología y bienestar espiritual. ¿En qué puedo ayudarte?"
+    - text: "Soy tu asistente virtual para consultas astrológicas y bienestar. ¿Qué te gustaría saber?"
+
+  utter_understand_denial:
+    - text: "Entiendo que ahora mismo no es el mejor momento. ¿Hay algo más en lo que pueda ayudarte?"
+    - text: "No hay problema. ¿Te gustaría información sobre nuestros servicios o tienes alguna otra pregunta?"
+
 actions:
   - action_default_fallback
   - action_handle_name_provision
@@ -147,6 +261,8 @@ actions:
   - action_sentiment_analysis
   - action_validate_booking
   - action_save_user_info
+  - action_fetch_packages
+  - action_fetch_package_details
 
 session_config:
   session_expiration_time: 60

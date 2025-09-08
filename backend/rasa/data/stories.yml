@@ -2,6 +2,10 @@ version: "3.1"
 
 stories:
 
+# ============================================================================
+# BASIC CONVERSATION FLOWS
+# ============================================================================
+
 - story: happy path
   steps:
   - intent: greet
@@ -28,3 +32,226 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+# ============================================================================
+# PACKAGE INFORMATION FLOWS
+# ============================================================================
+
+- story: ask packages flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: affirm
+  - action: utter_happy
+
+- story: show packages flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: show_packages
+  - action: utter_show_packages
+  - action: action_fetch_packages
+  - intent: chitchat
+  - action: utter_help
+
+- story: package details flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: package_details
+  - action: utter_package_details
+  - action: action_fetch_package_details
+  - intent: affirm
+  - action: utter_happy
+
+- story: ask package info flow
+  steps:
+  - intent: ask_package_info
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: package_details
+  - action: utter_package_details
+  - action: action_fetch_package_details
+  - intent: select_package
+  - action: utter_book_session
+
+# ============================================================================
+# BOOKING FLOWS
+# ============================================================================
+
+- story: complete booking flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: book_reading
+  - action: utter_book_session
+  - intent: provide_info
+  - action: action_handle_name_provision
+  - intent: provide_birth_date
+  - action: utter_birth_date
+  - intent: select_package
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: select_timeslot
+  - action: action_check_availability
+  - intent: confirm_booking
+  - action: utter_booking_confirmation
+
+- story: simple booking flow
+  steps:
+  - intent: book_reading
+  - action: utter_book_session
+  - intent: select_package
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: confirm_booking
+  - action: utter_booking_confirmation
+
+- story: booking with availability check
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_availability
+  - action: action_check_availability
+  - intent: book_reading
+  - action: utter_book_session
+  - intent: confirm_booking
+  - action: utter_booking_confirmation
+
+# ============================================================================
+# INFORMATION REQUEST FLOWS
+# ============================================================================
+
+- story: pricing information flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_pricing
+  - action: action_get_pricing
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: chitchat
+  - action: utter_help
+
+- story: contact information flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_contact
+  - action: utter_contact
+  - intent: ask_help
+  - action: utter_help
+
+- story: services information flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_session_types
+  - action: utter_session_types
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+
+# ============================================================================
+# CHITCHAT AND FALLBACK FLOWS
+# ============================================================================
+
+- story: chitchat flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: chitchat
+  - action: utter_astrology_question
+  - intent: provide_birth_date
+  - action: utter_birth_date
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+
+- story: fallback recovery flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: nlu_fallback
+  - action: action_default_fallback
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+
+- story: multiple fallback attempts
+  steps:
+  - intent: nlu_fallback
+  - action: action_default_fallback
+  - intent: nlu_fallback
+  - action: utter_default
+  - intent: ask_help
+  - action: utter_help
+
+# ============================================================================
+# NAME AND INFORMATION FLOWS
+# ============================================================================
+
+- story: name provision flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: provide_name
+  - action: action_handle_name_provision
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+
+- story: astrology sign flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: astrology_sign
+  - action: utter_astrology_sign
+  - intent: provide_birth_date
+  - action: utter_birth_date
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+
+# ============================================================================
+# COMPLEX INTERACTION FLOWS
+# ============================================================================
+
+- story: comprehensive consultation flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: chitchat
+  - action: utter_astrology_question
+  - intent: provide_birth_date
+  - action: utter_birth_date
+  - intent: ask_packages
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: package_details
+  - action: utter_package_details
+  - action: action_fetch_package_details
+  - intent: select_package
+  - action: utter_book_session
+  - intent: confirm_booking
+  - action: utter_booking_confirmation
+
+- story: information gathering flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: provide_info
+  - action: action_handle_name_provision
+  - intent: provide_birth_date
+  - action: utter_birth_date
+  - intent: ask_package_info
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: select_timeslot
+  - action: action_check_availability
+  - intent: confirm_booking
+  - action: utter_booking_confirmation

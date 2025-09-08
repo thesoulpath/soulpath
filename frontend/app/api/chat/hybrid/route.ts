@@ -63,6 +63,19 @@ export async function POST(request: NextRequest) {
             case 'goodbye':
               response = '¡Hasta luego! 🌟 Que tengas un día maravilloso. ¡Cuídate mucho! 💫';
               break;
+            case 'ask_packages':
+            case 'show_packages':
+            case 'ask_package_info':
+              // Use Rasa actions to fetch packages
+              response = await fetchPackagesFromAPI();
+              break;
+            case 'package_details':
+              // Use Rasa actions to fetch specific package details
+              const entities = rasaData.entities || [];
+              const packageName = entities.find(e => e.entity === 'package_name')?.value;
+              const packageId = entities.find(e => e.entity === 'package_id')?.value;
+              response = await fetchPackageDetailsFromAPI(packageName, packageId);
+              break;
             default:
               // Fall through to pattern matching or OpenRouter
               break;
@@ -75,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     // If Rasa didn't provide a response, use pattern matching for simple greetings only
     if (!response) {
-      response = getSimpleResponse(lowerMessage, conversationHistory) || '';
+      response = await getSimpleResponse(lowerMessage, conversationHistory) || '';
     }
 
     // For complex queries or if no simple response, use OpenRouter
@@ -159,6 +172,122 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Helper function to fetch packages from API
+async function fetchPackagesFromAPI(): Promise<string> {
+  try {
+    const response = await fetch('http://localhost:3000/api/packages?active=true', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const packages = data.packages || [];
+      
+      if (packages.length === 0) {
+        return 'No hay paquetes disponibles en este momento. Por favor contacta con nosotros directamente.';
+      }
+
+      let message = '🌟 **Paquetes de Astrología Disponibles:**\n\n';
+      
+      packages.forEach((pkg: any, index: number) => {
+        const name = pkg.name || 'Paquete Desconocido';
+        const description = pkg.description || 'Sin descripción disponible';
+        const price = pkg.price || 0;
+        const currency = pkg.currency || '$';
+        const sessions = pkg.sessionsCount || 1;
+        const duration = pkg.duration || 60;
+        const isPopular = pkg.isPopular || false;
+        
+        const priceText = price > 0 ? `${currency}${price.toFixed(0)}` : 'Contactar para precio';
+        const popularBadge = isPopular ? ' ⭐ POPULAR' : '';
+        
+        message += `**${index + 1}. ${name}**${popularBadge}\n`;
+        message += `   💰 Precio: ${priceText}\n`;
+        message += `   📅 Sesiones: ${sessions}\n`;
+        message += `   ⏱️ Duración: ${duration} minutos cada una\n`;
+        message += `   📝 ${description}\n\n`;
+      });
+      
+      message += '💫 **¿Listo para reservar?** Solo dime qué paquete te interesa y te ayudo a comenzar.';
+      
+      return message;
+    } else {
+      return 'Estoy teniendo problemas para acceder a la información de paquetes. Por favor intenta más tarde o contacta con nosotros directamente.';
+    }
+  } catch (error) {
+    console.error('Error fetching packages:', error);
+    return 'Estoy experimentando dificultades técnicas. Por favor intenta de nuevo o contacta con nosotros directamente.';
+  }
+}
+
+// Helper function to fetch specific package details
+async function fetchPackageDetailsFromAPI(packageName?: string, packageId?: string): Promise<string> {
+  try {
+    const response = await fetch('http://localhost:3000/api/packages?active=true', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const packages = data.packages || [];
+      
+      // Find the specific package
+      let targetPackage = null;
+      if (packageId) {
+        targetPackage = packages.find((pkg: any) => String(pkg.id) === String(packageId));
+      } else if (packageName) {
+        targetPackage = packages.find((pkg: any) => 
+          pkg.name && pkg.name.toLowerCase().includes(packageName.toLowerCase())
+        );
+      }
+      
+      if (targetPackage) {
+        const name = targetPackage.name || 'Paquete Desconocido';
+        const description = targetPackage.description || 'Sin descripción disponible';
+        const price = targetPackage.price || 0;
+        const currency = targetPackage.currency || '$';
+        const sessions = targetPackage.sessionsCount || 1;
+        const duration = targetPackage.duration || 60;
+        const packageType = targetPackage.packageType || 'Estándar';
+        const maxGroup = targetPackage.maxGroupSize || 1;
+        const isPopular = targetPackage.isPopular || false;
+        
+        const priceText = price > 0 ? `${currency}${price.toFixed(0)}` : 'Contactar para precio';
+        const popularBadge = isPopular ? ' ⭐ POPULAR' : '';
+        
+        let message = `🌟 **${name}**${popularBadge}\n\n`;
+        message += `📝 **Descripción:**\n${description}\n\n`;
+        message += `💰 **Precio:** ${priceText}\n`;
+        message += `📅 **Sesiones:** ${sessions}\n`;
+        message += `⏱️ **Duración:** ${duration} minutos por sesión\n`;
+        message += `👥 **Tipo:** ${packageType}\n`;
+        message += `👥 **Tamaño Máximo de Grupo:** ${maxGroup}\n\n`;
+        
+        if (isPopular) {
+          message += '⭐ ¡Este es uno de nuestros paquetes más populares!\n\n';
+        }
+        
+        message += '💫 **¿Listo para reservar este paquete?** Solo dime y te ayudo a comenzar.';
+        
+        return message;
+      } else {
+        return `No pude encontrar un paquete que coincida con '${packageName || packageId}'. Déjame mostrarte todos los paquetes disponibles en su lugar.`;
+      }
+    } else {
+      return 'Estoy teniendo problemas para acceder a los detalles del paquete. Por favor intenta más tarde.';
+    }
+  } catch (error) {
+    console.error('Error fetching package details:', error);
+    return 'Estoy experimentando dificultades técnicas. Por favor intenta de nuevo o contacta con nosotros directamente.';
+  }
+}
+
 // Helper function to detect complex queries that need OpenRouter
 function isComplexQuery(message: string): boolean {
   const lowerMessage = message.toLowerCase();
@@ -178,7 +307,7 @@ function isComplexQuery(message: string): boolean {
 }
 
 // Helper function for simple pattern matching (fallback)
-function getSimpleResponse(lowerMessage: string, conversationHistory: any[] = []): string | null {
+async function getSimpleResponse(lowerMessage: string, conversationHistory: any[] = []): Promise<string | null> {
   // Greetings
   if (lowerMessage.includes('hola') || lowerMessage.includes('hello') || lowerMessage.includes('hi') ||
       lowerMessage.includes('buenos dias') || lowerMessage.includes('buenas tardes') || lowerMessage.includes('buenas noches')) {
@@ -268,6 +397,16 @@ function getSimpleResponse(lowerMessage: string, conversationHistory: any[] = []
   // No responses
   if (lowerMessage.includes('no') || lowerMessage.includes('nah') || lowerMessage.includes('quizas') || lowerMessage.includes('maybe')) {
     return '¡Sin problema! 🤝 ¿Hay algo más en lo que pueda ayudarte?';
+  }
+
+  // Package requests
+  if (lowerMessage.includes('paquetes') || lowerMessage.includes('packages') || 
+      lowerMessage.includes('mostrar paquetes') || lowerMessage.includes('show packages') ||
+      lowerMessage.includes('ver paquetes') || lowerMessage.includes('see packages') ||
+      lowerMessage.includes('que paquetes') || lowerMessage.includes('what packages') ||
+      lowerMessage.includes('paquetes disponibles') || lowerMessage.includes('available packages')) {
+    // Fetch packages directly since Rasa might not be available
+    return await fetchPackagesFromAPI();
   }
 
   // Pricing questions

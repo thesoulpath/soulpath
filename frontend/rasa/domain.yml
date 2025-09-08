@@ -6,6 +6,9 @@ intents:
   - book_reading
   - provide_info
   - ask_package_info
+  - ask_packages
+  - show_packages
+  - package_details
   - select_package
   - select_timeslot
   - affirm
@@ -23,6 +26,7 @@ entities:
   - question_text
   - language_preference
   - package_name
+  - package_id
   - date
   - time
 
@@ -82,10 +86,72 @@ actions:
   - action_extract_booking_details
   - action_validate_booking_details
   - action_ask_for_missing_details
+  - action_fetch_packages
+  - action_fetch_package_details
   - action_show_packages
   - action_show_timeslots
   - action_confirm_booking
   - action_handle_chitchat
+
+slots:
+  name:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: person_name
+  email:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: email_address
+  phone:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: phone_number
+  birth_date:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: birth_date
+  birth_time:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: birth_time
+  birth_place:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: birth_place
+  question:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: question_text
+  language:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: language_preference
+  package_name:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: package_name
+  package_id:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: package_id
+  available_packages:
+    type: text
+  missing_details:
+    type: list
+  selected_package:
+    type: text
+  selected_timeslot:
+    type: text
 
 session_config:
   session_expiration_time: 60

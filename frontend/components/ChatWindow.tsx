@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useTranslations';
 import { ChatConfig } from '@/lib/config/chat-config';
+import { PackageDisplay, parsePackagesFromText, Package } from './PackageDisplay';
 
 interface Message {
   id: string;
@@ -12,6 +13,7 @@ interface Message {
   sender: 'user' | 'assistant';
   timestamp: Date;
   isTyping?: boolean;
+  packages?: Package[];
 }
 
 // interface QuickReply {
@@ -117,12 +119,16 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
 
       if (data.success && data.response) {
         const assistantMessageId = generateUniqueId();
+        
+        // Check if the response contains package information
+        const packages = parsePackagesFromText(data.response);
+        
         const assistantMessage: Message = {
           id: `assistant_${assistantMessageId}`,
           content: data.response,
           sender: 'assistant',
           timestamp: new Date(),
-          // Buttons removed for natural conversation
+          packages: packages.length > 0 ? packages : undefined,
         };
         setMessages(prev => [...prev, assistantMessage]);
       } else {
@@ -261,7 +267,26 @@ export function ChatWindow({ isOpen = false, onToggle, className = '' }: ChatWin
                             }`}>
                               <div className="whitespace-pre-wrap">{message.content}</div>
                               
-                              {/* Buttons removed - natural conversation flow */}
+                              {/* Package Display */}
+                              {message.packages && message.packages.length > 0 && (
+                                <div className="mt-3">
+                                  <PackageDisplay 
+                                    packages={message.packages}
+                                    onPackageSelect={(selectedPackage) => {
+                                      // Handle package selection
+                                      const packageMessageId = generateUniqueId();
+                                      const packageMessage: Message = {
+                                        id: `user_${packageMessageId}`,
+                                        content: `Me interesa el paquete: ${selectedPackage.name}`,
+                                        sender: 'user',
+                                        timestamp: new Date(),
+                                      };
+                                      setMessages(prev => [...prev, packageMessage]);
+                                      handleSendMessage();
+                                    }}
+                                  />
+                                </div>
+                              )}
                               
                               <div className={`text-xs mt-1 ${
                                 message.sender === 'user' ? 'text-[#0A0A23]/70' : 'text-[#C0C0C0]'
