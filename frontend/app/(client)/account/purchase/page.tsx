@@ -733,7 +733,7 @@ export default function PurchasePage() {
                         <span className="text-white font-semibold">Total</span>
                         <span className="text-[#ffd700] font-bold text-lg">
                           {formData.selectedPackage.currency.symbol}
-                          {(formData.selectedPackage.price * formData.quantity).toFixed(2)}
+                          {(typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price) ? (formData.selectedPackage.price * formData.quantity).toFixed(2) : '0.00')}
                         </span>
                       </div>
                     </div>

@@ -170,7 +170,7 @@ export default function MyPackagesPage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-400">Price:</span>
-                    <span className="text-sm font-bold text-[#ffd700]">${pkg.price.toFixed(2)}</span>
+                    <span className="text-sm font-bold text-[#ffd700]">${typeof pkg.price === 'number' && !isNaN(pkg.price) ? pkg.price.toFixed(2) : '0.00'}</span>
                   </div>
                 </div>
 

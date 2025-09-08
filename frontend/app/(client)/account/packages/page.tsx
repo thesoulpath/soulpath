@@ -103,8 +103,8 @@ export default function PackagesPage() {
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-[#ffd700]">
-                    {pkg.packagePrices && pkg.packagePrices.length > 0 
-                      ? `${pkg.packagePrices[0].currency.symbol}${pkg.packagePrices[0].price.toFixed(2)}`
+                    {pkg.packagePrices && pkg.packagePrices.length > 0
+                      ? `${pkg.packagePrices[0].currency.symbol}${(typeof pkg.packagePrices[0].price === 'number' && !isNaN(pkg.packagePrices[0].price) ? pkg.packagePrices[0].price.toFixed(2) : '0.00')}`
                       : 'Price TBD'
                     }
                   </div>

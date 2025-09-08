@@ -854,7 +854,7 @@ const PackagesAndPricing: React.FC = () => {
                           </Badge>
                         </td>
                         <td className="font-mono">
-                          {price.currency?.symbol || ''}{price.price.toFixed(2)}
+                          {price.currency?.symbol || ''}{(typeof price.price === 'number' && !isNaN(price.price) ? price.price.toFixed(2) : '0.00')}
                         </td>
                         <td>{getPricingModeBadge(price.pricingMode)}</td>
                         <td>
