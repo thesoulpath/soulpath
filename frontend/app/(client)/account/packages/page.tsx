@@ -104,7 +104,15 @@ export default function PackagesPage() {
                 <div className="text-right">
                   <div className="text-2xl font-bold text-[#ffd700]">
                     {pkg.packagePrices && pkg.packagePrices.length > 0
-                      ? `${pkg.packagePrices[0].currency.symbol}${(typeof pkg.packagePrices[0].price === 'number' && !isNaN(pkg.packagePrices[0].price) ? pkg.packagePrices[0].price.toFixed(2) : '0.00')}`
+                      ? <>
+                          {pkg.packagePrices[0].currency.symbol}
+                          {typeof pkg.packagePrices[0].price === 'number' && !isNaN(pkg.packagePrices[0].price)
+                            ? pkg.packagePrices[0].price.toFixed(2)
+                            : <span className="text-red-400 text-sm" title={`Raw value: ${pkg.packagePrices[0].price}`}>
+                                {pkg.packagePrices[0].price !== undefined && pkg.packagePrices[0].price !== null ? String(pkg.packagePrices[0].price) : 'Contact for price'}
+                              </span>
+                          }
+                        </>
                       : 'Price TBD'
                     }
                   </div>

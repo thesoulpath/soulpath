@@ -733,7 +733,12 @@ export default function PurchasePage() {
                         <span className="text-white font-semibold">Total</span>
                         <span className="text-[#ffd700] font-bold text-lg">
                           {formData.selectedPackage.currency.symbol}
-                          {(typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price) ? (formData.selectedPackage.price * formData.quantity).toFixed(2) : '0.00')}
+                          {typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price)
+                            ? (formData.selectedPackage.price * formData.quantity).toFixed(2)
+                            : <span className="text-red-400 text-sm" title={`Raw price: ${formData.selectedPackage.price}`}>
+                                {formData.selectedPackage.price !== undefined && formData.selectedPackage.price !== null ? String(formData.selectedPackage.price) : 'Contact for pricing'}
+                              </span>
+                          }
                         </span>
                       </div>
                     </div>

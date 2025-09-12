@@ -469,7 +469,7 @@ async function main() {
         packageDefinitionId: 1, // Starter Package
         currencyId: 1, // USD
         price: 200.00,
-        pricingMode: 'fixed',
+        pricingMode: 'custom',
         isActive: true
       }
     }),
@@ -480,7 +480,7 @@ async function main() {
         packageDefinitionId: 2, // Wellness Package
         currencyId: 1, // USD
         price: 400.00,
-        pricingMode: 'fixed',
+        pricingMode: 'custom',
         isActive: true
       }
     }),
@@ -491,7 +491,7 @@ async function main() {
         packageDefinitionId: 3, // Group Wellness
         currencyId: 1, // USD
         price: 180.00,
-        pricingMode: 'fixed',
+        pricingMode: 'custom',
         isActive: true
       }
     })

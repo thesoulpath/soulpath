@@ -1,98 +1,458 @@
 [
   {
-    "text": "cuánto cuesta una sesión",
-    "intent": "ask_pricing",
+    "text": "asdfghjkl",
+    "intent": "nlu_fallback",
     "intent_prediction": {
-      "name": "book_session",
-      "confidence": 0.27027177810668945
+      "name": "select_package",
+      "confidence": 3.414840830373578e-05
     }
   },
   {
-    "text": "qué precios tienen",
-    "intent": "ask_pricing",
+    "text": "random text",
+    "intent": "nlu_fallback",
     "intent_prediction": {
-      "name": "ask_contact",
-      "confidence": 0.21248508989810944
+      "name": "select_package",
+      "confidence": 1.2729209629469551e-05
     }
   },
   {
-    "text": "how much does it cost",
-    "intent": "ask_pricing",
+    "text": "gibberish",
+    "intent": "nlu_fallback",
     "intent_prediction": {
-      "name": "book_session",
-      "confidence": 0.2201261967420578
+      "name": "select_package",
+      "confidence": 1.5419420378748327e-05
     }
   },
   {
-    "text": "what are your rates",
-    "intent": "ask_pricing",
+    "text": "123456789",
+    "intent": "nlu_fallback",
     "intent_prediction": {
-      "name": "ask_contact",
-      "confidence": 0.21464617550373077
+      "name": "select_package",
+      "confidence": 3.233157258364372e-05
     }
   },
   {
-    "text": "cuándo tienen disponibilidad",
-    "intent": "ask_availability",
+    "text": "!@#$%^&*()",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.4184582141751889e-05
+    }
+  },
+  {
+    "text": "qwertyuiop",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.5114596862986218e-05
+    }
+  },
+  {
+    "text": "zxcvbnm",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 1.3028391549596563e-05
+    }
+  },
+  {
+    "text": "lorem ipsum",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.1203533176740166e-05
+    }
+  },
+  {
+    "text": "test test test",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 2.5812994863372296e-05
+    }
+  },
+  {
+    "text": "hello world hello world",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 4.214096406940371e-05
+    }
+  },
+  {
+    "text": "what?",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "affirm",
+      "confidence": 0.00016694534861017019
+    }
+  },
+  {
+    "text": "huh?",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.5120468560780864e-05
+    }
+  },
+  {
+    "text": "this doesn't make sense",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 4.585215719998814e-05
+    }
+  },
+  {
+    "text": "I'm lost",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 1.9305362002342008e-05
+    }
+  },
+  {
+    "text": "help me understand",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 2.0278435840737075e-05
+    }
+  },
+  {
+    "text": "what are you talking about?",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 5.631137537420727e-05
+    }
+  },
+  {
+    "text": "I don't get it",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 4.369818634586409e-05
+    }
+  },
+  {
+    "text": "can you explain?",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 5.924406650592573e-05
+    }
+  },
+  {
+    "text": "I'm not sure",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 2.7468151529319584e-05
+    }
+  },
+  {
+    "text": "maybe",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.4515831026074011e-05
+    }
+  },
+  {
+    "text": "possibly",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 2.711400702537503e-05
+    }
+  },
+  {
+    "text": "I think so",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 2.0094026695005596e-05
+    }
+  },
+  {
+    "text": "I guess",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.2821369637094904e-05
+    }
+  },
+  {
+    "text": "perhaps",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.7450618543080054e-05
+    }
+  },
+  {
+    "text": "might be",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.7439539078623056e-05
+    }
+  },
+  {
+    "text": "could be",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.2315211279201321e-05
+    }
+  },
+  {
+    "text": "probably",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 1.4866461242490914e-05
+    }
+  },
+  {
+    "text": "likely",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.4875539818604011e-05
+    }
+  },
+  {
+    "text": "unlikely",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 1.3205288269091398e-05
+    }
+  },
+  {
+    "text": "definitely not",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 5.0838505558203906e-05
+    }
+  },
+  {
+    "text": "absolutely not",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.8682487279875204e-05
+    }
+  },
+  {
+    "text": "always",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.5633137081749737e-05
+    }
+  },
+  {
+    "text": "sometimes",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.4692916010972112e-05
+    }
+  },
+  {
+    "text": "often",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 1.647511453484185e-05
+    }
+  },
+  {
+    "text": "rarely",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.3968176062917337e-05
+    }
+  },
+  {
+    "text": "usually",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.8707485651248135e-05
+    }
+  },
+  {
+    "text": "normally",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.6195897842408158e-05
+    }
+  },
+  {
+    "text": "typically",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.6568648788961582e-05
+    }
+  },
+  {
+    "text": "generally",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.560679629619699e-05
+    }
+  },
+  {
+    "text": "specifically",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.3487371688825078e-05
+    }
+  },
+  {
+    "text": "particularly",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.90667142305756e-05
+    }
+  },
+  {
+    "text": "especially",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.644340591155924e-05
+    }
+  },
+  {
+    "text": "mainly",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.2366063856461551e-05
+    }
+  },
+  {
+    "text": "mostly",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "astrology_sign",
+      "confidence": 1.2582640010805335e-05
+    }
+  },
+  {
+    "text": "primarily",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.560387318022549e-05
+    }
+  },
+  {
+    "text": "essentially",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.7188720448757522e-05
+    }
+  },
+  {
+    "text": "basically",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 2.3510407118010335e-05
+    }
+  },
+  {
+    "text": "fundamentally",
+    "intent": "nlu_fallback",
+    "intent_prediction": {
+      "name": "select_package",
+      "confidence": 1.7184329408337362e-05
+    }
+  },
+  {
+    "text": "am I talking to a human?",
+    "intent": "bot_challenge",
+    "intent_prediction": {
+      "name": "ask_payment",
+      "confidence": 0.36664679646492004
+    }
+  },
+  {
+    "text": "nací el 15/03/1990",
+    "intent": "birth_date",
+    "intent_prediction": {
+      "name": "provide_birth_date",
+      "confidence": 0.5436053276062012
+    }
+  },
+  {
+    "text": "nací en 1990",
+    "intent": "birth_date",
+    "intent_prediction": {
+      "name": "provide_birth_date",
+      "confidence": 0.6236969232559204
+    }
+  },
+  {
+    "text": "mi fecha de nacimiento es 15/03/1990",
+    "intent": "birth_date",
+    "intent_prediction": {
+      "name": "provide_birth_date",
+      "confidence": 0.6288670897483826
+    }
+  },
+  {
+    "text": "born on March 15, 1990",
+    "intent": "birth_date",
+    "intent_prediction": {
+      "name": "provide_birth_date",
+      "confidence": 0.5715257525444031
+    }
+  },
+  {
+    "text": "my birth date is 15/03/1990",
+    "intent": "birth_date",
+    "intent_prediction": {
+      "name": "provide_birth_date",
+      "confidence": 0.6031849980354309
+    }
+  },
+  {
+    "text": "I was born on 15/03/1990",
+    "intent": "birth_date",
+    "intent_prediction": {
+      "name": "provide_birth_date",
+      "confidence": 0.5533006191253662
+    }
+  },
+  {
+    "text": "how can I reach you",
+    "intent": "ask_contact",
     "intent_prediction": {
       "name": "astrology_question",
-      "confidence": 0.612311840057373
+      "confidence": 0.28161337971687317
     }
   },
   {
-    "text": "qué horarios manejan",
-    "intent": "ask_availability",
+    "text": "what's your phone number",
+    "intent": "ask_contact",
     "intent_prediction": {
-      "name": "astrology_question",
-      "confidence": 0.5385672450065613
-    }
-  },
-  {
-    "text": "when are you available",
-    "intent": "ask_availability",
-    "intent_prediction": {
-      "name": "astrology_question",
-      "confidence": 0.44615769386291504
-    }
-  },
-  {
-    "text": "what's your schedule",
-    "intent": "ask_availability",
-    "intent_prediction": {
-      "name": "astrology_question",
-      "confidence": 0.42542222142219543
-    }
-  },
-  {
-    "text": "necesito ayuda",
-    "intent": "ask_help",
-    "intent_prediction": {
-      "name": "book_session",
-      "confidence": 0.177198126912117
-    }
-  },
-  {
-    "text": "no entiendo",
-    "intent": "ask_help",
-    "intent_prediction": {
-      "name": "ask_contact",
-      "confidence": 0.19097669422626495
-    }
-  },
-  {
-    "text": "I need help",
-    "intent": "ask_help",
-    "intent_prediction": {
-      "name": "astrology_question",
-      "confidence": 0.2770191729068756
-    }
-  },
-  {
-    "text": "can you help me",
-    "intent": "ask_help",
-    "intent_prediction": {
-      "name": "astrology_question",
-      "confidence": 0.2293906807899475
+      "name": "chitchat",
+      "confidence": 0.8283300995826721
     }
   }
 ]

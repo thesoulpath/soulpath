@@ -179,7 +179,7 @@ curl -X POST "http://localhost:3000/api/admin/package-prices" \
     "packageDefinitionId": 1,
     "currencyId": 1,
     "price": 299.99,
-    "pricingMode": "fixed",
+    "pricingMode": "custom",
     "isActive": true
   }'
 ```

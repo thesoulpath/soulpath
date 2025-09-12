@@ -1,17 +1,23 @@
 {
-  "": {
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1-score": 0.0,
-    "support": 18
+  "utter_ask_packages": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 4
   },
-  "ask_contact": {
+  "action_fetch_packages": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 4
+  },
+  "utter_contact": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
     "support": 1
   },
-  "ask_pricing": {
+  "utter_goodbye": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
@@ -23,37 +29,19 @@
     "f1-score": 1.0,
     "support": 2
   },
-  "utter_pricing": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 2
-  },
-  "greet": {
-    "precision": 0.75,
-    "recall": 1.0,
-    "f1-score": 0.8571428571428571,
-    "support": 3
-  },
-  "utter_happy": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 1
-  },
   "action_listen": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
-    "support": 36
+    "support": 44
   },
-  "goodbye": {
-    "precision": 0.5,
+  "utter_book_session": {
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.6666666666666666,
-    "support": 2
+    "f1-score": 1.0,
+    "support": 6
   },
-  "utter_contact": {
+  "utter_help": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
@@ -65,17 +53,11 @@
     "f1-score": 1.0,
     "support": 1
   },
-  "book_session": {
+  "utter_happy": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
-    "support": 4
-  },
-  "utter_book_session": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 4
+    "support": 1
   },
   "utter_astrology_question": {
     "precision": 1.0,
@@ -89,71 +71,29 @@
     "f1-score": 1.0,
     "support": 3
   },
-  "ask_session_types": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 2
-  },
-  "utter_goodbye": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 2
-  },
-  "astrology_question": {
-    "precision": 0.3333333333333333,
-    "recall": 1.0,
-    "f1-score": 0.5,
-    "support": 1
-  },
-  "ask_availability": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 1
-  },
-  "affirm": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 1
-  },
-  "ask_help": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 1
-  },
-  "utter_help": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 1
-  },
-  "micro avg": {
-    "precision": 0.935064935064935,
-    "recall": 0.8,
-    "f1-score": 0.8622754491017963,
-    "support": 90
-  },
+  "accuracy": 1.0,
   "macro avg": {
-    "precision": 0.8901515151515152,
-    "recall": 0.9545454545454546,
-    "f1-score": 0.9101731601731603,
-    "support": 90
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 70
   },
   "weighted avg": {
-    "precision": 0.7731481481481481,
-    "recall": 0.8,
-    "f1-score": 0.7822751322751322,
-    "support": 90
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 70
   },
-  "accuracy": 0.8,
+  "micro avg": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 70
+  },
   "conversation_accuracy": {
-    "accuracy": 0.0,
-    "correct": 0,
+    "accuracy": 1.0,
+    "correct": 10,
     "with_warnings": 0,
-    "total": 8
+    "total": 10
   }
 }

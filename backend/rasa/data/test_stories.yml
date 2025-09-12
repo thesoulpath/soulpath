@@ -31,7 +31,8 @@ stories:
   - user: |
       cuánto cuesta una sesión
   - intent: ask_pricing
-  - action: utter_pricing
+  - action: utter_ask_packages
+  - action: action_fetch_packages
   - user: |
       me interesa la astrología
   - intent: book_session
@@ -99,8 +100,35 @@ stories:
   - user: |
       cuánto cuesta la astrología
   - intent: ask_pricing
-  - action: utter_pricing
+  - action: utter_ask_packages
+  - action: action_fetch_packages
   - user: |
       me interesa agendar una cita
+  - intent: book_session
+  - action: utter_book_session
+
+# Test story: English pricing inquiry
+- story: test_english_pricing
+  steps:
+  - user: |
+      what are your prices?
+  - intent: ask_pricing
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - user: |
+      I want to book a session
+  - intent: book_session
+  - action: utter_book_session
+
+# Test story: Spanish pricing inquiry
+- story: test_spanish_pricing
+  steps:
+  - user: |
+      ¿cuáles son tus precios?
+  - intent: ask_pricing
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - user: |
+      quiero reservar una sesión
   - intent: book_session
   - action: utter_book_session

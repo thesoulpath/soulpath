@@ -195,7 +195,7 @@ run_test "List all package prices" \
 
 # POST /api/admin/package-prices
 run_test "Create new package price" \
-    "curl -s -w '%{http_code}' -X POST '$BASE_URL/admin/package-prices' -H 'Content-Type: application/json' -H 'Authorization: Bearer $ADMIN_TOKEN' -d '{\"packageDefinitionId\":1,\"currencyId\":1,\"price\":299.99,\"pricingMode\":\"fixed\",\"isActive\":true}'" \
+    "curl -s -w '%{http_code}' -X POST '$BASE_URL/admin/package-prices' -H 'Content-Type: application/json' -H 'Authorization: Bearer $ADMIN_TOKEN' -d '{\"packageDefinitionId\":1,\"currencyId\":1,\"price\":299.99,\"pricingMode\":\"custom\",\"isActive\":true}'" \
     "201"
 
 echo ""

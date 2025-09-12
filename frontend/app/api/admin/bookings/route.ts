@@ -252,12 +252,12 @@ export async function GET(request: NextRequest) {
             }
           }
         }
-      } as any;
+      } as any; // Prisma select object - complex nested type
     } else {
       select.userPackage = {
         select: {
           id: true,
-          isActive: true as any,
+          isActive: true,
           packagePrice: {
             select: {
               id: true,
@@ -287,7 +287,7 @@ export async function GET(request: NextRequest) {
             }
           }
         }
-      } as any;
+      } as any; // Prisma select object - complex nested type
     }
 
     console.log('🔍 Executing database query...');

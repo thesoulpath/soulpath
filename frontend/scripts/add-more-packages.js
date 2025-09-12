@@ -82,7 +82,7 @@ async function main() {
             packageDefinitionId: packageDefinition.id,
             currencyId: usd.id,
             price: pkgData.price,
-            pricingMode: 'fixed',
+            pricingMode: 'custom',
             isActive: true
           }
         });

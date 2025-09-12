@@ -108,7 +108,12 @@ export function useAuth() {
     return { error: null };
   };
 
-  console.log('🔐 useAuth: Current state:', { user: !!user, userEmail: user?.email, isAdmin, isLoading });
+  console.log('🔐 useAuth: Current state:', {
+    user: user ? 'authenticated' : null,
+    userEmail: user?.email || 'none',
+    isAdmin,
+    isLoading
+  });
 
   return {
     user,

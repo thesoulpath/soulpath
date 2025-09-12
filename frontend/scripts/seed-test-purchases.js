@@ -49,7 +49,7 @@ async function seedTestPurchases() {
           packageDefinitionId: packageDefinition.id,
           price: 100.00,
           currencyCode: 'USD',
-          pricingMode: 'fixed',
+          pricingMode: 'custom',
           isActive: true
         }
       });

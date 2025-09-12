@@ -170,7 +170,14 @@ export default function MyPackagesPage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-400">Price:</span>
-                    <span className="text-sm font-bold text-[#ffd700]">${typeof pkg.price === 'number' && !isNaN(pkg.price) ? pkg.price.toFixed(2) : '0.00'}</span>
+                    <span className="text-sm font-bold text-[#ffd700]">
+                      ${typeof pkg.price === 'number' && !isNaN(pkg.price)
+                        ? pkg.price.toFixed(2)
+                        : <span className="text-red-400 text-xs" title={`Raw value: ${pkg.price}`}>
+                            {pkg.price !== undefined && pkg.price !== null ? String(pkg.price) : 'Contact for price'}
+                          </span>
+                      }
+                    </span>
                   </div>
                 </div>
 

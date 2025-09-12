@@ -75,11 +75,17 @@ const PackagePriceModal: React.FC<PackagePriceModalProps> = ({
   useEffect(() => {
     if (packagePrice && mode === 'edit') {
       setFormData({
-        packageDefinitionId: packagePrice.packageDefinitionId.toString(),
-        currencyId: packagePrice.currencyId.toString(),
-        price: packagePrice.price.toString(),
-        pricingMode: packagePrice.pricingMode,
-        isActive: packagePrice.isActive
+        packageDefinitionId: (packagePrice.packageDefinitionId !== null && packagePrice.packageDefinitionId !== undefined)
+          ? packagePrice.packageDefinitionId.toString()
+          : '',
+        currencyId: (packagePrice.currencyId !== null && packagePrice.currencyId !== undefined)
+          ? packagePrice.currencyId.toString()
+          : '',
+        price: (packagePrice.price !== null && packagePrice.price !== undefined)
+          ? packagePrice.price.toString()
+          : '',
+        pricingMode: packagePrice.pricingMode || 'calculated',
+        isActive: packagePrice.isActive ?? true
       });
     } else {
       resetForm();
@@ -144,17 +150,31 @@ const PackagePriceModal: React.FC<PackagePriceModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    console.log('🔍 PackagePriceModal handleSubmit called');
+    console.log('🔍 Form data before validation:', formData);
+    console.log('🔍 Calculated price:', calculatedPrice);
+
     if (!validateForm()) {
+      console.log('❌ Form validation failed');
       return;
     }
+
+    console.log('✅ Form validation passed');
 
     const submitData = {
       ...formData,
       price: formData.pricingMode === 'calculated' ? calculatedPrice : parseFloat(formData.price)
     };
 
-    onSubmit(submitData);
+    console.log('🔄 Prepared submit data:', submitData);
+    console.log('🔄 Calling onSubmit with data...');
+
+    try {
+      onSubmit(submitData);
+      console.log('✅ onSubmit called successfully');
+    } catch (error) {
+      console.error('❌ Error calling onSubmit:', error);
+    }
   };
 
   const handleClose = () => {

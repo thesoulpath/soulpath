@@ -8,7 +8,7 @@ const createPackagePriceSchema = z.object({
   packageDefinitionId: z.number().int().positive('Package definition ID must be positive'),
   currencyId: z.number().int().positive('Currency ID must be positive'),
   price: z.number().positive('Price must be positive'),
-  pricingMode: z.enum(['fixed', 'calculated']).default('fixed'),
+  pricingMode: z.enum(['custom', 'calculated']).default('calculated'),
   isActive: z.boolean().default(true)
 });
 
@@ -19,7 +19,7 @@ const updatePackagePriceSchema = createPackagePriceSchema.partial().extend({
 const querySchema = z.object({
   packageDefinitionId: z.coerce.number().int().positive().optional(),
   currencyId: z.coerce.number().int().positive().optional(),
-  pricingMode: z.enum(['fixed', 'calculated']).optional(),
+  pricingMode: z.enum(['custom', 'calculated', 'all']).optional(),
   isActive: z.enum(['true', 'false']).optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     if (packageDefinitionId) where.packageDefinitionId = packageDefinitionId;
     if (currencyId) where.currencyId = currencyId;
-    if (pricingMode) where.pricingMode = pricingMode;
+    if (pricingMode && pricingMode !== 'all') where.pricingMode = pricingMode as 'custom' | 'calculated';
     if (isActive !== undefined) where.isActive = isActive === 'true';
 
     // Base select fields
@@ -361,8 +361,11 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Check for conflicts if package or currency is being updated
-    if (updateData.packageDefinitionId || updateData.currencyId) {
+    // Check for conflicts only if package or currency is actually being changed to a different value
+    const isPackageChanging = updateData.packageDefinitionId && updateData.packageDefinitionId !== existingPrice.packageDefinitionId;
+    const isCurrencyChanging = updateData.currencyId && updateData.currencyId !== existingPrice.currencyId;
+    
+    if (isPackageChanging || isCurrencyChanging) {
       const newPackageDefinitionId = updateData.packageDefinitionId ?? existingPrice.packageDefinitionId;
       const newCurrencyId = updateData.currencyId ?? existingPrice.currencyId;
 

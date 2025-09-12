@@ -63,13 +63,17 @@ const ScheduleTemplateModal: React.FC<ScheduleTemplateModalProps> = ({
   useEffect(() => {
     if (scheduleTemplate && mode === 'edit') {
       setFormData({
-        dayOfWeek: scheduleTemplate.dayOfWeek,
-        startTime: scheduleTemplate.startTime,
-        endTime: scheduleTemplate.endTime,
-        sessionDurationId: scheduleTemplate.sessionDurationId.toString(),
-        capacity: scheduleTemplate.capacity.toString(),
-        isAvailable: scheduleTemplate.isAvailable,
-        autoAvailable: scheduleTemplate.autoAvailable
+        dayOfWeek: scheduleTemplate.dayOfWeek || '',
+        startTime: scheduleTemplate.startTime || '',
+        endTime: scheduleTemplate.endTime || '',
+        sessionDurationId: (scheduleTemplate.sessionDurationId !== null && scheduleTemplate.sessionDurationId !== undefined)
+          ? scheduleTemplate.sessionDurationId.toString()
+          : '',
+        capacity: (scheduleTemplate.capacity !== null && scheduleTemplate.capacity !== undefined)
+          ? scheduleTemplate.capacity.toString()
+          : '',
+        isAvailable: scheduleTemplate.isAvailable ?? true,
+        autoAvailable: scheduleTemplate.autoAvailable ?? false
       });
     } else {
       resetForm();

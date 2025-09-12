@@ -32,6 +32,16 @@ nlu:
     - qué precios tienen
     - how much does it cost
     - what are your rates
+    - ¿cuáles son tus precios?
+    - ¿cuánto cobras?
+    - ¿cuánto vale cada paquete?
+    - show me prices
+    - I want to know the prices
+    - what are your package prices?
+    - ¿cuánto cuestan los paquetes?
+    - ¿cuáles son los costos?
+    - dame los precios
+    - necesito saber los precios
 
 # Test cases for availability
 - intent: ask_availability

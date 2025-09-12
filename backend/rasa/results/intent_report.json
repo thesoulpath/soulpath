@@ -1,86 +1,249 @@
 {
-  "ask_contact": {
-    "precision": 0.5714285714285714,
-    "recall": 1.0,
-    "f1-score": 0.7272727272727273,
-    "support": 4,
-    "confused_with": {}
-  },
-  "ask_pricing": {
+  "nlu_fallback": {
     "precision": 0.0,
     "recall": 0.0,
     "f1-score": 0.0,
-    "support": 4,
+    "support": 48,
     "confused_with": {
-      "book_session": 2,
-      "ask_contact": 2
-    }
-  },
-  "ask_availability": {
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1-score": 0.0,
-    "support": 4,
-    "confused_with": {
-      "astrology_question": 4
-    }
-  },
-  "book_session": {
-    "precision": 0.5714285714285714,
-    "recall": 1.0,
-    "f1-score": 0.7272727272727273,
-    "support": 4,
-    "confused_with": {}
-  },
-  "ask_help": {
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1-score": 0.0,
-    "support": 4,
-    "confused_with": {
-      "astrology_question": 2,
-      "book_session": 1,
-      "ask_contact": 1
+      "select_package": 38,
+      "astrology_sign": 9,
+      "affirm": 1
     }
   },
   "greet": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
-    "support": 4,
+    "support": 29,
     "confused_with": {}
   },
-  "astrology_question": {
-    "precision": 0.4,
+  "select_timeslot": {
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.5714285714285715,
-    "support": 4,
+    "f1-score": 1.0,
+    "support": 20,
+    "confused_with": {}
+  },
+  "provide_info": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 18,
+    "confused_with": {}
+  },
+  "select_package": {
+    "precision": 0.20833333333333334,
+    "recall": 1.0,
+    "f1-score": 0.3448275862068966,
+    "support": 10,
+    "confused_with": {}
+  },
+  "astrology_sign": {
+    "precision": 0.7567567567567568,
+    "recall": 1.0,
+    "f1-score": 0.8615384615384616,
+    "support": 28,
     "confused_with": {}
   },
   "goodbye": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
+    "support": 20,
+    "confused_with": {}
+  },
+  "ask_session_types": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 11,
+    "confused_with": {}
+  },
+  "ask_name": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 8,
+    "confused_with": {}
+  },
+  "book_reading": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 20,
+    "confused_with": {}
+  },
+  "astrology_question": {
+    "precision": 0.8,
+    "recall": 1.0,
+    "f1-score": 0.888888888888889,
     "support": 4,
     "confused_with": {}
   },
-  "accuracy": 0.625,
+  "provide_birth_date": {
+    "precision": 0.625,
+    "recall": 1.0,
+    "f1-score": 0.7692307692307693,
+    "support": 10,
+    "confused_with": {}
+  },
+  "show_packages": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 12,
+    "confused_with": {}
+  },
+  "bot_challenge": {
+    "precision": 1.0,
+    "recall": 0.75,
+    "f1-score": 0.8571428571428571,
+    "support": 4,
+    "confused_with": {
+      "ask_payment": 1
+    }
+  },
+  "birth_date": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 6,
+    "confused_with": {
+      "provide_birth_date": 6
+    }
+  },
+  "ask_package_info": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 25,
+    "confused_with": {}
+  },
+  "package_details": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 30,
+    "confused_with": {}
+  },
+  "affirm": {
+    "precision": 0.9629629629629629,
+    "recall": 1.0,
+    "f1-score": 0.9811320754716981,
+    "support": 26,
+    "confused_with": {}
+  },
+  "ask_pricing": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 81,
+    "confused_with": {}
+  },
+  "ask_contact": {
+    "precision": 1.0,
+    "recall": 0.5,
+    "f1-score": 0.6666666666666666,
+    "support": 4,
+    "confused_with": {
+      "astrology_question": 1,
+      "chitchat": 1
+    }
+  },
+  "chitchat": {
+    "precision": 0.9782608695652174,
+    "recall": 1.0,
+    "f1-score": 0.989010989010989,
+    "support": 45,
+    "confused_with": {}
+  },
+  "book_session": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 4,
+    "confused_with": {}
+  },
+  "confirm_booking": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 21,
+    "confused_with": {}
+  },
+  "mood_unhappy": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 14,
+    "confused_with": {}
+  },
+  "ask_help": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 4,
+    "confused_with": {}
+  },
+  "ask_availability": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 4,
+    "confused_with": {}
+  },
+  "ask_packages": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 43,
+    "confused_with": {}
+  },
+  "deny": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 25,
+    "confused_with": {}
+  },
+  "provide_name": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 9,
+    "confused_with": {}
+  },
+  "mood_great": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 14,
+    "confused_with": {}
+  },
+  "ask_payment": {
+    "precision": 0.9090909090909091,
+    "recall": 1.0,
+    "f1-score": 0.9523809523809523,
+    "support": 10,
+    "confused_with": {}
+  },
+  "accuracy": 0.9060955518945635,
   "macro avg": {
-    "precision": 0.44285714285714284,
-    "recall": 0.625,
-    "f1-score": 0.5032467532467533,
-    "support": 32
+    "precision": 0.8787227365067478,
+    "recall": 0.9112903225806451,
+    "f1-score": 0.8809941692431671,
+    "support": 607
   },
   "weighted avg": {
-    "precision": 0.44285714285714284,
-    "recall": 0.625,
-    "f1-score": 0.5032467532467533,
-    "support": 32
+    "precision": 0.8745835383540419,
+    "recall": 0.9060955518945635,
+    "f1-score": 0.8837779112352807,
+    "support": 607
   },
   "micro avg": {
-    "precision": 0.625,
-    "recall": 0.625,
-    "f1-score": 0.625,
-    "support": 32
+    "precision": 0.9060955518945635,
+    "recall": 0.9060955518945635,
+    "f1-score": 0.9060955518945635,
+    "support": 607
   }
 }

@@ -44,7 +44,7 @@ async function createSamplePackages() {
           create: {
             price: 75.00,
             currencyId: currency.id,
-            pricingMode: 'fixed',
+            pricingMode: 'custom',
             isActive: true
           }
         },
@@ -63,7 +63,7 @@ async function createSamplePackages() {
           create: {
             price: 120.00,
             currencyId: currency.id,
-            pricingMode: 'fixed',
+            pricingMode: 'custom',
             isActive: true
           }
         },
@@ -82,7 +82,7 @@ async function createSamplePackages() {
           create: {
             price: 180.00,
             currencyId: currency.id,
-            pricingMode: 'fixed',
+            pricingMode: 'custom',
             isActive: true
           }
         },
@@ -101,7 +101,7 @@ async function createSamplePackages() {
           create: {
             price: 300.00,
             currencyId: currency.id,
-            pricingMode: 'fixed',
+            pricingMode: 'custom',
             isActive: true
           }
         },

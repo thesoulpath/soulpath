@@ -1,0 +1,74 @@
+[
+  {
+    "text": "I want details about package 1",
+    "entities": [
+      {
+        "start": 21,
+        "end": 30,
+        "value": "package 1",
+        "entity": "package_name"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "package_id",
+        "start": 21,
+        "end": 30,
+        "confidence_entity": 0.8411823511123657,
+        "value": "package 1",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ]
+  },
+  {
+    "text": "I need more info about package 2",
+    "entities": [
+      {
+        "start": 23,
+        "end": 32,
+        "value": "package 2",
+        "entity": "package_name"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "package_id",
+        "start": 23,
+        "end": 32,
+        "confidence_entity": 0.7666622400283813,
+        "value": "package 2",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ]
+  },
+  {
+    "text": "What's included in package 3?",
+    "entities": [
+      {
+        "start": 19,
+        "end": 28,
+        "value": "package 3",
+        "entity": "package_name"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "package_id",
+        "start": 19,
+        "end": 28,
+        "confidence_entity": 0.8146856427192688,
+        "value": "package 3",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ]
+  }
+]

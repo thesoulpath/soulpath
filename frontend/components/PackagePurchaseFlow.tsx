@@ -487,7 +487,13 @@ export function PackagePurchaseFlow() {
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-white">
-                        Total: {formData.selectedPackage.currency.symbol}{(typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price) ? (formData.selectedPackage.price * formData.quantity).toFixed(2) : '0.00')}
+                        Total: {formData.selectedPackage.currency.symbol}
+                        {typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price)
+                          ? (formData.selectedPackage.price * formData.quantity).toFixed(2)
+                          : <span className="text-red-400 text-sm" title={`Raw price: ${formData.selectedPackage.price}`}>
+                              {formData.selectedPackage.price !== undefined && formData.selectedPackage.price !== null ? String(formData.selectedPackage.price) : 'Contact for pricing'}
+                            </span>
+                        }
                       </div>
                     </div>
                   </div>
@@ -604,7 +610,13 @@ export function PackagePurchaseFlow() {
                   <div className="flex justify-between items-center text-lg font-bold border-t border-[#0a0a23] pt-4">
                     <span className="text-gray-300">Total:</span>
                     <span className="text-[#ffd700]">
-                      {formData.selectedPackage.currency.symbol}{(typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price) ? (formData.selectedPackage.price * formData.quantity).toFixed(2) : '0.00')}
+                      {formData.selectedPackage.currency.symbol}
+                      {typeof formData.selectedPackage.price === 'number' && !isNaN(formData.selectedPackage.price)
+                        ? (formData.selectedPackage.price * formData.quantity).toFixed(2)
+                        : <span className="text-red-400 text-sm" title={`Raw price: ${formData.selectedPackage.price}`}>
+                            {formData.selectedPackage.price !== undefined && formData.selectedPackage.price !== null ? String(formData.selectedPackage.price) : 'Contact for pricing'}
+                          </span>
+                      }
                     </span>
                   </div>
 

@@ -380,72 +380,214 @@ const PackagesAndPricing: React.FC = () => {
   };
 
   const handleEditDefinition = async (data: unknown) => {
-    if (!user?.access_token || !selectedItem || 'package_prices' in selectedItem) return;
+    console.log('🔍 handleEditDefinition called with data:', data);
+    console.log('🔍 selectedItem:', selectedItem);
+    console.log('🔍 user access_token exists:', !!user?.access_token);
+
+    if (!user?.access_token || !selectedItem) {
+      console.log('❌ Early return due to missing user token or selectedItem');
+      console.log('   - user?.access_token:', !!user?.access_token);
+      console.log('   - selectedItem:', selectedItem);
+      return;
+    }
 
     try {
+      console.log('🔄 Preparing PUT request to /api/admin/package-definitions');
+      const formData = data as Record<string, unknown>;
+      const requestBody: Record<string, unknown> = {
+        id: selectedItem.id
+      };
+
+      // Only include fields that have actually changed
+      // Cast selectedItem to PackageDefinition since we know it's a definition in this function
+      const packageDef = selectedItem as PackageDefinition;
+      
+      if (formData.name && formData.name !== packageDef.name) {
+        requestBody.name = formData.name;
+      }
+      if (formData.description !== undefined && formData.description !== packageDef.description) {
+        requestBody.description = formData.description;
+      }
+      if (formData.sessionsCount) {
+        const newSessionsCount = parseInt(formData.sessionsCount as string);
+        if (newSessionsCount !== packageDef.sessionsCount) {
+          requestBody.sessionsCount = newSessionsCount;
+        }
+      }
+      if (formData.sessionDurationId) {
+        const newSessionDurationId = parseInt(formData.sessionDurationId as string);
+        if (newSessionDurationId !== packageDef.sessionDurationId) {
+          requestBody.sessionDurationId = newSessionDurationId;
+        }
+      }
+      if (formData.packageType && formData.packageType !== packageDef.packageType) {
+        requestBody.packageType = formData.packageType;
+      }
+      if (formData.maxGroupSize !== undefined) {
+        const newMaxGroupSize = formData.maxGroupSize ? parseInt(formData.maxGroupSize as string) : null;
+        if (newMaxGroupSize !== packageDef.maxGroupSize) {
+          requestBody.maxGroupSize = newMaxGroupSize;
+        }
+      }
+      if (formData.isActive !== undefined && formData.isActive !== packageDef.isActive) {
+        requestBody.isActive = formData.isActive;
+      }
+
+      console.log('🔄 Request body:', requestBody);
+      console.log('🔄 Original selectedItem:', selectedItem);
+
       const response = await fetch('/api/admin/package-definitions', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${user.access_token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          id: selectedItem.id,
-          ...(data as Record<string, unknown>)
-        })
+        body: JSON.stringify(requestBody)
       });
 
+      console.log('🔄 Response status:', response.status);
+      console.log('🔄 Response ok:', response.ok);
+
       const responseData = await response.json();
+      console.log('🔄 Response data:', responseData);
 
       if (responseData.success) {
+        console.log('✅ Package definition updated successfully');
         toast.success('Package definition updated successfully');
         setShowEditDefinitionModal(false);
         setSelectedItem(null);
         fetchPackageDefinitions();
       } else {
+        console.log('❌ API returned success: false');
+        console.log('   - Error message:', responseData.message);
+        console.log('   - Response details:', responseData);
         toast.error(responseData.message || 'Failed to update package definition');
       }
-    } catch {
+    } catch (error) {
+      console.error('❌ Error in handleEditDefinition:', error);
       toast.error('Error updating package definition');
     }
   };
 
   const handleEditPrice = async (data: unknown) => {
-    if (!user?.access_token || !selectedItem || !('package_prices' in selectedItem)) return;
+    console.log('🔍 handleEditPrice called with data:', data);
+    console.log('🔍 selectedItem:', selectedItem);
+    console.log('🔍 user access_token exists:', !!user?.access_token);
+
+    if (!user?.access_token || !selectedItem || 'package_prices' in selectedItem) {
+      console.log('❌ Early return due to missing user token, selectedItem, or wrong item type');
+      console.log('   - user?.access_token:', !!user?.access_token);
+      console.log('   - selectedItem:', selectedItem);
+      console.log('   - has package_prices (should be false for PackagePrice):', selectedItem ? 'package_prices' in selectedItem : 'N/A');
+      return;
+    }
 
     try {
+      console.log('🔄 Preparing PUT request to /api/admin/package-prices');
+      const formData = data as Record<string, unknown>;
+      const requestBody: Record<string, unknown> = {
+        id: selectedItem.id
+      };
+
+      // Only include fields that have actually changed
+      // Cast selectedItem to PackagePrice since we know it's a price in this function
+      const packagePrice = selectedItem as PackagePrice;
+      
+      const newPackageDefinitionId = formData.packageDefinitionId ? parseInt(formData.packageDefinitionId as string) : undefined;
+      const newCurrencyId = formData.currencyId ? parseInt(formData.currencyId as string) : undefined;
+      const newPrice = formData.price ? parseFloat(formData.price as string) : undefined;
+
+      console.log('🔍 Comparison values:');
+      console.log('  - newPackageDefinitionId:', newPackageDefinitionId, 'vs packagePrice.packageDefinitionId:', packagePrice.packageDefinitionId);
+      console.log('  - newCurrencyId:', newCurrencyId, 'vs packagePrice.currencyId:', packagePrice.currencyId);
+      console.log('  - newPrice:', newPrice, 'vs packagePrice.price:', packagePrice.price);
+      console.log('  - formData.pricingMode:', formData.pricingMode, 'vs packagePrice.pricingMode:', packagePrice.pricingMode);
+      console.log('  - formData.isActive:', formData.isActive, 'vs packagePrice.isActive:', packagePrice.isActive);
+
+      if (newPackageDefinitionId && newPackageDefinitionId !== packagePrice.packageDefinitionId) {
+        console.log('✅ Including packageDefinitionId in request');
+        requestBody.packageDefinitionId = newPackageDefinitionId;
+      }
+      if (newCurrencyId && newCurrencyId !== packagePrice.currencyId) {
+        console.log('✅ Including currencyId in request');
+        requestBody.currencyId = newCurrencyId;
+      }
+      if (newPrice !== undefined && newPrice !== packagePrice.price) {
+        console.log('✅ Including price in request');
+        requestBody.price = newPrice;
+      }
+      if (formData.pricingMode && formData.pricingMode !== packagePrice.pricingMode) {
+        console.log('✅ Including pricingMode in request');
+        requestBody.pricingMode = formData.pricingMode;
+      }
+      if (formData.isActive !== undefined && formData.isActive !== packagePrice.isActive) {
+        console.log('✅ Including isActive in request');
+        requestBody.isActive = formData.isActive;
+      }
+
+      console.log('🔄 Request body:', requestBody);
+      console.log('🔄 Original selectedItem:', selectedItem);
+
       const response = await fetch('/api/admin/package-prices', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${user.access_token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          id: selectedItem.id,
-          ...(data as Record<string, unknown>)
-        })
+        body: JSON.stringify(requestBody)
       });
 
+      console.log('🔄 Response status:', response.status);
+      console.log('🔄 Response ok:', response.ok);
+
       const responseData = await response.json();
+      console.log('🔄 Response data:', responseData);
 
       if (responseData.success) {
+        console.log('✅ Package price updated successfully');
         toast.success('Package price updated successfully');
         setShowEditPriceModal(false);
         setSelectedItem(null);
         fetchPackagePrices();
       } else {
+        console.log('❌ API returned success: false');
+        console.log('   - Error message:', responseData.message);
+        console.log('   - Response details:', responseData);
         toast.error(responseData.message || 'Failed to update package price');
       }
-    } catch {
+    } catch (error) {
+      console.error('❌ Error in handleEditPrice:', error);
       toast.error('Error updating package price');
     }
   };
 
   const handleDelete = async () => {
-    if (!user?.access_token || !selectedItem) return;
-    
+    console.log('🔍 handleDelete called');
+    console.log('🔍 deleteType:', deleteType);
+    console.log('🔍 selectedItem:', selectedItem);
+    console.log('🔍 selectedItem.id:', selectedItem?.id);
+    console.log('🔍 selectedItem.id type:', typeof selectedItem?.id);
+    console.log('🔍 user access_token exists:', !!user?.access_token);
+
+    if (!user?.access_token || !selectedItem) {
+      console.log('❌ Early return due to missing user token or selectedItem');
+      console.log('   - user?.access_token:', !!user?.access_token);
+      console.log('   - selectedItem:', selectedItem);
+      return;
+    }
+
+    if (!selectedItem.id) {
+      console.log('❌ selectedItem.id is undefined or null');
+      console.log('   - selectedItem:', JSON.stringify(selectedItem, null, 2));
+      toast.error('Invalid item selected for deletion');
+      return;
+    }
+
     try {
       const endpoint = deleteType === 'definition' ? 'package-definitions' : 'package-prices';
+      console.log('🔄 Preparing DELETE request to /api/admin/' + endpoint);
+      console.log('🔄 Item ID:', selectedItem.id);
+
       const response = await fetch(`/api/admin/${endpoint}?id=${selectedItem.id}`, {
         method: 'DELETE',
         headers: {
@@ -454,9 +596,14 @@ const PackagesAndPricing: React.FC = () => {
         }
       });
 
+      console.log('🔄 Response status:', response.status);
+      console.log('🔄 Response ok:', response.ok);
+
       const data = await response.json();
+      console.log('🔄 Response data:', data);
 
       if (data.success) {
+        console.log('✅ Deletion successful');
         toast.success(`${deleteType === 'definition' ? 'Package definition' : 'Package price'} deleted successfully`);
         setShowDeleteModal(false);
         setSelectedItem(null);
@@ -466,9 +613,41 @@ const PackagesAndPricing: React.FC = () => {
           fetchPackagePrices();
         }
       } else {
-        toast.error(data.message || `Failed to delete ${deleteType}`);
+        console.log('❌ API returned success: false');
+        console.log('   - Error message:', data.message);
+        console.log('   - Response details:', data);
+        
+        // Show more user-friendly error messages
+        if (data.message?.includes('active user packages')) {
+          if (deleteType === 'definition') {
+            toast.error('Cannot delete package definition with active user packages. Click "Edit" to deactivate it instead.', {
+              duration: 6000,
+              action: {
+                label: 'Edit Instead',
+                onClick: () => {
+                  setShowDeleteModal(false);
+                  setShowEditDefinitionModal(true);
+                }
+              }
+            });
+          } else {
+            toast.error('Cannot delete package price with active user packages. Click "Edit" to deactivate it instead.', {
+              duration: 6000,
+              action: {
+                label: 'Edit Instead',
+                onClick: () => {
+                  setShowDeleteModal(false);
+                  setShowEditPriceModal(true);
+                }
+              }
+            });
+          }
+        } else {
+          toast.error(data.message || `Failed to delete ${deleteType}`);
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error('❌ Error in handleDelete:', error);
       toast.error(`Error deleting ${deleteType}`);
     }
   };
@@ -492,13 +671,42 @@ const PackagesAndPricing: React.FC = () => {
       const data = await response.json();
 
       if (data.success) {
-        toast.success(`Package ${isActive ? 'shown' : 'hidden'} on front page successfully`);
+        toast.success(`Package ${isActive ? 'activated' : 'deactivated'} successfully`);
         fetchPackageDefinitions();
       } else {
         toast.error(data.message || 'Failed to update package status');
       }
     } catch {
       toast.error('Error updating package status');
+    }
+  };
+
+  const togglePriceStatus = async (priceId: number, isActive: boolean) => {
+    if (!user?.access_token) return;
+    
+    try {
+      const response = await fetch('/api/admin/package-prices', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: priceId,
+          isActive: isActive
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(`Price ${isActive ? 'activated' : 'deactivated'} successfully`);
+        fetchPackagePrices();
+      } else {
+        toast.error(data.message || 'Failed to update price status');
+      }
+    } catch {
+      toast.error('Error updating price status');
     }
   };
 
@@ -719,7 +927,7 @@ const PackagesAndPricing: React.FC = () => {
                               className={pkg.isActive ? "dashboard-button-warning" : "dashboard-button-success"}
                               onClick={() => togglePackageStatus(pkg.id, !pkg.isActive)}
                             >
-                              {pkg.isActive ? 'Hide' : 'Show'}
+                              {pkg.isActive ? 'Deactivate' : 'Activate'}
                             </BaseButton>
                             <BaseButton
                               size="sm"
@@ -854,7 +1062,13 @@ const PackagesAndPricing: React.FC = () => {
                           </Badge>
                         </td>
                         <td className="font-mono">
-                          {price.currency?.symbol || ''}{(typeof price.price === 'number' && !isNaN(price.price) ? price.price.toFixed(2) : '0.00')}
+                          {price.currency?.symbol || ''}
+                          {typeof price.price === 'number' && !isNaN(price.price)
+                            ? price.price.toFixed(2)
+                            : <span className="text-red-400 text-xs" title={`Raw value: ${price.price}`}>
+                                {price.price !== undefined && price.price !== null ? String(price.price) : 'N/A'}
+                              </span>
+                          }
                         </td>
                         <td>{getPricingModeBadge(price.pricingMode)}</td>
                         <td>
@@ -864,6 +1078,14 @@ const PackagesAndPricing: React.FC = () => {
                         </td>
                         <td>
                           <div className="flex gap-2">
+                            <BaseButton
+                              size="sm"
+                              variant="outline"
+                              className={price.isActive ? "dashboard-button-warning" : "dashboard-button-success"}
+                              onClick={() => togglePriceStatus(price.id, !price.isActive)}
+                            >
+                              {price.isActive ? 'Deactivate' : 'Activate'}
+                            </BaseButton>
                             <BaseButton
                               size="sm"
                               variant="outline"
@@ -930,7 +1152,7 @@ const PackagesAndPricing: React.FC = () => {
         isOpen={showEditPriceModal}
         onClose={() => setShowEditPriceModal(false)}
         onSubmit={handleEditPrice}
-        packagePrice={selectedItem && 'package_prices' in selectedItem ? selectedItem as unknown as PackagePrice : null}
+        packagePrice={selectedItem && !('package_prices' in selectedItem) ? selectedItem as unknown as PackagePrice : null}
         packageDefinitions={packageDefinitions}
         currencies={currencies}
         mode="edit"
@@ -941,7 +1163,11 @@ const PackagesAndPricing: React.FC = () => {
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
         title={`Delete ${deleteType === 'definition' ? 'Package Definition' : 'Package Price'}`}
-        description={`Are you sure you want to delete this ${deleteType === 'definition' ? 'package definition' : 'package price'}?`}
+        description={
+          deleteType === 'definition' 
+            ? 'Are you sure you want to delete this package definition? Note: This action will fail if there are active user packages associated with it. Consider deactivating it instead.'
+            : 'Are you sure you want to delete this package price? Note: This action will fail if there are active user packages associated with it.'
+        }
         itemName={selectedItem ? ('packagePrices' in selectedItem ? (selectedItem as unknown as PackagePrice).packageDefinition?.name || 'N/A' : (selectedItem as unknown as PackageDefinition).name) : undefined}
         itemType={deleteType}
       />

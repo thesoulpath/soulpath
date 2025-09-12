@@ -119,7 +119,7 @@ async function main() {
         packageDefinitionId: basicPackage.id,
         currencyId: usd.id,
         price: 120.00,
-        pricingMode: 'fixed',
+        pricingMode: 'custom',
         isActive: true
       }
     });
@@ -137,7 +137,7 @@ async function main() {
         packageDefinitionId: premiumPackage.id,
         currencyId: usd.id,
         price: 180.00,
-        pricingMode: 'fixed',
+        pricingMode: 'custom',
         isActive: true
       }
     });
@@ -155,7 +155,7 @@ async function main() {
         packageDefinitionId: couplePackage.id,
         currencyId: usd.id,
         price: 250.00,
-        pricingMode: 'fixed',
+        pricingMode: 'custom',
         isActive: true
       }
     });

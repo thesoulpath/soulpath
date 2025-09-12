@@ -63,14 +63,23 @@ const PackageDefinitionModal: React.FC<PackageDefinitionModalProps> = ({
 
   useEffect(() => {
     if (packageDefinition && mode === 'edit') {
+      // Add validation to ensure packageDefinition has the expected structure
+      console.log('🔍 PackageDefinitionModal: Editing package definition:', packageDefinition);
+      
       setFormData({
-        name: packageDefinition.name,
+        name: packageDefinition.name || '',
         description: packageDefinition.description || '',
-        sessionsCount: packageDefinition.sessionsCount.toString(),
-        sessionDurationId: packageDefinition.sessionDurationId.toString(),
-        packageType: packageDefinition.packageType,
-        maxGroupSize: packageDefinition.maxGroupSize?.toString() || '',
-        isActive: packageDefinition.isActive
+        sessionsCount: (packageDefinition.sessionsCount !== null && packageDefinition.sessionsCount !== undefined) 
+          ? packageDefinition.sessionsCount.toString() 
+          : '',
+        sessionDurationId: (packageDefinition.sessionDurationId !== null && packageDefinition.sessionDurationId !== undefined)
+          ? packageDefinition.sessionDurationId.toString()
+          : '',
+        packageType: packageDefinition.packageType || 'individual',
+        maxGroupSize: (packageDefinition.maxGroupSize !== null && packageDefinition.maxGroupSize !== undefined)
+          ? packageDefinition.maxGroupSize.toString()
+          : '',
+        isActive: packageDefinition.isActive ?? true
       });
     } else {
       resetForm();
@@ -119,16 +128,28 @@ const PackageDefinitionModal: React.FC<PackageDefinitionModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    console.log('🔍 PackageDefinitionModal handleSubmit called');
+    console.log('🔍 Form data before validation:', formData);
+
     if (validateForm()) {
+      console.log('✅ Form validation passed');
       const submitData = {
         ...formData,
         sessionsCount: parseInt(formData.sessionsCount),
         sessionDurationId: parseInt(formData.sessionDurationId),
         maxGroupSize: formData.maxGroupSize ? parseInt(formData.maxGroupSize) : null
       };
-      
-      onSubmit(submitData);
+      console.log('🔄 Prepared submit data:', submitData);
+      console.log('🔄 Calling onSubmit with data...');
+
+      try {
+        onSubmit(submitData);
+        console.log('✅ onSubmit called successfully');
+      } catch (error) {
+        console.error('❌ Error calling onSubmit:', error);
+      }
+    } else {
+      console.log('❌ Form validation failed');
     }
   };
 

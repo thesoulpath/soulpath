@@ -130,12 +130,21 @@ stories:
   - intent: greet
   - action: utter_greet
   - intent: ask_pricing
-  - action: action_get_pricing
-  - intent: ask_packages
   - action: utter_ask_packages
   - action: action_fetch_packages
   - intent: chitchat
   - action: utter_help
+
+- story: direct pricing flow
+  steps:
+  - intent: ask_pricing
+  - action: utter_ask_packages
+  - action: action_fetch_packages
+  - intent: package_details
+  - action: utter_package_details
+  - action: action_fetch_package_details
+  - intent: select_package
+  - action: utter_book_session
 
 - story: contact information flow
   steps:
