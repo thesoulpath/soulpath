@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  rasa-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.rasa
+    ports:
+      - "5005:5005"
+    environment:
+      - PORT=5005
+      - RASA_MODEL_SERVER=null
+      - PYTHONUNBUFFERED=1
+      - TF_CPP_MIN_LOG_LEVEL=2
+    volumes:
+      - ./rasa/models:/app/models
+      - ./rasa/logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/webhooks/rest/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  rasa-actions:
+    build:
+      context: .
+      dockerfile: Dockerfile.rasa
+    command: ["python", "-m", "rasa", "run", "actions", "--port", "5055"]
+    ports:
+      - "5055:5055"
+    environment:
+      - PORT=5055
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./rasa:/app
+    restart: unless-stopped
+    depends_on:
+      - rasa-server
+
+  # Optional: Add a reverse proxy for production-like setup
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - rasa-server
+      - rasa-actions
+    restart: unless-stopped
+
+networks:
+  default:
+    name: rasa-network

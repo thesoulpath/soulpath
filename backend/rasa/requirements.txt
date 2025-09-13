@@ -1,19 +1,47 @@
+# Core Rasa dependencies
 rasa==3.6.21
 rasa-sdk==3.6.2
+
+# HTTP and async libraries
 requests==2.31.0
 aiohttp==3.8.6
-python-telegram-bot==20.7
+httpx==0.24.1
 sanic==23.6.0
 uvloop==0.17.0
-httpx==0.24.1
-pydantic==1.10.13
+
+# Telegram integration
+python-telegram-bot==20.7
+
+# Web framework dependencies
 fastapi==0.104.1
 uvicorn==0.24.0
 gunicorn==21.2.0
 python-multipart==0.0.6
+
+# Data processing and validation
+pydantic==1.10.13
+typing-extensions==4.8.0
+
+# Environment and configuration
 python-dotenv==1.0.0
 pytz==2023.3
-asyncio==3.4.3
-typing-extensions==4.8.0
+
+# Build tools
 setuptools==68.2.2
 wheel==0.41.2
+
+# TensorFlow for ML (CPU version for Render)
+tensorflow-cpu==2.13.0
+
+# spaCy for NLP
+spacy>=3.6.0
+
+# Additional utilities
+numpy>=1.21.0
+scikit-learn>=1.0.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Security and monitoring
+cryptography>=3.4.8
+psutil>=5.8.0

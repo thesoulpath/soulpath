@@ -1,30 +1,42 @@
 services:
   - type: web
     name: rasa-server
-    runtime: python3
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -m rasa run --enable-api --cors "*" --port $PORT --credentials credentials.yml --endpoints endpoints.yml
+    runtime: docker
+    dockerfilePath: ./Dockerfile.rasa
+    dockerContext: .
+    dockerBuildArgs:
+      - BUILDKIT_INLINE_CACHE=1
     envVars:
       - key: PORT
         generateValue: true
       - key: RASA_MODEL_SERVER
         value: null
-      - key: RASA_CORE_ENDPOINTS
-        value: endpoints.yml
-      - key: RASA_NLU_ENDPOINTS
-        value: endpoints.yml
-      - key: PYTHONPATH
-        value: /opt/render/project/src
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: TF_CPP_MIN_LOG_LEVEL
+        value: "2"
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
+      - key: NUMEXPR_NUM_THREADS
+        value: "1"
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
+    healthCheckPath: /webhooks/rest/
+    plan: starter
 
   - type: web
     name: rasa-actions
-    runtime: python3
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -m rasa run actions --port $ACTIONS_PORT
+    runtime: docker
+    dockerfilePath: ./Dockerfile.rasa
+    dockerContext: .
+    command: python -m rasa run actions --port $ACTIONS_PORT
     envVars:
       - key: ACTIONS_PORT
         value: 5055
+      - key: PYTHONUNBUFFERED
+        value: "1"
       - key: RASA_MODEL_SERVER
         value: null
-      - key: PYTHONPATH
-        value: /opt/render/project/src
+    plan: starter

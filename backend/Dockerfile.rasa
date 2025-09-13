@@ -1,35 +1,60 @@
-# Memory-optimized Rasa-only Dockerfile
-FROM python:3.8-slim
+# Optimized Rasa Dockerfile for Render deployment
+FROM python:3.10-slim
 
-# Install system dependencies with minimal footprint
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy and install requirements with timeout handling
+# Set environment variables for optimization
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV TF_CPP_MIN_LOG_LEVEL=2
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
+ENV NUMEXPR_NUM_THREADS=1
+ENV OPENBLAS_NUM_THREADS=1
+
+# Copy requirements first for better caching
 COPY rasa/requirements.txt ./
-RUN pip install --no-cache-dir --timeout=300 -r requirements.txt && \
-    pip install --no-cache-dir --timeout=300 rasa==3.6.21 tensorflow-cpu spacy && \
-    python -c "import spacy.cli; spacy.cli.download('en_core_web_sm')" && \
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir tensorflow-cpu==2.13.0 && \
     pip cache purge
+
+# Download spaCy model
+RUN python -c "import spacy.cli; spacy.cli.download('es_core_news_sm')" || \
+    python -c "import spacy.cli; spacy.cli.download('en_core_web_sm')"
 
 # Copy Rasa project
 COPY rasa/ ./
 
-# Add cache-busting layer to force rebuild
-RUN echo "Cache busting layer - $(date)" > /tmp/cache_bust.txt
-RUN echo "FORCE_REBUILD_20241209004" > /tmp/force_rebuild.txt
+# Create necessary directories
+RUN mkdir -p models logs
 
 # Copy startup script
 COPY start-rasa.sh /app/start-rasa.sh
 RUN chmod +x /app/start-rasa.sh
 
+# Create non-root user for security
+RUN useradd -m -u 1000 rasa && \
+    chown -R rasa:rasa /app
+USER rasa
+
 # Expose port (Render will override with PORT env var)
 EXPOSE 5005
 
-# Start Rasa server using startup script
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:5005/webhooks/rest/ || exit 1
+
+# Start Rasa server
 CMD ["/app/start-rasa.sh"]
