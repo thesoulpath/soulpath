@@ -74,11 +74,8 @@ export async function GET(request: NextRequest) {
         lte: new Date(dateTo)
       };
     }
-    if (hasCapacity === 'true') {
-      where.bookedCount = { lt: { capacity: true } };
-    } else if (hasCapacity === 'false') {
-      where.bookedCount = { gte: { capacity: true } };
-    }
+    // NOTE: Prisma does not support comparing two columns directly in a where clause.
+    // We'll apply hasCapacity filtering in application code after fetching results.
 
     // Base select fields
     const select: Record<string, unknown> = {
@@ -135,16 +132,33 @@ export async function GET(request: NextRequest) {
 
     console.log('🔍 Executing database query...');
     
-    const [scheduleSlots, totalCount] = await Promise.all([
+    // Fetch results; if hasCapacity filter is provided, fetch without pagination first,
+    // then filter in memory and paginate to ensure accurate counts.
+    const shouldFilterCapacity = hasCapacity !== undefined;
+
+    const [rawSlots, baseTotalCount] = await Promise.all([
       prisma.scheduleSlot.findMany({
         where,
         select,
-        skip: offset,
-        take: limit,
+        skip: shouldFilterCapacity ? undefined : offset,
+        take: shouldFilterCapacity ? undefined : limit,
         orderBy: { startTime: 'asc' }
       }),
       prisma.scheduleSlot.count({ where })
     ]);
+
+    // Apply capacity filter if requested
+    const capacityFiltered = shouldFilterCapacity
+      ? rawSlots.filter((slot: any) => {
+          const capacity = slot.capacity as number | null;
+          const booked = (slot.bookedCount as number | null) ?? 0;
+          const hasRemaining = capacity === null || booked < capacity;
+          return hasCapacity === 'true' ? hasRemaining : !hasRemaining;
+        })
+      : rawSlots;
+
+    const totalCount = shouldFilterCapacity ? capacityFiltered.length : baseTotalCount;
+    const scheduleSlots = shouldFilterCapacity ? capacityFiltered.slice(offset, offset + limit) : capacityFiltered;
 
     console.log('✅ Database query successful, found', scheduleSlots.length, 'schedule slots');
 
