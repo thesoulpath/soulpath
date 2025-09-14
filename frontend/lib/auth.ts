@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from './prisma';
 import { env } from './env';
 
-const JWT_SECRET = env.JWT_SECRET;
+const JWT_SECRET: string = env.JWT_SECRET ?? process.env.JWT_SECRET ?? 'development-secret-change-me';
 
 export interface AuthenticatedUser {
   id: string;
