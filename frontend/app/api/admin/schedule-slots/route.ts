@@ -174,8 +174,6 @@ export async function GET(request: NextRequest) {
       message: 'An unexpected error occurred',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
