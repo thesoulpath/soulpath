@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensurePrismaConnected } from '@/lib/prisma';
 import { withCache } from '@/lib/cache';
 
 // ISR Configuration - This route will be statically generated and revalidated
@@ -114,6 +114,9 @@ export async function GET() {
         }
       }
     ];
+
+    // Ensure DB is connected (handles cold starts)
+    await ensurePrismaConnected();
 
     // Try to fetch from database with caching
     let sections;

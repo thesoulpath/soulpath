@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensurePrismaConnected } from '@/lib/prisma';
 import { withCache } from '@/lib/cache';
 
 // ISR Configuration - This route will be statically generated and revalidated
@@ -157,6 +157,7 @@ function transformFlatContentToNested(flatContent: Record<string, string>): Tran
 
 export async function GET() {
   try {
+    await ensurePrismaConnected();
     // Use caching for content data
     const transformedContent = await withCache(
       'content',
@@ -207,6 +208,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    await ensurePrismaConnected();
     const body = await request.json();
     
     // Get the first content record or create one

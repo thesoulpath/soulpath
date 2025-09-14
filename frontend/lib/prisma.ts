@@ -22,3 +22,17 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient({
 });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+
+export async function ensurePrismaConnected(retries = 3): Promise<void> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      return;
+    } catch (_error) {
+      if (attempt === retries) {
+        throw _error;
+      }
+      await new Promise(resolve => setTimeout(resolve, attempt * 200));
+    }
+  }
+}
