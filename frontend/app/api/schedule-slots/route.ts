@@ -23,15 +23,7 @@ export async function GET(request: NextRequest) {
         if (availableOnly) {
           whereClause.isAvailable = true;
           // Only show slots that haven't reached capacity
-          whereClause.OR = [
-            { capacity: null }, // No capacity limit
-            {
-              AND: [
-                { capacity: { not: null } },
-                { bookedCount: { lt: prisma.scheduleSlot.fields.capacity } }
-              ]
-            }
-          ];
+          // Prisma cannot compare two columns in a filter; we'll filter in JS below
         }
 
         if (date) {
@@ -46,7 +38,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Fetch schedule slots with optimized query
-        return await prisma.scheduleSlot.findMany({
+        const raw = await prisma.scheduleSlot.findMany({
           where: whereClause,
           select: {
             id: true,
@@ -70,20 +62,38 @@ export async function GET(request: NextRequest) {
             { startTime: 'asc' }
           ]
         });
+
+        return availableOnly
+          ? raw.filter((slot: { capacity: number | null; bookedCount: number | null; isAvailable: boolean }) => {
+              const capacity = slot.capacity as number | null;
+              const booked = (slot.bookedCount as number | null) ?? 0;
+              return slot.isAvailable && (capacity === null || booked < capacity);
+            })
+          : raw;
       },
       2 * 60 * 1000 // Cache for 2 minutes (availability changes frequently)
     );
 
     // Transform the data to match the expected format
-    const transformedSlots = slots.map(slot => ({
+    const transformedSlots = slots.map((slot: {
+      id: number;
+      startTime: Date;
+      endTime: Date;
+      capacity: number | null;
+      bookedCount: number | null;
+      isAvailable: boolean;
+      scheduleTemplate: {
+        sessionDuration: { name: string | null; duration_minutes: number | null } | null
+      } | null;
+    }) => ({
       id: slot.id,
       date: slot.startTime.toISOString().split('T')[0], // Format as YYYY-MM-DD
       time: slot.startTime.toTimeString().split(' ')[0].substring(0, 5), // Format as HH:MM
       isAvailable: slot.isAvailable && (slot.capacity === null || (slot.bookedCount || 0) < slot.capacity),
       capacity: slot.capacity,
       bookedCount: slot.bookedCount || 0,
-      duration: slot.scheduleTemplate.sessionDuration?.duration_minutes || 60,
-      sessionType: slot.scheduleTemplate.sessionDuration?.name || 'Standard Session'
+      duration: slot.scheduleTemplate?.sessionDuration?.duration_minutes || 60,
+      sessionType: slot.scheduleTemplate?.sessionDuration?.name || 'Standard Session'
     }));
 
     console.log(`✅ Found ${transformedSlots.length} schedule slots`);
