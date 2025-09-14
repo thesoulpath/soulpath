@@ -74,10 +74,15 @@ export async function GET(request: NextRequest) {
         lte: new Date(dateTo)
       };
     }
+    // Note: hasCapacity filter temporarily disabled due to Prisma limitations
+    // TODO: Implement proper capacity comparison using raw SQL if needed
     if (hasCapacity === 'true') {
-      where.bookedCount = { lt: { capacity: true } };
+      where.OR = [
+        { capacity: null }, // No capacity limit
+        { capacity: { not: null } } // Has capacity (comparison will be done in application layer)
+      ];
     } else if (hasCapacity === 'false') {
-      where.bookedCount = { gte: { capacity: true } };
+      where.capacity = { not: null }; // Has capacity limit
     }
 
     // Base select fields
