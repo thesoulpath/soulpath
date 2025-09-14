@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // Test endpoint to demonstrate conversation logs functionality
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     // Get some sample conversation logs (without auth for testing)
     const logs = await prisma.conversationLog.findMany({

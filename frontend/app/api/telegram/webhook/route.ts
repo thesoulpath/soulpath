@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { env } from '@/lib/env';
 import { ConversationalOrchestrator } from '@/lib/services/conversational-orchestrator';
 import { OrchestratorConfig, IntentActionMapping } from '@/lib/types/conversational-orchestrator';
@@ -110,7 +110,7 @@ function getBaseUrl(): string {
   return baseUrl;
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     console.log('🔍 GET /api/telegram/webhook - Health check');
     return NextResponse.json({ 
@@ -127,7 +127,7 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     console.log('📱 Telegram webhook received');
     

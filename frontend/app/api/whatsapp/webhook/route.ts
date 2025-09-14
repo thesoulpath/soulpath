@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { ConversationalOrchestrator } from '@/lib/services/conversational-orchestrator';
 import { OrchestratorConfig, IntentActionMapping } from '@/lib/types/conversational-orchestrator';
 
@@ -122,7 +122,7 @@ function getOrchestrator(): ConversationalOrchestrator {
   return orchestrator;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const body = await request.text();
     const signature = request.headers.get('x-twilio-signature');
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     // Verificación de salud del webhook
     const orchestrator = getOrchestrator();
