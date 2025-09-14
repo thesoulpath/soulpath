@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { env } from '@/lib/env';
 import { ConversationalOrchestrator } from '@/lib/services/conversational-orchestrator';
 import { OrchestratorConfig, IntentActionMapping } from '@/lib/types/conversational-orchestrator';
 
@@ -100,9 +101,6 @@ function getBaseUrl(): string {
   
   // If PORT is not set, try to detect from the request or use common ports
   if (!process.env.PORT) {
-    // Try common development ports
-    const commonPorts = [3000, 3001, 3002, 3003];
-    // For now, let's use 3001 since we know that's what Next.js is using
     port = 3001;
   }
   
@@ -317,7 +315,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function sendTelegramMessage(chatId: string, text: string): Promise<void> {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN || '8381849581:AAG7bQxK23l5m2MeKJDnMIpGEzy0SeEYSig';
+  const botToken = env.TELEGRAM_BOT_TOKEN as string;
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
   try {
@@ -345,7 +343,7 @@ async function sendTelegramMessage(chatId: string, text: string): Promise<void> 
 }
 
 async function answerCallbackQuery(callbackQueryId: string): Promise<void> {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN || '8381849581:AAG7bQxK23l5m2MeKJDnMIpGEzy0SeEYSig';
+  const botToken = env.TELEGRAM_BOT_TOKEN as string;
   const url = `https://api.telegram.org/bot${botToken}/answerCallbackQuery`;
 
   try {

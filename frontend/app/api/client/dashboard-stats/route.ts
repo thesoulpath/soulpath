@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { requireAuth } from '@/lib/auth';
 import { withCache } from '@/lib/cache';
 import { withApiOptimization } from '@/lib/middleware/performance';
+import { env } from '@/lib/env';
 
 interface BookingData {
   id: string;
@@ -45,8 +46,8 @@ interface PackageWithDetails {
 async function handler(request: NextRequest) {
   try {
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      env.NEXT_PUBLIC_SUPABASE_URL as string,
+      process.env.SUPABASE_SERVICE_ROLE_KEY as string
     );
     const user = await requireAuth(request);
 

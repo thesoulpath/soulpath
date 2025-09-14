@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from 'redis';
+import { env } from './env';
 
 // Redis client configuration
 class RedisManager {
@@ -22,10 +23,10 @@ class RedisManager {
 
     try {
       // Create Redis client with environment-based configuration
-      const redisUrl = process.env.REDIS_URL || process.env.REDISCLOUD_URL;
+      const redisUrl = env.REDIS_URL ?? process.env.REDISCLOUD_URL ?? 'redis://localhost:6379';
 
       this.client = createClient({
-        url: redisUrl || 'redis://localhost:6379',
+        url: redisUrl,
         socket: {
           connectTimeout: 60000,
         }
@@ -33,17 +34,23 @@ class RedisManager {
 
       // Handle connection events
       this.client.on('error', (err) => {
-        console.error('Redis Client Error:', err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Redis Client Error:', err);
+        }
         this.isConnected = false;
       });
 
       this.client.on('connect', () => {
-        console.log('✅ Connected to Redis');
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('✅ Connected to Redis');
+        }
         this.isConnected = true;
       });
 
       this.client.on('disconnect', () => {
-        console.log('❌ Disconnected from Redis');
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('❌ Disconnected from Redis');
+        }
         this.isConnected = false;
       });
 
