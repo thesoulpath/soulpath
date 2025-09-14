@@ -27,16 +27,26 @@ export interface RasaResponse {
   }>;
 }
 
+export type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: JSONValue }
+  | JSONValue[];
+
+export type EntitiesMap = Record<string, string | number | boolean | null>;
+
 export interface RasaAction {
   action: string;
   confidence: number;
-  parameters?: Record<string, any>;
+  parameters?: Record<string, JSONValue>;
   response?: string;
 }
 
 export interface APICallResult {
   success: boolean;
-  data?: any;
+  data?: JSONValue;
   error?: string;
   statusCode?: number;
 }
@@ -85,16 +95,16 @@ export interface ConversationLog {
   rasaIntent: string | null;
   confidence?: number;
   rasaConfidence: number | null;
-  entities?: any[];
-  rasaEntities: any[] | null;
+  entities?: RasaResponse['entities'];
+  rasaEntities: RasaResponse['entities'] | null;
   action?: string;
   responseGenerator: string;
   bookingStep: string | null;
-  bookingData?: any;
-  bookingDataSnapshot: any | null;
+  bookingData?: JSONValue;
+  bookingDataSnapshot: JSONValue | null;
   modelVersion: string | null;
   success?: boolean;
-  apiCalls?: any[];
+  apiCalls?: Array<APICallResult | APICallResult[]>;
   processingTime?: number;
   error?: string;
   feedback?: UserFeedback[];
@@ -180,7 +190,7 @@ export interface ConversationContext {
   userId: string;
   sessionId: string;
   lastIntent?: string;
-  lastEntities?: Record<string, any>;
+  lastEntities?: EntitiesMap;
   conversationHistory: Array<{
     role: 'user' | 'assistant';
     message: string;
@@ -189,7 +199,7 @@ export interface ConversationContext {
   userPreferences?: {
     language: string;
     timezone: string;
-    notificationSettings: any;
+    notificationSettings: JSONValue;
   };
 }
 
@@ -214,12 +224,12 @@ export interface ErrorResponse {
   success: false;
   error: string;
   code: string;
-  details?: any;
+  details?: JSONValue;
 }
 
 export interface SuccessResponse {
   success: true;
-  data: any;
+  data: JSONValue;
   message?: string;
 }
 
