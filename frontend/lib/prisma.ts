@@ -7,7 +7,13 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL || "postgresql://postgres.hwxrstqeuouefyrwjsjt:SIo1ahTJ3L0GoIMP@aws-1-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
+      url: (() => {
+        const url = process.env.DATABASE_URL;
+        if (!url) {
+          throw new Error('DATABASE_URL is not set. Please configure it in your environment.');
+        }
+        return url;
+      })(),
     },
   },
   // Enhanced logging for debugging

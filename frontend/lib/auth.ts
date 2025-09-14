@@ -1,12 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './prisma';
+import { env } from './env';
 
-const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-
-// Debug JWT_SECRET loading
-console.log('🔐 Auth: JWT_SECRET loaded:', JWT_SECRET ? 'YES' : 'NO', 'Length:', JWT_SECRET?.length || 0);
+const JWT_SECRET = env.JWT_SECRET;
 
 export interface AuthenticatedUser {
   id: string;
@@ -18,19 +15,23 @@ export async function requireAuth(request: NextRequest): Promise<AuthenticatedUs
   const authHeader = request.headers.get('Authorization');
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('Auth: No Authorization header or invalid format');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Auth: No Authorization header or invalid format');
+    }
     return null;
   }
 
   const token = authHeader.replace('Bearer ', '');
-  console.log('Auth: Token received, length:', token.length);
+  // Never log tokens or secrets
   
   try {
     // Verify JWT token
     const decoded = jwt.verify(token, JWT_SECRET) as any;
     
     if (!decoded || !decoded.userId) {
-      console.log('Auth: Invalid JWT token or missing userId');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Auth: Invalid JWT token or missing userId');
+      }
       return null;
     }
 
@@ -40,11 +41,16 @@ export async function requireAuth(request: NextRequest): Promise<AuthenticatedUs
     });
 
     if (!user) {
-      console.log('Auth: User not found in database');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Auth: User not found in database');
+      }
       return null;
     }
 
-    console.log('Auth: User authenticated:', user.email, 'Role:', user.role);
+    // Avoid logging PII in production
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Auth: User authenticated.');
+    }
 
     // Check if user is admin
     const isAdminByEmail = user.email && [
@@ -58,11 +64,15 @@ export async function requireAuth(request: NextRequest): Promise<AuthenticatedUs
     const isAdminByRole = user.role === 'admin';
 
     if (!isAdminByEmail && !isAdminByRole) {
-      console.log('Auth: User is not admin, email:', user.email, 'role:', user.role);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Auth: User is not admin');
+      }
       return null;
     }
 
-    console.log('Auth: User is admin by', isAdminByEmail ? 'email' : 'role');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Auth: User is admin');
+    }
 
     return {
       id: user.id,
@@ -70,7 +80,9 @@ export async function requireAuth(request: NextRequest): Promise<AuthenticatedUs
       role: user.role || 'admin'
     };
   } catch (error) {
-    console.log('Auth: JWT verification error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Auth: JWT verification error');
+    }
     return null;
   }
 }

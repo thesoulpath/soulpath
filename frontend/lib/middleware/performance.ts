@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimitRedis } from '../rate-limit';
 
 // Performance monitoring middleware
 export class PerformanceMiddleware {
@@ -100,7 +101,15 @@ export class PerformanceMiddleware {
 
     // Apply rate limiting
     if (rateLimit) {
-      const rateLimitResult = PerformanceMiddleware.checkRateLimit(request, rateLimitMax);
+      const ip = request.headers.get('x-forwarded-for') ||
+                 request.headers.get('x-real-ip') ||
+                 'unknown';
+      const key = `${ip}-${request.nextUrl.pathname}`;
+      const windowSeconds = Math.floor((15 * 60 * 1000) / 1000);
+
+      // Try Redis-backed rate limit first
+      const redisResult = await checkRateLimitRedis(key, rateLimitMax, windowSeconds);
+      const rateLimitResult = redisResult ?? PerformanceMiddleware.checkRateLimit(request, rateLimitMax);
 
       if (!rateLimitResult.allowed) {
         return NextResponse.json(
