@@ -48,7 +48,14 @@ export async function POST(request: NextRequest) {
       // Now try the specific user query
       console.log('🔍 Executing user findUnique query...');
       user = await prisma.user.findUnique({
-        where: { email: email.toLowerCase() }
+        where: { email: email.toLowerCase() },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          fullName: true,
+          role: true
+        }
       });
       console.log('👤 User found:', user ? 'Yes' : 'No');
       if (user) {

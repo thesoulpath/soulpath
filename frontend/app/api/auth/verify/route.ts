@@ -29,7 +29,13 @@ export async function POST(request: NextRequest) {
 
     // Get user from database
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId }
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true
+      }
     });
 
     if (!user) {
